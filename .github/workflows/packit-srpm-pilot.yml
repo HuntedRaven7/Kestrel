@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Discover packages
         id: discover
@@ -52,54 +54,42 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up podman
+      - name: Fetch and stage verified sources
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        env:
+          PACKAGE: ${{ matrix.package }}
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq podman
+          python3 pigeon/tools/source_pipeline.py "$PACKAGE" \
+            --output work/sources \
+            --stage-into packages
 
-      - name: Pull Fedora 44 build container
+      - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
-        run: podman pull quay.io/fedora/fedora:44
-
-      - name: Build SRPM in Fedora container
-        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
-        id: build
+        env:
+          PACKAGE: ${{ matrix.package }}
         run: |
-          podman run --rm \
-            -v "$(pwd):/workspace:Z" \
-            -w /workspace \
-            quay.io/fedora/fedora:44 \
-            bash -c "
-              dnf install -y fedora-workstation-repositories &&
-              printf '[hummingbird]\nname=Hummingbird Copr Repository\nbaseurl=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/\$basearch/\nenabled=1\ngpgcheck=1\ngpgkey=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/key/gpgkey\nrepo_gpgcheck=0\npriority=10\n' > /etc/yum.repos.d/hummingbird.repo &&
-              dnf install -y packit python3-pip &&
-              packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ --package ${{ matrix.package }} 2>&1 | tee /tmp/packit.log &&
-              SRPM=\$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm 2>/dev/null | head -1) &&
-              echo \"srpm_path=\$SRPM\" > /workspace/srpm_output.txt
-            "
-          # Read the SRPM path from the output file
-          if [ -f srpm_output.txt ]; then
-            SRPM_PATH=$(cat srpm_output.txt | cut -d= -f2)
-            echo "srpm_path=$SRPM_PATH" >> $GITHUB_OUTPUT
-            echo "Found SRPM: $SRPM_PATH"
-          else
-            echo "ERROR: No SRPM output file found"
-            exit 1
-          fi
-
-      - name: Verify SRPM
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && success() && steps.build.outputs.srpm_path != '' }}
-        run: |
-          rpm -qip ${{ steps.build.outputs.srpm_path }}
-          rpm -qlp ${{ steps.build.outputs.srpm_path }}
+          mkdir -p work/srpm
+          docker run --rm \
+            -e PACKAGE \
+            -v "$PWD:/repo:Z" \
+            -v "$PWD/work/srpm:/out:Z" \
+            -w /repo \
+            quay.io/packit/packit@sha256:8a1784251c51eed7a094820c894e2ee7f4ed4bbce4eb78eb172a04de3fae43e1 \
+            bash -exc '
+              git config --global --add safe.directory "*"
+              packit srpm --preserve-spec --output "/out/$PACKAGE.src.rpm" -p "$PACKAGE"
+              python3 pigeon/tools/source_pipeline.py "$PACKAGE" --verify-staged packages
+              rpm -qp --qf "%{NAME}-%{VERSION}-%{RELEASE}\n" "/out/$PACKAGE.src.rpm"
+            '
+          # A build that produced no SRPM must fail here
+          test -s "work/srpm/$PACKAGE.src.rpm"
 
       - name: Upload SRPM
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && success() && steps.build.outputs.srpm_path != '' }}
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: srpm-${{ matrix.package }}
-          path: ${{ steps.build.outputs.srpm_path }}
+          path: work/srpm/${{ matrix.package }}.src.rpm
           retention-days: 7
 
   verify-all:
