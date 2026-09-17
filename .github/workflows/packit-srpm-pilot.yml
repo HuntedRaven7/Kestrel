@@ -18,7 +18,7 @@ jobs:
     name: Discover packages
     runs-on: ubuntu-24.04
     outputs:
-      packages: ${{ steps.discover.outputs.packages }}
+      packages: ${{ steps.discover.outputs.stdout }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
