@@ -161,6 +161,8 @@ jobs:
       packages: write
       id-token: write
       attestations: write
+    outputs:
+      repomd_hash: ${{ steps.hash.outputs.hash }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -225,6 +227,12 @@ jobs:
           path: ~/pigeon-sbom.spdx.json
           retention-days: 30
 
+      - name: Compute repomd.xml hash
+        id: hash
+        run: |
+          HASH=$(sha256sum ~/repository/repodata/repomd.xml | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
   slsa-provenance:
     name: Attest SLSA provenance
     needs: publish
@@ -236,7 +244,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
     with:
       base64-subjects: |
-        ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', hashFiles('~/repository/repodata/repomd.xml')) }}
+        ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', needs.publish.outputs.repomd_hash) }}
       provenance-name: pigeon-provenance
 
   trivy-scan:

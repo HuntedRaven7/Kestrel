@@ -25,6 +25,8 @@ jobs:
       packages: write
       id-token: write
       attestations: write
+    outputs:
+      sbom_hash: ${{ steps.hash.outputs.hash }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,6 +90,13 @@ jobs:
           path: ~/woodpecker-sbom.spdx.json
           retention-days: 30
 
+      - name: Compute SBOM hash
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        id: hash
+        run: |
+          HASH=$(sha256sum ~/woodpecker-sbom.spdx.json | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
   slsa-provenance:
     name: Attest SLSA provenance
     needs: build
@@ -99,7 +108,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
     with:
       base64-subjects: |
-        ${{ format('{{"ghcr.io/huntedraven7/woodpecker:testing":"{0}"}}', hashFiles('~/woodpecker-sbom.spdx.json')) }}
+        ${{ format('{{"ghcr.io/huntedraven7/woodpecker:testing":"{0}"}}', needs.build.outputs.sbom_hash) }}
       provenance-name: woodpecker-provenance
 
   trivy-scan:
