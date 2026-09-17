@@ -1,0 +1,68 @@
+# Woodpecker — Hummingbird-based server image
+# Layer discipline: few COPYs, fold small RUNs, declare VERSION/flavor ARGs late.
+# Consumes Pigeon RPM repo by digest (Renovate-owned).
+# No GUI stack — shares base stages with Warbler, stops before desktop layer.
+
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:TODO_BASE_IMAGE_SHA
+ARG BASE_IMAGE_SHA=sha256:TODO_BASE_IMAGE_SHA
+ARG PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon
+ARG PIGEON_IMAGE_SHA=sha256:TODO_PIGEON_IMAGE_SHA
+
+FROM ${BASE_IMAGE} AS base
+
+# Install Pigeon repo + base packages needed for bootstrap
+COPY --from=${PIGEON_IMAGE}@${PIGEON_IMAGE_SHA} /repository /etc/pigeon
+RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
+    dnf -y install \
+        createrepo_c \
+        python3 \
+        python3-dnf \
+        python3-hawkey \
+    && dnf clean all
+
+# Copy manifests and scripts
+COPY packages/ /etc/woodpecker/packages/
+COPY contracts/ /etc/woodpecker/contracts/
+COPY scripts/ /usr/libexec/woodpecker/
+
+# Install packages from Pigeon repo + base (woodpecker.toml contract)
+RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
+    /usr/libexec/woodpecker/install-packages.py \
+        --contract /etc/woodpecker/packages/woodpecker.toml \
+        --repo /etc/pigeon \
+        --base-image ${BASE_IMAGE} \
+    && dnf clean all
+
+# Verify RPM contract (asserts installed set matches woodpecker.toml)
+RUN /usr/libexec/woodpecker/verify-rpm-contract.py \
+    --contract /etc/woodpecker/packages/woodpecker.toml \
+    --installed-db /var/lib/rpm
+
+# Configure server services (cockpit, ssh, uupd, bootc-auto-update, etc.)
+RUN /usr/libexec/woodpecker/configure-services.sh
+
+# Configure branding
+RUN /usr/libexec/woodpecker/configure-branding.sh
+
+# Verify server contract
+RUN /usr/libexec/woodpecker/verify-server-contract.py \
+    --contract /etc/woodpecker/contracts/server.toml
+
+# Clean stage + bootc lint
+RUN /usr/libexec/woodpecker/clean-stage.sh \
+    && bootc container lint --fatal-warnings
+
+# Copy system files (sshd config, cockpit, etc.)
+COPY system_files/shared/ /
+
+# Final labels
+ARG IMAGE_NAME=woodpecker
+ARG VERSION=testing
+LABEL org.opencontainers.image.title="Woodpecker"
+LABEL org.opencontainers.image.description="Hummingbird-based server"
+LABEL org.opencontainers.image.source="https://github.com/HuntedRaven7/Kestrel"
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.vendor="Kestrel"
+LABEL containers.bootc=1
+
+CMD ["/sbin/init"]

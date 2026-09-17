@@ -1,0 +1,89 @@
+name: packit-srpm-pilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Specific package to build SRPM for (empty = all)"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  discover:
+    name: Discover packages
+    runs-on: ubuntu-24.04
+    outputs:
+      packages: ${{ steps.discover.outputs.packages }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Discover packages
+        id: discover
+        run: |
+          python3 pigeon/tools/packit_workflow.py packages
+
+  srpm:
+    name: Build SRPM (${{ matrix.package }})
+    needs: discover
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJson(needs.discover.outputs.packages) }}
+    if: ${{ github.event.inputs.package == '' || github.event.inputs.package == matrix.package }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Packit
+        uses: packit/packit-actions@v1
+        with:
+          packit-version: "latest"
+
+      - name: Install dependencies
+        run: |
+          sudo dnf install -y fedora-workstation-repositories
+          sudo dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo
+
+      - name: Download source via source_pipeline.py
+        run: |
+          python3 pigeon/tools/source_pipeline.py fetch ${{ matrix.package }} --output ~/rpmbuild/SOURCES/
+
+      - name: Generate SRPM with Packit
+        id: srpm
+        run: |
+          cd pigeon/packages/${{ matrix.package }}
+          packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log
+          echo "srpm_path=$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm | head -1)" >> $GITHUB_OUTPUT
+
+      - name: Verify SRPM
+        run: |
+          rpm -qip ${{ steps.srpm.outputs.srpm_path }}
+          rpm -qlp ${{ steps.srpm.outputs.srpm_path }}
+
+      - name: Upload SRPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: srpm-${{ matrix.package }}
+          path: ${{ steps.srpm.outputs.srpm_path }}
+          retention-days: 7
+
+  verify-all:
+    name: Verify all SRPMs generated
+    needs: srpm
+    runs-on: ubuntu-24.04
+    if: always()
+    steps:
+      - name: Check all matrix jobs succeeded
+        run: |
+          # This step runs only if all matrix jobs complete
+          echo "All SRPM builds completed"

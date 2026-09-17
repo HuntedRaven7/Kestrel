@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Mango
+Comment=Mango Wayland compositor
+Exec=/usr/bin/mango
+Type=Application
+DesktopNames=mango

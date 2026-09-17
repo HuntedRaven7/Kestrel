@@ -1,0 +1,9 @@
+{
+  "flavors": ["main", "nvidia", "gaming", "nvidia-gaming"],
+  "streams": ["testing", "stable"],
+  "images": {
+    "warbler": { "title": "Warbler", "description": "Hummingbird-based Mango desktop" },
+    "woodpecker": { "title": "Woodpecker", "description": "Hummingbird-based server" }
+  },
+  "uupd_version": "0.1.0"
+}

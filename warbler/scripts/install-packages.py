@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Install packages from Pigeon repo + base image per warbler.toml contract.
+
+Usage:
+  install-packages.py --contract PATH --repo PATH --base-image IMAGE
+"""
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+import tomllib
+from pathlib import Path
+
+
+def parse_contract(path: Path) -> dict[str, str]:
+    """Parse warbler.toml and return {package: version_or_wildcard}."""
+    data = tomllib.loads(path.read_text())
+    pkgs = {}
+    for section in ("warbler",):
+        if section in data:
+            pkgs.update(data[section])
+    return pkgs
+
+
+def get_base_packages(base_image: str) -> set[str]:
+    """Query base image for pre-installed RPMs via skopeo + rpm."""
+    # For now, return empty - in reality this would inspect the base image
+    # For bootc images, we assume minimal base and install everything explicitly
+    return set()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Install Warbler packages")
+    parser.add_argument("--contract", required=True, type=Path)
+    parser.add_argument("--repo", required=True, type=Path)
+    parser.add_argument("--base-image", required=True)
+    args = parser.parse_args()
+
+    pkgs = parse_contract(args.contract)
+    if not pkgs:
+        print("ERROR: No packages in contract", file=sys.stderr)
+        return 1
+
+    # Build repo config for Pigeon repo
+    repo_file = Path("/etc/yum.repos.d/pigeon.repo")
+    repo_file.write_text(f"""[pigeon]
+name=Kestrel Pigeon Repository
+baseurl=file://{args.repo}
+enabled=1
+gpgcheck=0
+priority=5
+""")
+
+    # Filter out wildcard versions (from base) - they'll be installed from base repos
+    pigeon_pkgs = [f"{name}-{ver}" if ver != "*" else name for name, ver in pkgs.items() if ver != "*"]
+    base_pkgs = [name for name, ver in pkgs.items() if ver == "*"]
+
+    # Install from Pigeon repo
+    if pigeon_pkgs:
+        print(f"Installing from Pigeon repo: {pigeon_pkgs}")
+        subprocess.run(
+            ["dnf", "install", "-y", "--repo=pigeon", *pigeon_pkgs],
+            check=True,
+        )
+
+    # Install base packages (wildcards) - these come from base image / Fedora repos
+    if base_pkgs:
+        print(f"Installing from base repos: {base_pkgs}")
+        subprocess.run(
+            ["dnf", "install", "-y", *base_pkgs],
+            check=True,
+        )
+
+    print("Package installation complete")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

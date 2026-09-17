@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: scenefx is not in Fedora dist-git. Built against our wlroots0.20.",
+  "upstream": "https://github.com/wlrfx/scenefx",
+  "upstream_tag": "0.5"
+}

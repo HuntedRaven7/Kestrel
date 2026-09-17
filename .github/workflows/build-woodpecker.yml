@@ -1,0 +1,135 @@
+name: build-woodpecker
+
+on:
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "Push to registry"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Build Woodpecker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Build Woodpecker image
+        run: |
+          podman build -f woodpecker/Containerfile \
+            --build-arg BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:TODO_BASE_IMAGE_SHA \
+            --build-arg PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon@sha256:TODO_PIGEON_IMAGE_SHA \
+            --build-arg VERSION=testing \
+            -t ghcr.io/huntedraven7/woodpecker:testing \
+            woodpecker/.
+
+      - name: Bootc lint
+        run: |
+          podman run --rm --privileged \
+            -v /var/lib/containers:/var/lib/containers \
+            ghcr.io/huntedraven7/woodpecker:testing \
+            bootc container lint --fatal-warnings
+
+      - name: Push image
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        run: |
+          podman push ghcr.io/huntedraven7/woodpecker:testing
+          # Also tag with digest for immutable reference
+          digest=$(podman inspect ghcr.io/huntedraven7/woodpecker:testing --format '{{.Digest}}')
+          podman tag ghcr.io/huntedraven7/woodpecker:testing ghcr.io/huntedraven7/woodpecker:${digest}
+          podman push ghcr.io/huntedraven7/woodpecker:${digest}
+
+      - name: Install cosign
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.4.0'
+
+      - name: Cosign sign
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        run: |
+          cosign sign --yes ghcr.io/huntedraven7/woodpecker:testing
+
+      - name: Generate SBOM (syft)
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        uses: anchore/sbom-action@v0
+        with:
+          image: ghcr.io/huntedraven7/woodpecker:testing
+          format: spdx-json
+          output-file: ~/woodpecker-sbom.spdx.json
+
+      - name: Upload SBOM
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: woodpecker-sbom
+          path: ~/woodpecker-sbom.spdx.json
+          retention-days: 30
+
+      - name: Attest SLSA provenance
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+        with:
+          base64-subjects: |
+            ${{ format('{{"ghcr.io/huntedraven7/woodpecker:testing":"{0}"}}', hashFiles('~/woodpecker-sbom.spdx.json')) }}
+          provenance-name: woodpecker-provenance
+
+  trivy-scan:
+    name: Trivy scan
+    needs: build
+    runs-on: ubuntu-24.04
+    if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/huntedraven7/woodpecker:testing'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  promote:
+    name: Promote to stable
+    needs: [build, trivy-scan]
+    runs-on: ubuntu-24.04
+    if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Promote testing -> stable
+        run: |
+          podman pull ghcr.io/huntedraven7/woodpecker:testing
+          podman tag ghcr.io/huntedraven7/woodpecker:testing ghcr.io/huntedraven7/woodpecker:stable
+          podman push ghcr.io/huntedraven7/woodpecker:stable
+
+      - name: Verify promotion
+        run: |
+          podman pull ghcr.io/huntedraven7/woodpecker:stable
+          podman inspect ghcr.io/huntedraven7/woodpecker:stable --format '{{.Digest}}'

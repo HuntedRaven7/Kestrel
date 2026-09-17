@@ -1,0 +1,106 @@
+# Warbler — Hummingbird-based Mango desktop
+# Layer discipline: few COPYs, fold small RUNs, declare VERSION/flavor ARGs late.
+# Consumes Pigeon RPM repo by digest (Renovate-owned).
+# For nvidia/gaming flavors, uses kernel cache image (prebuilt OGC kernel + NVIDIA modules).
+
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:TODO_BASE_IMAGE_SHA
+ARG BASE_IMAGE_SHA=sha256:TODO_BASE_IMAGE_SHA
+ARG KERNEL_CACHE_IMAGE=ghcr.io/huntedraven7/warbler-kernel-cache@sha256:TODO_KERNEL_CACHE_SHA
+ARG KERNEL_CACHE_SHA=sha256:TODO_KERNEL_CACHE_SHA
+ARG PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon
+ARG PIGEON_IMAGE_SHA=sha256:TODO_PIGEON_IMAGE_SHA
+
+# Flavor determines base image: main uses pristine base; nvidia/gaming use kernel cache
+ARG IMAGE_FLAVOR=main
+RUN if [ "${IMAGE_FLAVOR}" = "main" ]; then \
+      echo "BASE_IMAGE_SELECTED=${BASE_IMAGE}" >> /tmp/base-image.env; \
+    else \
+      echo "BASE_IMAGE_SELECTED=${KERNEL_CACHE_IMAGE}" >> /tmp/base-image.env; \
+    fi
+
+# Use the selected base image
+FROM ${BASE_IMAGE} AS base
+
+# Install Pigeon repo + base packages needed for bootstrap
+COPY --from=${PIGEON_IMAGE}@${PIGEON_IMAGE_SHA} /repository /etc/pigeon
+RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
+    dnf -y install \
+        createrepo_c \
+        python3 \
+        python3-dnf \
+        python3-hawkey \
+    && dnf clean all
+
+# Copy manifests and scripts
+COPY packages/ /etc/warbler/packages/
+COPY contracts/ /etc/warbler/contracts/
+COPY scripts/ /usr/libexec/warbler/
+
+# Install packages from Pigeon repo + base (warbler.toml contract)
+RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
+    /usr/libexec/warbler/install-packages.py \
+        --contract /etc/warbler/packages/warbler.toml \
+        --repo /etc/pigeon \
+        --base-image ${BASE_IMAGE} \
+    && dnf clean all
+
+# Verify RPM contract (asserts installed set matches warbler.toml)
+RUN /usr/libexec/warbler/verify-rpm-contract.py \
+    --contract /etc/warbler/packages/warbler.toml \
+    --installed-db /var/lib/rpm
+
+# Configure desktop services (GDM, seatd, etc.)
+RUN /usr/libexec/warbler/configure-services.sh
+
+# Configure branding (os-release, etc.)
+RUN /usr/libexec/warbler/configure-branding.sh
+
+# Verify desktop contract (asserts desktop.toml expectations)
+RUN /usr/libexec/warbler/verify-desktop-contract.py \
+    --contract /etc/warbler/contracts/desktop.toml
+
+# Flavor-specific layers (declared late for cache discipline)
+ARG VERSION=testing
+
+# For nvidia/gaming flavors using kernel cache: unpack prebuilt OGC kernel + NVIDIA modules
+# The cache image already has /warbler-cache with ogc.tar and nvidia-modules-*.tar
+RUN if [ "${IMAGE_FLAVOR}" != "main" ] && [ -d /warbler-cache ]; then \
+      echo "Unpacking prebuilt OGC kernel from kernel cache image"; \
+      tar -C / -xf /warbler-cache/ogc.tar; \
+      release="$(cat /usr/lib/warbler/ogc-kernel-release)"; \
+      depmod -a "$release"; \
+      ln -sfn "vmlinuz-${release}" /boot/vmlinuz; \
+    fi
+
+RUN if [[ "${IMAGE_FLAVOR}" == *"nvidia"* ]] && [ -d /warbler-cache ]; then \
+      echo "Unpacking prebuilt NVIDIA modules from kernel cache image"; \
+      for cached in /warbler-cache/nvidia-modules-*.tar; do \
+        [ -f "$cached" ] && tar -C / -xf "$cached"; \
+      done; \
+      # Also copy installer for userspace install \
+      cp /warbler-cache/nvidia-installer.run /tmp/nvidia-installer.run; \
+    fi
+
+# NVIDIA userspace install (runs after package transaction, not cached)
+# For nvidia flavors using kernel cache, the module is already unpacked above
+RUN if [[ "${IMAGE_FLAVOR}" == *"nvidia"* ]]; then \
+      /usr/libexec/warbler/install-nvidia.sh; \
+    fi
+
+# Clean stage + bootc lint
+RUN /usr/libexec/warbler/clean-stage.sh \
+    && bootc container lint --fatal-warnings
+
+# Copy system files (GDM autologin, mango.desktop, awww service, etc.)
+COPY system_files/shared/ /
+
+# Final labels
+ARG IMAGE_NAME=warbler
+LABEL org.opencontainers.image.title="Warbler"
+LABEL org.opencontainers.image.description="Hummingbird-based Mango desktop"
+LABEL org.opencontainers.image.source="https://github.com/HuntedRaven7/Kestrel"
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.vendor="Kestrel"
+LABEL containers.bootc=1
+
+CMD ["/sbin/init"]

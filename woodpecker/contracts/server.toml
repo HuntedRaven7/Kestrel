@@ -1,0 +1,69 @@
+# Server contract asserted post-install
+# verify-server-contract.py reads this file and asserts the installed system matches.
+
+[services]
+# Core services
+cockpit_enabled = true
+cockpit_socket = "cockpit.socket"
+sshd_enabled = false  # Default OFF per security policy (ENABLE_SSHD=0)
+sshd_socket = "sshd.socket"
+sshd_config = "/etc/ssh/sshd_config"
+sshd_port = 22
+sshd_permit_root_login = "prohibit-password"
+sshd_password_authentication = "no"
+sshd_pubkey_authentication = "yes"
+
+# Update services
+uupd_enabled = true
+uupd_timer = "uupd.timer"
+bootc_auto_update_enabled = true
+bootc_auto_update_timer = "bootc-auto-update.timer"
+
+# Network
+networkmanager_enabled = true
+firewalld_enabled = true
+firewalld_default_zone = "public"
+tailscale_enabled = false  # Opt-in
+wireguard_enabled = false  # Opt-in
+
+# Storage
+lvm2_monitoring = true
+cryptsetup_enabled = true
+
+[container]
+# Container runtime
+podman_version = "*"
+skopeo_version = "*"
+buildah_version = "*"
+runc_version = "*"
+crun_version = "*"
+containers_storage = "/var/lib/containers"
+containers_graphroot = "/var/lib/containers/storage"
+
+# Podman socket (rootless)
+podman_socket_user = "podman.socket"
+podman_socket_system = "podman.socket"
+
+[management]
+# Cockpit
+cockpit_port = 9090
+cockpit_tls = true
+cockpit_auth = "pam"
+
+# Bootc
+bootc_status_command = "bootc status"
+bootc_upgrade_command = "bootc upgrade"
+
+[security]
+# SELinux
+selinux_mode = "enforcing"
+selinux_type = "targeted"
+
+# SSH hardening
+ssh_ciphers = "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com"
+ssh_macs = "hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com"
+ssh_kex_algorithms = "curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512"
+
+[unavailable]
+# Tracking issues for missing server components
+# component = "issue-url"

@@ -1,0 +1,322 @@
+# Hardware enablement & server packages from utah-packages
+# Based on projectbluefin/utah-packages for full hardware support
+
+# Firmware & hardware management
+fwupd
+alsa-firmware
+linux-firmware
+linux-firmware-whence
+hwdata
+pciutils
+libpciaccess
+libblockdev
+libbytesize
+parted
+udisks2
+
+# Input devices
+libinput
+libwacom
+libratbag
+input-remapper
+libei
+libevdev
+libglvnd
+libgudev
+evtest
+i2c-tools
+
+# Sensors & monitoring
+iio-sensor-proxy
+ddcutil
+smartmontools
+nvme-cli
+
+# Graphics/GPU
+libva
+libva-utils
+intel-media-driver-free
+intel-mediasdk
+intel-vpl-gpu-rt
+igt-gpu-tools
+libdrm
+mesa-dri-drivers
+mesa-vulkan-drivers
+mesa-filesystem
+vulkan-loader
+vulkan-headers
+spirv-tools
+
+# Camera
+libcamera
+
+# Color management
+colord
+colord-gtk
+lcms2
+
+# Power management
+upower
+
+# Bluetooth
+bluez
+gnome-bluetooth
+
+# Mobile broadband
+ModemManager
+
+# Network
+NetworkManager
+NetworkManager-tui
+firewalld
+iptables
+nftables
+iproute
+dnsmasq
+openresolv
+tailscale
+wireguard-tools
+openssh-server
+openssh-clients
+samba
+libnfs
+
+# Storage
+lvm2
+cryptsetup
+mdadm
+xfsprogs
+btrfs-progs
+dosfstools
+e2fsprogs
+ntfs-3g
+
+# Container/virtualization
+containerd
+runc
+crun
+podman
+skopeo
+buildah
+criu
+containers-common
+container-selinux
+qemu-img
+qemu-kvm
+libvirt
+libvirt-daemon
+libvirt-daemon-kvm
+virt-manager
+virt-install
+virt-viewer
+distrobox
+
+# Boot/kernel
+dracut
+grub2
+grub2-efi-x64
+grub2-efi-x64-modules
+shim-x64
+mokutil
+efibootmgr
+
+# Audio
+pipewire
+pipewire-pulseaudio
+pipewire-alsa
+pipewire-jack
+wireplumber
+alsa-lib
+alsa-utils
+alsa-tools
+pulseaudio-utils
+
+# Printing
+cups
+cups-filters
+cups-pk-helper
+print-manager
+
+# Fonts
+dejavu-sans-fonts
+dejavu-serif-fonts
+dejavu-sans-mono-fonts
+google-noto-sans-fonts
+google-noto-serif-fonts
+google-noto-mono-fonts
+liberation-fonts
+liberation-sans-fonts
+liberation-serif-fonts
+liberation-mono-fonts
+
+# Internationalization
+glibc-langpack-en
+glibc-all-langpacks
+langtable
+liblangtag
+
+# SELinux
+selinux-policy
+selinux-policy-targeted
+audit
+libselinux
+libsepol
+policycoreutils
+setroubleshoot
+
+# Flatpak
+flatpak
+flatpak-builder
+flatpak-session-helper
+flatpak-xdg-utils
+
+# Wayland
+wayland
+wayland-protocols
+waypipe
+
+# Desktop portal
+xdg-desktop-portal
+xdg-desktop-portal-gtk
+xdg-desktop-portal-gnome
+xdg-terminal-exec
+xdg-user-dirs-gtk
+
+# Graphics libraries
+cairo
+pango
+pixman
+graphene
+fribidi
+harfbuzz
+gdk-pixbuf2
+gobject-introspection
+json-glib
+libsoup3
+rest
+
+# Python ecosystem
+python3-argcomplete
+python3-dasbus
+python3-dbus-next
+python3-evdev
+python3-psutil
+python3-pydantic
+python3-pydantic-core
+
+# Rust tools
+rust-bootupd
+rust-just
+
+# Utilities
+make
+sassc
+sdl2-compat
+shared-mime-info
+squashfs-tools
+startup-notification
+switcheroo-control
+tecla
+fastfetch
+gum
+isomd5sum
+zenity
+fzf
+fish
+zsh
+bat
+eza
+zoxide
+ripgrep
+fd-find
+htop
+btop
+tmux
+vim
+nano
+rsync
+chrony
+sudo
+
+# Additional libraries
+libXcursor
+libXdamage
+libXfixes
+libXinerama
+libXrandr
+libX11
+libxcb
+libxkbcommon
+xkeyboard-config
+xorg-x11-server-utils
+xorg-x11-xinit
+xorg-x11-xauth
+at-spi2-core
+libXrandr
+libadwaita
+libappindicator
+libayatana-appindicator
+libayatana-indicator
+libcanberra
+libdbusmenu
+libdisplay-info
+libfreeaptx
+libheif
+libical
+libnma
+libnotify
+liboping
+libsoup3
+libthai
+libxcrypt
+malcontent
+malcontent-bootstrap
+mozc
+mozjs140
+pango
+pycairo
+runc
+sassc
+sdl2-compat
+shared-mime-info
+squashfs-tools
+startup-notification
+switcheroo-control
+tecla
+xmlrpc-c
+xrefresh
+yyjson
+
+# GNOME stack (for reference - Warbler uses Mango not GNOME)
+# gnome-shell
+# gnome-session
+# gnome-settings-daemon
+# gnome-control-center
+# gnome-desktop3
+# gnome-online-accounts
+# gnome-bluetooth
+# gnome-autoar
+# gnome-tweaks
+# gjs
+# mutter
+# nautilus
+# nautilus-python
+# evolution-data-server
+# evolution-ews
+# gnome-ponytail-daemon
+# gnome-shell-extension-gsconnect
+
+# Video/gstreamer
+gstreamer1
+gstreamer1-plugins-base
+gstreamer1-plugins-good
+gstreamer1-plugins-bad-free
+
+# libvirt related (already listed above)
+# libvirt
+# libvirt-daemon
+# libvirt-daemon-kvm
+
+# Security
+# polkit (already listed)
+# polkit-gnome
