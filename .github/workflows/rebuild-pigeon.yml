@@ -143,13 +143,29 @@ jobs:
           pattern: stage-*
           path: ~/stages
           merge-multiple: true
+        continue-on-error: true
+
+      - name: Check if artifacts exist
+        id: artifacts
+        run: |
+          if [ -d ~/stages ] && [ -n "$(ls -A ~/stages 2>/dev/null)" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Run precedence check
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           python3 pigeon/tools/publish_gate.py \
             --repo-root ~/stages \
             --base-image quay.io/hummingbird-community/bootc-os:latest \
             --pigeon-suffix .hum1.pigeon
+
+      - name: Skip precedence check (no artifacts)
+        if: ${{ steps.artifacts.outputs.exists == 'false' }}
+        run: |
+          echo "No stage artifacts found, skipping precedence check"
 
   publish:
     name: Publish to GHCR
@@ -175,8 +191,19 @@ jobs:
           pattern: stage-*
           path: ~/stages
           merge-multiple: true
+        continue-on-error: true
+
+      - name: Check if artifacts exist
+        id: artifacts
+        run: |
+          if [ -d ~/stages ] && [ -n "$(ls -A ~/stages 2>/dev/null)" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create repository structure
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           mkdir -p ~/repository
           for stage in 0 1 2; do
@@ -186,22 +213,26 @@ jobs:
           done
 
       - name: Create repodata
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           cd ~/repository
           createrepo_c .
 
       - name: Install cosign
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         uses: sigstore/cosign-installer@v3
         with:
           cosign-release: 'v2.4.0'
 
       - name: Sign repomd.xml (keyless cosign)
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           cosign sign-blob --yes \
             --output-signature ~/repository/repodata/repomd.xml.sig \
             ~/repository/repodata/repomd.xml
 
       - name: Build and push OCI image
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           cat > ~/Dockerfile.publish << 'EOF'
           FROM scratch
@@ -214,6 +245,7 @@ jobs:
           podman push ghcr.io/huntedraven7/pigeon:latest
 
       - name: Generate SBOM (syft)
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         uses: anchore/sbom-action@v0
         with:
           image: ghcr.io/huntedraven7/pigeon:latest
@@ -221,6 +253,7 @@ jobs:
           output-file: ~/pigeon-sbom.spdx.json
 
       - name: Upload SBOM as artifact
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: pigeon-sbom
@@ -228,15 +261,21 @@ jobs:
           retention-days: 30
 
       - name: Compute repomd.xml hash
+        if: ${{ steps.artifacts.outputs.exists == 'true' }}
         id: hash
         run: |
           HASH=$(sha256sum ~/repository/repodata/repomd.xml | cut -d' ' -f1)
           echo "hash=$HASH" >> $GITHUB_OUTPUT
 
+      - name: Skip publish (no artifacts)
+        if: ${{ steps.artifacts.outputs.exists == 'false' }}
+        run: |
+          echo "No stage artifacts found, skipping publish"
+
   slsa-provenance:
     name: Attest SLSA provenance
     needs: publish
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.repomd_hash != '' }}
     permissions:
       contents: write
       actions: read
@@ -252,7 +291,7 @@ jobs:
     name: Trivy vulnerability scan
     runs-on: ubuntu-24.04
     needs: publish
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.repomd_hash != '' }}
     steps:
       - name: Run Trivy scanner
         uses: aquasecurity/trivy-action@master
