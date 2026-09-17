@@ -596,8 +596,8 @@
     },
     "alsa-firmware": {
       "version": "1.2.4",
-      "url_template": "https://github.com/alsa-project/alsa-firmware/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/alsa-project/alsa-firmware/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "988855e97a457b02e5fafd9deafa926dcca04ec3f0f47a25041476bf346b68b189d352f5b4986ab465d474bf7035e54029bdfcfff36893635e8c020a5fe8a87c",
       "stage": 2,
       "note": "Fedora dist-git import. ALSA firmware.",
       "renovate": {
