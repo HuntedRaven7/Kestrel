@@ -488,8 +488,8 @@
     },
     "hwdata": {
       "version": "0.411",
-      "url_template": "https://github.com/VincentHW/hwdata/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/vcrhonek/hwdata/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "63ecfe9dd2e8e37e1854cabbcbfdb56b8b510abbe4ea3d66c6ff824bb61219a061e35a8f2bcd092d7ff4d9416a7dce49d84eecd66d5f13b4191f68d7c863de69",
       "stage": 2,
       "note": "Fedora dist-git import. Hardware data.",
       "renovate": {
