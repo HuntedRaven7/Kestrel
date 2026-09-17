@@ -91,9 +91,9 @@
       "note": "Local config package: GDM autologin drop-in + mango.desktop session. No upstream."
     },
     "xdg-desktop-portal-wlr": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/xdg-desktop-portal-wlr/xdg-desktop-portal-wlr-{version}.tar.gz/sha512/{sha512}/xdg-desktop-portal-wlr-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "0.8.4",
+      "url_template": "https://github.com/emersion/xdg-desktop-portal-wlr/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "05c4ec1148aec480f38d83cfe99be19144315e9848584664956dd56e36c07792df90807d0e674318dda87be012c0ecdea58f49e54a5401aba4f8673c63714221",
       "stage": 2,
       "note": "Fedora dist-git import. Source from lookaside cache.",
       "renovate": {
@@ -103,9 +103,9 @@
       "filename": "xdg-desktop-portal-wlr-TODO.tar.gz"
     },
     "xdg-desktop-portal-gtk": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/xdg-desktop-portal-gtk/xdg-desktop-portal-gtk-{version}.tar.gz/sha512/{sha512}/xdg-desktop-portal-gtk-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.15.3",
+      "url_template": "https://github.com/flatpak/xdg-desktop-portal-gtk/archive/refs/tags/{version}.tar.gz",
+      "sha512": "4a25c3862814d042b8d5e58e479299ef2044a895bf995c88599672a41074b960d4923b9a1313c309943d7a4f50e6c3f5ef91870a374758d7684c7c8763e28f17",
       "stage": 2,
       "note": "Fedora dist-git import. Source from lookaside cache.",
       "renovate": {
@@ -163,9 +163,9 @@
       "filename": "v1.5.0.tar.gz"
     },
     "swayidle": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/swayidle/swayidle-{version}.tar.gz/sha512/{sha512}/swayidle-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.9.0",
+      "url_template": "https://github.com/swaywm/swayidle/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "89fd24929a741270836af7a6d6049cdfe0c7717ae0913285af2e3c8540f7f0a95e839675a9a4e40e57ac86c35094b676591f3f358378c803d08c65b43b91899f",
       "stage": 2,
       "note": "Fedora dist-git import. Idle management for Wayland.",
       "renovate": {
@@ -175,9 +175,9 @@
       "filename": "swayidle-TODO.tar.gz"
     },
     "swaylock": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/swaylock/swaylock-{version}.tar.gz/sha512/{sha512}/swaylock-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.8.6",
+      "url_template": "https://github.com/swaywm/swaylock/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "833d25d580ed082e3fcce7366867fa931f3588e38d7dedd692039c41510dcb364f2bbe6941a7173aacb746827643da4feff94ec62790fe5094b38fff71048ef2",
       "stage": 2,
       "note": "Fedora dist-git import. Screen locker for Wayland.",
       "renovate": {
@@ -187,9 +187,9 @@
       "filename": "swaylock-TODO.tar.gz"
     },
     "brightnessctl": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/brightnessctl/brightnessctl-{version}.tar.gz/sha512/{sha512}/brightnessctl-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "0.5.1",
+      "url_template": "https://github.com/Hummer12007/brightnessctl/archive/refs/tags/{version}.tar.gz",
+      "sha512": "41ac86357b3b5a3d54a043140a6bdb1fb68d5080a16e86692059ad58f4b9134a8532432a3f664c70c665a4ad73ea8a94cc9b88fa84abc28f0356b8b397aaebc7",
       "stage": 2,
       "note": "Fedora dist-git import. Brightness control utility.",
       "renovate": {
@@ -199,9 +199,9 @@
       "filename": "brightnessctl-TODO.tar.gz"
     },
     "pamixer": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/pamixer/pamixer-{version}.tar.gz/sha512/{sha512}/pamixer-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.6",
+      "url_template": "https://github.com/cdemoulins/pamixer/archive/refs/tags/{version}.tar.gz",
+      "sha512": "c01b7c4184901955bff82aaeef0cde7f0b613e6ebff1158b3603f2835e13590a9353920a430598a3cde5c305a7316a78e302186bf4d3bf458133262578b42eb3",
       "stage": 2,
       "note": "Fedora dist-git import. PulseAudio mixer CLI.",
       "renovate": {
@@ -210,21 +210,9 @@
       },
       "filename": "pamixer-TODO.tar.gz"
     },
-    "xfce-polkit": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/xfce-polkit/xfce-polkit-{version}.tar.gz/sha512/{sha512}/xfce-polkit-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
-      "stage": 2,
-      "note": "Fedora dist-git import. Polkit authentication agent.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "xfce-mirror/xfce-polkit"
-      },
-      "filename": "xfce-polkit-TODO.tar.gz"
-    },
     "polkit": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/polkit/polkit-{version}.tar.gz/sha512/{sha512}/polkit-{version}.tar.gz",
+      "version": "127",
+      "url_template": "https://gitlab.freedesktop.org/polkit/polkit/-/archive/{version}/polkit-{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. PolicyKit framework.",
@@ -235,8 +223,8 @@
       "filename": "polkit-TODO.tar.gz"
     },
     "foot": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/foot/foot-{version}.tar.gz/sha512/{sha512}/foot-{version}.tar.gz",
+      "version": "1.28.0",
+      "url_template": "https://github.com/dnkl/foot/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Wayland terminal emulator (fallback).",
@@ -247,9 +235,9 @@
       "filename": "foot-TODO.tar.gz"
     },
     "fwupd": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/fwupd/fwupd-{version}.tar.gz/sha512/{sha512}/fwupd-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.1.7",
+      "url_template": "https://github.com/fwupd/fwupd/archive/refs/tags/{version}.tar.gz",
+      "sha512": "4e3bb70a300376f96e8fdd358a488bad3f96b43f9d0ced12e8ab6916a1cbd30a37f6031684be22151cdeeba74660feb3a90c6492c9eafad2e2c459720278b33a",
       "stage": 2,
       "note": "Fedora dist-git import. Firmware update daemon.",
       "renovate": {
@@ -259,9 +247,9 @@
       "filename": "fwupd-TODO.tar.gz"
     },
     "libinput": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/libinput/libinput-{version}.tar.gz/sha512/{sha512}/libinput-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.32.0",
+      "url_template": "https://gitlab.freedesktop.org/libinput/libinput/-/archive/{version}/libinput-{version}.tar.gz",
+      "sha512": "62658cfb8626ba653127e711ec69f7209451aa679e585152f99eef014bb8598fd52eaffedeefbb97ab8ea401322ce7549c7a701f52cf9ed83db564a80ec29ba5",
       "stage": 2,
       "note": "Fedora dist-git import. Input device library.",
       "renovate": {
@@ -271,8 +259,8 @@
       "filename": "libinput-TODO.tar.gz"
     },
     "libwacom": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/libwacom/libwacom-{version}.tar.gz/sha512/{sha512}/libwacom-{version}.tar.gz",
+      "version": "2.20.0",
+      "url_template": "https://github.com/linuxwacom/libwacom/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Wacom tablet library.",
@@ -283,8 +271,8 @@
       "filename": "libwacom-TODO.tar.gz"
     },
     "libratbag": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/libratbag/libratbag-{version}.tar.gz/sha512/{sha512}/libratbag-{version}.tar.gz",
+      "version": "0.18",
+      "url_template": "https://github.com/libratbag/libratbag/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Gaming mouse configuration library.",
@@ -295,8 +283,8 @@
       "filename": "libratbag-TODO.tar.gz"
     },
     "iio-sensor-proxy": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/iio-sensor-proxy/iio-sensor-proxy-{version}.tar.gz/sha512/{sha512}/iio-sensor-proxy-{version}.tar.gz",
+      "version": "3.9",
+      "url_template": "https://github.com/hadess/iio-sensor-proxy/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. IIO sensor proxy.",
@@ -307,9 +295,9 @@
       "filename": "iio-sensor-proxy-TODO.tar.gz"
     },
     "ddcutil": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/ddcutil/ddcutil-{version}.tar.gz/sha512/{sha512}/ddcutil-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.2.1",
+      "url_template": "https://github.com/rockowitz/ddcutil/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "119db19d4ca95ffcd50a0d40aebde15f346fbd745b5c84e9d58d8895a51acba52040540b1a325bd61f2c791a525c556526536df1e24c684cfd3b7c7ebfa2e589",
       "stage": 2,
       "note": "Fedora dist-git import. DDC/CI monitor control.",
       "renovate": {
@@ -319,9 +307,9 @@
       "filename": "ddcutil-TODO.tar.gz"
     },
     "ModemManager": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/ModemManager/ModemManager-{version}.tar.gz/sha512/{sha512}/ModemManager-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.24.2",
+      "url_template": "https://gitlab.freedesktop.org/ModemManager/ModemManager/-/archive/{version}/ModemManager-{version}.tar.gz",
+      "sha512": "341a795e6aa4f76f606a57921511233eb68510bea0bc6967449e2d2bb5949106c7d17ae964683797734c1cd688ac15ad076e08cc1d54aee22a16d23a9ca61510",
       "stage": 2,
       "note": "Fedora dist-git import. Mobile broadband modem manager.",
       "renovate": {
@@ -331,8 +319,8 @@
       "filename": "ModemManager-TODO.tar.gz"
     },
     "tailscale": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/tailscale/tailscale-{version}.tar.gz/sha512/{sha512}/tailscale-{version}.tar.gz",
+      "version": "1.98.8",
+      "url_template": "https://github.com/tailscale/tailscale/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. WireGuard-based VPN.",
@@ -343,8 +331,8 @@
       "filename": "tailscale-TODO.tar.gz"
     },
     "wireguard-tools": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/wireguard-tools/wireguard-tools-{version}.tar.gz/sha512/{sha512}/wireguard-tools-{version}.tar.gz",
+      "version": "1.0.20260223",
+      "url_template": "https://github.com/WireGuard/wireguard-tools/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. WireGuard tools.",
@@ -355,9 +343,9 @@
       "filename": "wireguard-tools-TODO.tar.gz"
     },
     "firewalld": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/firewalld/firewalld-{version}.tar.gz/sha512/{sha512}/firewalld-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.5.2",
+      "url_template": "https://github.com/firewalld/firewalld/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "cded29ecb816e82b185c5b0ed680e8a95c71242c3afaec1c4eb9b6b7c87069fda7c5d5fb1563cea7230af5fc8d39c95b52b54fdd58250a5ee0298eb789b64daf",
       "stage": 2,
       "note": "Fedora dist-git import. Firewall daemon.",
       "renovate": {
@@ -367,9 +355,9 @@
       "filename": "firewalld-TODO.tar.gz"
     },
     "containerd": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/containerd/containerd-{version}.tar.gz/sha512/{sha512}/containerd-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.3.5",
+      "url_template": "https://github.com/containerd/containerd/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "87255f36b2b2fb5fc2cb7abaadae33c2ea85b5f7a1259c8c52cc3cf3efffa64525886a220eadf804b7c6414babe7310d39fddc6a24e79b707770fb621323f5c8",
       "stage": 2,
       "note": "Fedora dist-git import. Container runtime.",
       "renovate": {
@@ -379,9 +367,9 @@
       "filename": "containerd-TODO.tar.gz"
     },
     "runc": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/runc/runc-{version}.tar.gz/sha512/{sha512}/runc-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.5.1",
+      "url_template": "https://github.com/opencontainers/runc/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "4a96870af3146203a001e08d9a0330f6234f8f0b2efe62e123a4f9b131b73967482954f658d53258e19444630c18981b5d7ef805ab736ca16a69f783f39db182",
       "stage": 2,
       "note": "Fedora dist-git import. OCI container runtime.",
       "renovate": {
@@ -391,9 +379,9 @@
       "filename": "runc-TODO.tar.gz"
     },
     "crun": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/crun/crun-{version}.tar.gz/sha512/{sha512}/crun-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.29.1",
+      "url_template": "https://github.com/containers/crun/archive/refs/tags/{version}.tar.gz",
+      "sha512": "30d009e3bae8c9176fe35fdb4d8c9aeba4f4e0d8c7286c512b8fda9876d398a43b7b11b702142ea3cb8d925b5840b9f3a9fa677e4966a5420e619a274c87f7c6",
       "stage": 2,
       "note": "Fedora dist-git import. OCI container runtime (C).",
       "renovate": {
@@ -403,9 +391,9 @@
       "filename": "crun-TODO.tar.gz"
     },
     "podman": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/podman/podman-{version}.tar.gz/sha512/{sha512}/podman-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "6.1.2",
+      "url_template": "https://github.com/containers/podman/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "c17d05d4b5683a266290f91afa78945666f39f2dea3de8074bd3457083120f787532b6c88f4c00996ad309ce05b2c3cd50d91742aa315a10ace868d49adafb48",
       "stage": 2,
       "note": "Fedora dist-git import. Podman container engine.",
       "renovate": {
@@ -415,9 +403,9 @@
       "filename": "podman-TODO.tar.gz"
     },
     "skopeo": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/skopeo/skopeo-{version}.tar.gz/sha512/{sha512}/skopeo-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.24.1",
+      "url_template": "https://github.com/containers/skopeo/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "707091114258c3a7a01494ba6f78097a21d9c92d51bf664ace839995f5a6b245a4c98df9bf18347f670362ebc777de48f472c33ed3a013622e88d900864a536e",
       "stage": 2,
       "note": "Fedora dist-git import. Container image tool.",
       "renovate": {
@@ -427,9 +415,9 @@
       "filename": "skopeo-TODO.tar.gz"
     },
     "buildah": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/buildah/buildah-{version}.tar.gz/sha512/{sha512}/buildah-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.45.1",
+      "url_template": "https://github.com/containers/buildah/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "e3fe336421e20938fb486a06f0321729c22e3b457ae9c9ec81c6ffeb0bdc85470bfe42caba152e383c1fe9cd2625eea90e9c593726f384c2fbe4bf64de3a8ddd",
       "stage": 2,
       "note": "Fedora dist-git import. Build container images.",
       "renovate": {
@@ -439,8 +427,8 @@
       "filename": "buildah-TODO.tar.gz"
     },
     "dracut": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/dracut/dracut-{version}.tar.gz/sha512/{sha512}/dracut-{version}.tar.gz",
+      "version": "111",
+      "url_template": "https://github.com/dracutdevs/dracut/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Initramfs generator.",
@@ -451,8 +439,8 @@
       "filename": "dracut-TODO.tar.gz"
     },
     "grub2": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/grub2/grub2-{version}.tar.gz/sha512/{sha512}/grub2-{version}.tar.gz",
+      "version": "2.12",
+      "url_template": "https://github.com/grub2/grub2/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Bootloader.",
@@ -463,8 +451,8 @@
       "filename": "grub2-TODO.tar.gz"
     },
     "smartmontools": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/smartmontools/smartmontools-{version}.tar.gz/sha512/{sha512}/smartmontools-{version}.tar.gz",
+      "version": "7.5",
+      "url_template": "https://github.com/smartmontools/smartmontools/archive/refs/tags/RELEASE_{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. SMART monitoring.",
@@ -475,9 +463,9 @@
       "filename": "smartmontools-TODO.tar.gz"
     },
     "nvme-cli": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/nvme-cli/nvme-cli-{version}.tar.gz/sha512/{sha512}/nvme-cli-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.16",
+      "url_template": "https://github.com/linux-nvme/nvme-cli/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "507018ff41832574bef5b88ea6a17336b9792c54f8e5c619d041bce23124e1d6d5e5e824407f46d4f1b4d6899125885eb14289f3399e61c7e7a59a603f1635e2",
       "stage": 2,
       "note": "Fedora dist-git import. NVMe CLI tools.",
       "renovate": {
@@ -487,9 +475,9 @@
       "filename": "nvme-cli-TODO.tar.gz"
     },
     "pciutils": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/pciutils/pciutils-{version}.tar.gz/sha512/{sha512}/pciutils-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "3.15.0",
+      "url_template": "https://github.com/pciutils/pciutils/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "8164652b4283edd5bbb9db6604aee4135f4ca4398de337bf111fec09b8a8825d00a4ad363cd4a0848bd750c846c0037bfaa4f88c36fe709b4fd67462c6501abf",
       "stage": 2,
       "note": "Fedora dist-git import. PCI utilities.",
       "renovate": {
@@ -499,8 +487,8 @@
       "filename": "pciutils-TODO.tar.gz"
     },
     "hwdata": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/hwdata/hwdata-{version}.tar.gz/sha512/{sha512}/hwdata-{version}.tar.gz",
+      "version": "0.411",
+      "url_template": "https://github.com/VincentHW/hwdata/archive/refs/tags/v{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Hardware data.",
@@ -511,9 +499,9 @@
       "filename": "hwdata-TODO.tar.gz"
     },
     "libblockdev": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/libblockdev/libblockdev-{version}.tar.gz/sha512/{sha512}/libblockdev-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "3.5.0",
+      "url_template": "https://github.com/storaged-project/libblockdev/archive/refs/tags/{version}.tar.gz",
+      "sha512": "cf25962694ed854baa370cfb96f934f2c9bc4f7ef62b31274a182b0317dc5178259fab8e43230bdd16d51055a809420637bfac0d62267845a814ed245e28a322",
       "stage": 2,
       "note": "Fedora dist-git import. Block device library.",
       "renovate": {
@@ -523,9 +511,9 @@
       "filename": "libblockdev-TODO.tar.gz"
     },
     "libbytesize": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/libbytesize/libbytesize-{version}.tar.gz/sha512/{sha512}/libbytesize-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.12",
+      "url_template": "https://github.com/storaged-project/libbytesize/archive/refs/tags/{version}.tar.gz",
+      "sha512": "2742e9ad9377295fce298a2b70a1a6b9859f36fea3b9ac74d2281b359a1419917c04e001bda1d999aa4f993733bb4d6f0e2a2c7ed3b0b89080140df7ee96fc6c",
       "stage": 2,
       "note": "Fedora dist-git import. Byte size library.",
       "renovate": {
@@ -535,8 +523,8 @@
       "filename": "libbytesize-TODO.tar.gz"
     },
     "udisks2": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/udisks2/udisks2-{version}.tar.gz/sha512/{sha512}/udisks2-{version}.tar.gz",
+      "version": "2.11.2",
+      "url_template": "https://github.com/storaged-project/udisks/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Disk management.",
@@ -547,8 +535,8 @@
       "filename": "udisks2-TODO.tar.gz"
     },
     "upower": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/upower/upower-{version}.tar.gz/sha512/{sha512}/upower-{version}.tar.gz",
+      "version": "1.91.4",
+      "url_template": "https://gitlab.freedesktop.org/upower/upower/-/archive/{version}/upower-{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Power management.",
@@ -559,8 +547,8 @@
       "filename": "upower-TODO.tar.gz"
     },
     "bluez": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/bluez/bluez-{version}.tar.gz/sha512/{sha512}/bluez-{version}.tar.gz",
+      "version": "5.87",
+      "url_template": "https://git.kernel.org/pub/scm/bluetooth/bluez.git/snapshot/bluez-{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. Bluetooth stack.",
@@ -571,9 +559,9 @@
       "filename": "bluez-TODO.tar.gz"
     },
     "colord": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/colord/colord-{version}.tar.gz/sha512/{sha512}/colord-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.4.8",
+      "url_template": "https://github.com/hughsie/colord/archive/refs/tags/{version}.tar.gz",
+      "sha512": "dd92b1db8c3a1d03f87a39062c062fb2417c93e9a31087390370ddfce8b13750c13a0ea8275de13d06e4cded878f20cdc4dde3d00fcdb768389a46a5d1f3e8e8",
       "stage": 2,
       "note": "Fedora dist-git import. Color management.",
       "renovate": {
@@ -583,9 +571,9 @@
       "filename": "colord-TODO.tar.gz"
     },
     "colord-gtk": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/colord-gtk/colord-gtk-{version}.tar.gz/sha512/{sha512}/colord-gtk-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "0.3.1",
+      "url_template": "https://github.com/hughsie/colord-gtk/archive/refs/tags/{version}.tar.gz",
+      "sha512": "772ecb4a88e47975458814304dcaf76484b6054ba132bcf1da6f08ab87e3f00b7589a5b4d34109d594f394028661e10d4151840e1baefa98c8aa364be764c742",
       "stage": 2,
       "note": "Fedora dist-git import. Color management GTK.",
       "renovate": {
@@ -595,9 +583,9 @@
       "filename": "colord-gtk-TODO.tar.gz"
     },
     "lcms2": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/lcms2/lcms2-{version}.tar.gz/sha512/{sha512}/lcms2-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "2.16",
+      "url_template": "https://github.com/mm2/Little-CMS/archive/refs/tags/lcms{version}.tar.gz",
+      "sha512": "c0d857123a0168cb76b5944a20c9e3de1cbe74e2b509fb72a54f74543e9c173474f09d50c495b0a0a295a3c2b47c5fa54a330d057e1a59b5a7e36d3f5a7f81b2",
       "stage": 2,
       "note": "Fedora dist-git import. Color management engine.",
       "renovate": {
@@ -607,8 +595,8 @@
       "filename": "lcms2-TODO.tar.gz"
     },
     "alsa-firmware": {
-      "version": "TODO",
-      "url_template": "https://src.fedoraproject.org/lookaside/extras/alsa-firmware/alsa-firmware-{version}.tar.gz/sha512/{sha512}/alsa-firmware-{version}.tar.gz",
+      "version": "1.2.4",
+      "url_template": "https://github.com/alsa-project/alsa-firmware/archive/refs/tags/{version}.tar.gz",
       "sha512": "TODO-record-on-first-fetch",
       "stage": 2,
       "note": "Fedora dist-git import. ALSA firmware.",
@@ -665,6 +653,17 @@
         "depName": "kubestellar/console"
       },
       "filename": "v0.3.34.tar.gz"
+    },
+    "polkit-gnome": {
+      "version": "0.105",
+      "url_template": "https://github.com/GNOME/polkit-gnome/archive/refs/tags/{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "GNOME polkit authentication agent. Replaces xfce-polkit.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "GNOME/polkit-gnome"
+      }
     }
   }
 }
