@@ -29,7 +29,7 @@ jobs:
           python3 pigeon/tools/packit_workflow.py packages
 
   srpm:
-    name: Build SRPM (${{ matrix.package }})
+    name: Build SRPM
     needs: discover
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -37,8 +37,13 @@ jobs:
       fail-fast: false
       matrix:
         package: ${{ fromJson(needs.discover.outputs.packages) }}
-    if: ${{ github.event.inputs.package == '' || github.event.inputs.package == matrix.package }}
     steps:
+      - name: Skip if specific package requested
+        if: ${{ github.event.inputs.package != '' && github.event.inputs.package != matrix.package }}
+        run: |
+          echo "Skipping ${{ matrix.package }} (not requested)"
+          exit 0
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -85,5 +90,4 @@ jobs:
     steps:
       - name: Check all matrix jobs succeeded
         run: |
-          # This step runs only if all matrix jobs complete
           echo "All SRPM builds completed"
