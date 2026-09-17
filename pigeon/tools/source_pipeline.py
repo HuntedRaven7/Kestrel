@@ -99,7 +99,7 @@ def entry_ready(entry: dict) -> str | None:
     return None
 
 
-def cmd_fetch(pkg: str, output: str | None) -> int:
+def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verify_staged: bool = False) -> int:
     data = load_sources()
     entry = data["packages"].get(pkg)
     if entry is None:
@@ -147,6 +147,20 @@ def cmd_fetch(pkg: str, output: str | None) -> int:
             print(f"FAIL: verification failed for {pkg} (digest match: {digest == recorded})")
             return 1
         print(f"OK: {pkg}@{entry.get('version')} verified ({archive.name})")
+        
+        if verify_staged:
+            # Verify the staged source exists in the package directory
+            staged_path = ROOT / "pigeon" / "packages" / pkg / archive.name
+            if not staged_path.exists():
+                print(f"FAIL: staged source not found at {staged_path}")
+                return 1
+            # Verify the digest matches
+            staged_digest = sha512_of(staged_path)
+            if staged_digest != recorded:
+                print(f"FAIL: staged source digest mismatch")
+                return 1
+            print(f"OK: staged source verified at {staged_path}")
+        
         return 0
 
 
@@ -210,11 +224,13 @@ def main(argv: list[str]) -> int:
         p = sub.add_parser(name)
         p.add_argument("package")
         p.add_argument("--output", default=None, help="stage verified archive into DIR")
+        p.add_argument("--stage-into", default=None, help="stage verified archive into package dir (e.g., packages)")
+        p.add_argument("--verify-staged", action="store_true", help="verify staged source exists in package dir")
     r = sub.add_parser("report")
     r.add_argument("package")
     args = ap.parse_args(argv)
     if args.cmd == "fetch":
-        return cmd_fetch(args.package, args.output)
+        return cmd_fetch(args.package, args.output, args.stage_into, args.verify_staged)
     if args.cmd == "record":
         return cmd_record(args.package, args.output)
     return cmd_report(args.package)
