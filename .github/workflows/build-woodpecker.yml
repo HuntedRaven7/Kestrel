@@ -88,13 +88,19 @@ jobs:
           path: ~/woodpecker-sbom.spdx.json
           retention-days: 30
 
-      - name: Attest SLSA provenance
-        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
-        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
-        with:
-          base64-subjects: |
-            ${{ format('{{"ghcr.io/huntedraven7/woodpecker:testing":"{0}"}}', hashFiles('~/woodpecker-sbom.spdx.json')) }}
-          provenance-name: woodpecker-provenance
+  slsa-provenance:
+    name: Attest SLSA provenance
+    needs: build
+    if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: |
+        ${{ format('{{"ghcr.io/huntedraven7/woodpecker:testing":"{0}"}}', hashFiles('~/woodpecker-sbom.spdx.json')) }}
+      provenance-name: woodpecker-provenance
 
   trivy-scan:
     name: Trivy scan
