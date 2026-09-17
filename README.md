@@ -1,6 +1,6 @@
-# Kestrel
+# Project Kestrel
 
-> Monorepo for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
+> One source of reason for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
 
 ## Architecture
 
