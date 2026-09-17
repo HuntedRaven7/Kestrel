@@ -1,0 +1,100 @@
+From 2b61befef595ce5a7f0a94f8bcadd1a2731ffe13 Mon Sep 17 00:00:00 2001
+From: Mykyta Holubakha <hilobakho@gmail.com>
+Date: Mon, 6 Sep 2021 10:26:23 +0300
+Subject: [PATCH] Support displaying brightness as a percentage
+
+Closes #56
+Resolves #55
+---
+ brightnessctl.1 |  6 ++++++
+ brightnessctl.c | 15 +++++++++++++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/brightnessctl.1 b/brightnessctl.1
+index 83faf8d..5b490c3 100644
+--- a/brightnessctl.1
++++ b/brightnessctl.1
+@@ -42,6 +42,12 @@ Do not perform write operations.
+ Produce machine\-readable output.
+ .RE
+ 
++.sp
++\fB\-P, \-\-percentage\fP
++.RS 4
++Display value as a percentage in get.
++.RE
++
+ .sp
+ \fB\-n, \-\-min\-value\fP=\fIVALUE\fP
+ .RS 4
+diff --git a/brightnessctl.c b/brightnessctl.c
+index 6045ec3..d8ec1b3 100644
+--- a/brightnessctl.c
++++ b/brightnessctl.c
+@@ -44,6 +44,8 @@ static int read_class(struct device **, char *);
+ static int read_devices(struct device **);
+ static void print_device(struct device *);
+ static void list_devices(struct device **);
++static float val_to_percent(float, struct device *, bool);
++static unsigned long percent_to_val(float, struct device *);
+ static struct device *find_device(struct device **, char *);
+ static bool save_device_data(struct device *);
+ static bool restore_device_data(struct device *);
+@@ -85,6 +87,7 @@ struct params {
+ 	bool list;
+ 	bool pretend;
+ 	bool mach;
++	bool percentage;
+ 	bool save;
+ 	bool restore;
+ 	float exponent;
+@@ -98,6 +101,7 @@ static const struct option options[] = {
+ 	{"help", no_argument, NULL, 'h'},
+ 	{"list", no_argument, NULL, 'l'},
+ 	{"machine-readable", no_argument, NULL, 'm'},
++	{"percentage", no_argument, NULL, 'P'},
+ 	{"min-value", optional_argument, NULL, 'n'},
+ 	{"exponent", optional_argument, NULL, 'e'},
+ 	{"quiet", no_argument, NULL, 'q'},
+@@ -122,7 +126,7 @@ int main(int argc, char **argv) {
+ 		fail("This program only supports Linux.\n");
+ 	p.exponent = 1;
+ 	while (1) {
+-		if ((c = getopt_long(argc, argv, "lqpmn::e::srhVc:d:", options, NULL)) < 0)
++		if ((c = getopt_long(argc, argv, "lqpmPn::e::srhVc:d:", options, NULL)) < 0)
+ 			break;
+ 		switch (c) {
+ 		case 'l':
+@@ -143,6 +147,9 @@ int main(int argc, char **argv) {
+ 		case 'm':
+ 			p.mach = true;
+ 			break;
++		case 'P':
++			p.percentage = true;
++			break;
+ 		case 'n':
+ 			if (optarg)
+ 				p.min = atol(optarg);
+@@ -246,7 +253,10 @@ int apply_operation(struct device *dev, enum operation operation, struct value *
+ 		print_device(dev);
+ 		return 0;
+ 	case GET:
+-		fprintf(stdout, "%u\n", dev->curr_brightness);
++		if (p.percentage)
++			fprintf(stdout, "%d\n", (int) val_to_percent(dev->curr_brightness, dev, true));
++		else
++			fprintf(stdout, "%u\n", dev->curr_brightness);
+ 		return 0;
+ 	case MAX:
+ 		fprintf(stdout, "%u\n", dev->max_brightness);
+@@ -643,6 +653,7 @@ Options:\n\
+   -q, --quiet\t\t\tsuppress output.\n\
+   -p, --pretend\t\t\tdo not perform write operations.\n\
+   -m, --machine-readable\tproduce machine-readable output.\n\
++  -P, --percentage\t\tdisplay value as a percentage in get.\n\
+   -n, --min-value\t\tset minimum brightness, defaults to 1.\n\
+   -e, --exponent[=K]\t\tchanges percentage curve to exponential.\n\
+   -s, --save\t\t\tsave previous state in a temporary file.\n\
+-- 
+2.43.2
+

@@ -1,0 +1,29 @@
+From 4956a77acda6ac603a2abde361197e32c89b81d0 Mon Sep 17 00:00:00 2001
+From: Maryse47 <41080948+Maryse47@users.noreply.github.com>
+Date: Mon, 22 Dec 2025 17:22:24 +0100
+Subject: [PATCH 1/7] polkit-agent-helper service: simplify sandbox rules for
+ /dev
+
+Using 'DevicePolicy=strict' blocks even limited device access set by 'PrivateDevices=yes'
+which overcomplicates the setup. The latter alone should be sufficient for effective sandboxing.
+---
+ data/polkit-agent-helper@.service.in | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/data/polkit-agent-helper@.service.in b/data/polkit-agent-helper@.service.in
+index e5ce65d..f49c4ad 100644
+--- a/data/polkit-agent-helper@.service.in
++++ b/data/polkit-agent-helper@.service.in
+@@ -4,8 +4,7 @@ Documentation=man:polkit(8)
+ 
+ [Service]
+ Type=oneshot
+-DeviceAllow=/dev/null rw
+-DevicePolicy=strict
++DevicePolicy=closed
+ ExecStart=@libprivdir@/polkit-agent-helper-1 --socket-activated
+ SuccessExitStatus=2
+ StandardInput=socket
+-- 
+2.53.0
+

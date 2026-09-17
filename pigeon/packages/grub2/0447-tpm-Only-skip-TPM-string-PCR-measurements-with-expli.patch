@@ -1,0 +1,276 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Leo Sandoval <lsandova@redhat.com>
+Date: Fri, 31 Jul 2026 14:12:06 -0600
+Subject: [PATCH] tpm: Only skip TPM string PCR measurements with explicit
+ consent
+
+TPM PCR8 (GRUB_STRING_PCR) measurements record every GRUB command and
+kernel/module command line into TPM PCR register 8 via the TPM verifier's
+verify_string callback. In some deployment scenarios these string
+measurements are undesirable, for example on Confidential Computer
+workloads [1], while binary measurements (PCR9) remain valuable.
+
+Following the pattern established by commit 968de8c23 (shim_lock: Only
+skip loading shim_lock verifier with explicit consent), add a build-time
+--disable-tpm-string-pcr option to grub-mkimage and grub-install. When
+specified, an OBJ_TYPE_DISABLE_TPM_STRING_PCR marker is embedded in
+core.img. At runtime the TPM module scans the embedded module headers
+during GRUB_MOD_INIT(tpm) and sets a static flag; grub_tpm_verify_string()
+checks this flag and returns GRUB_ERR_NONE immediately, skipping all
+PCR8 measurements while leaving PCR9 binary measurements intact.
+
+This approach is tamper-resistant because the decision to skip string
+measurements is baked into the (potentially signed) GRUB image at build
+time and cannot be toggled by grub.cfg or an attacker with console
+access. The existing OBJ_TYPE_DISABLE_SHIM_LOCK and OBJ_TYPE_DISABLE_CLI
+markers use the same mechanism.
+
+[1] https://fedoraproject.org/wiki/Changes/Grub2LightForConfidentialComputing
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+Signed-off-by: Leo Sandoval <lsandova@redhat.com>
+---
+ grub-core/commands/tpm.c    | 19 +++++++++++++++++++
+ include/grub/kernel.h       |  3 ++-
+ include/grub/util/install.h |  8 ++++++--
+ util/grub-install-common.c  | 12 +++++++++---
+ util/grub-mkimage.c         |  9 ++++++++-
+ util/mkimage.c              | 16 +++++++++++++++-
+ 6 files changed, 59 insertions(+), 8 deletions(-)
+
+diff --git a/grub-core/commands/tpm.c b/grub-core/commands/tpm.c
+index 324423ef8..cfe7b6012 100644
+--- a/grub-core/commands/tpm.c
++++ b/grub-core/commands/tpm.c
+@@ -20,6 +20,7 @@
+ 
+ #include <grub/err.h>
+ #include <grub/i18n.h>
++#include <grub/kernel.h>
+ #include <grub/misc.h>
+ #include <grub/mm.h>
+ #include <grub/tpm.h>
+@@ -29,6 +30,8 @@
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
++static grub_uint8_t tpm_string_pcr_disabled;
++
+ static grub_err_t
+ grub_tpm_verify_init (grub_file_t io,
+ 		      enum grub_file_type type __attribute__ ((unused)),
+@@ -58,6 +61,9 @@ grub_tpm_verify_string (char *str, enum grub_verify_string_type type)
+   char *description;
+   grub_err_t status;
+ 
++  if (tpm_string_pcr_disabled)
++    return GRUB_ERR_NONE;
++
+   switch (type)
+     {
+     case GRUB_VERIFY_KERNEL_CMDLINE:
+@@ -96,6 +102,8 @@ struct grub_file_verifier grub_tpm_verifier = {
+ 
+ GRUB_MOD_INIT (tpm)
+ {
++  struct grub_module_header *header;
++
+   /*
+    * Even though this now calls ibmvtpm's grub_tpm_present() from GRUB_MOD_INIT(),
+    * it does seem to call it late enough in the initialization sequence so
+@@ -104,6 +112,17 @@ GRUB_MOD_INIT (tpm)
+    */
+   if (!grub_tpm_present())
+     return;
++
++  FOR_MODULES (header)
++    {
++      if (header->type == OBJ_TYPE_DISABLE_TPM_STRING_PCR)
++	{
++	  tpm_string_pcr_disabled = 1;
++	  grub_dprintf ("tpm", "String PCR measurements disabled\n");
++	  break;
++	}
++    }
++
+   grub_verifier_register (&grub_tpm_verifier);
+ }
+ 
+diff --git a/include/grub/kernel.h b/include/grub/kernel.h
+index f98a780da..0e9ad9fa5 100644
+--- a/include/grub/kernel.h
++++ b/include/grub/kernel.h
+@@ -33,7 +33,8 @@ enum
+   OBJ_TYPE_DISABLE_SHIM_LOCK,
+   OBJ_TYPE_GPG_PUBKEY,
+   OBJ_TYPE_X509_PUBKEY,
+-  OBJ_TYPE_DISABLE_CLI
++  OBJ_TYPE_DISABLE_CLI,
++  OBJ_TYPE_DISABLE_TPM_STRING_PCR
+ };
+ 
+ /* The module header.  */
+diff --git a/include/grub/util/install.h b/include/grub/util/install.h
+index 857ccbbe9..e3e672e83 100644
+--- a/include/grub/util/install.h
++++ b/include/grub/util/install.h
+@@ -74,6 +74,8 @@
+     1},                                                                 \
+   { "disable-cli", GRUB_INSTALL_OPTIONS_DISABLE_CLI, 0, 0,		\
+     N_("disabled command line interface access"), 0 },			\
++  { "disable-tpm-string-pcr", GRUB_INSTALL_OPTIONS_DISABLE_TPM_STRING_PCR, 0, 0, \
++      N_("disable TPM string PCR measurements"), 0 },			\
+   { "verbose", 'v', 0, 0,						\
+     N_("print verbose messages."), 1 }
+ 
+@@ -138,7 +140,8 @@ enum grub_install_options {
+   GRUB_INSTALL_OPTIONS_SBAT,
+   GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK,
+   GRUB_INSTALL_OPTIONS_APPENDED_SIGNATURE_SIZE,
+-  GRUB_INSTALL_OPTIONS_DISABLE_CLI
++  GRUB_INSTALL_OPTIONS_DISABLE_CLI,
++  GRUB_INSTALL_OPTIONS_DISABLE_TPM_STRING_PCR
+ };
+ 
+ extern char *grub_install_source_directory;
+@@ -202,7 +205,8 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 			     int note, size_t appsig_size,
+ 			     grub_compression_t comp, const char *dtb_file,
+ 			     const char *sbat_path, const int disable_shim_lock,
+-			     const int disable_cli);
++			     const int disable_cli,
++			     const int disable_tpm_string_pcr);
+ 
+ const struct grub_install_image_target_desc *
+ grub_install_get_image_target (const char *arg);
+diff --git a/util/grub-install-common.c b/util/grub-install-common.c
+index 42aec141e..9cfa14acc 100644
+--- a/util/grub-install-common.c
++++ b/util/grub-install-common.c
+@@ -470,6 +470,7 @@ static size_t nx509keys;
+ static grub_compression_t compression;
+ static size_t appsig_size;
+ static int disable_cli;
++static int disable_tpm_string_pcr;
+ 
+ int
+ grub_install_parse (int key, char *arg)
+@@ -518,6 +519,9 @@ grub_install_parse (int key, char *arg)
+     case GRUB_INSTALL_OPTIONS_DISABLE_CLI:
+       disable_cli = 1;
+       return 1;
++    case GRUB_INSTALL_OPTIONS_DISABLE_TPM_STRING_PCR:
++      disable_tpm_string_pcr = 1;
++      return 1;
+ 
+     case GRUB_INSTALL_OPTIONS_VERBOSITY:
+       verbosity++;
+@@ -712,13 +716,14 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+   grub_util_info ("grub-mkimage --directory '%s' --prefix '%s' --output '%s'"
+ 		  " --format '%s' --compression '%s'"
+ 		  " --appended-signture-size %zu %s%s%s\n",
+-		  " --format '%s' --compression '%s'%s%s%s%s\n",
++		  " --format '%s' --compression '%s'%s%s%s%s%s\n",
+ 		  dir, prefix, outname,
+ 		  mkimage_target, compnames[compression],
+ 		  appsig_size,
+ 		  note ? " --note" : "",
+ 		  disable_shim_lock ? " --disable-shim-lock" : "",
+-		  disable_cli ? " --disable-cli" : "", s);
++		  disable_cli ? " --disable-cli" : "",
++		  disable_tpm_string_pcr ? " --disable-tpm-string-pcr" : "", s);
+   free (s);
+ 
+   tgt = grub_install_get_image_target (mkimage_target);
+@@ -731,7 +736,8 @@ grub_install_make_image_wrap_file (const char *dir, const char *prefix,
+ 			       x509keys, nx509keys,
+ 			       config_path, tgt,
+ 			       note, appsig_size, compression, dtb, sbat,
+-			       disable_shim_lock, disable_cli);
++			       disable_shim_lock, disable_cli,
++			       disable_tpm_string_pcr);
+   while (dc--)
+     grub_install_pop_module ();
+ }
+diff --git a/util/grub-mkimage.c b/util/grub-mkimage.c
+index 13bdc6cf0..99d5c6046 100644
+--- a/util/grub-mkimage.c
++++ b/util/grub-mkimage.c
+@@ -85,6 +85,7 @@ static struct argp_option options[] = {
+   {"sbat", 's', N_("FILE"), 0, N_("SBAT metadata"), 0},
+   {"disable-shim-lock", GRUB_INSTALL_OPTIONS_DISABLE_SHIM_LOCK, 0, 0, N_("disable shim_lock verifier"), 0},
+   {"disable-cli", GRUB_INSTALL_OPTIONS_DISABLE_CLI, 0, 0, N_("disable command line interface access"), 0},
++  {"disable-tpm-string-pcr", GRUB_INSTALL_OPTIONS_DISABLE_TPM_STRING_PCR, 0, 0, N_("disable TPM string PCR measurements"), 0},
+   {"verbose",     'v', 0,      0, N_("print verbose messages."), 0},
+   {"appended-signature-size", 'S', N_("SIZE"), 0, N_("Add a note segment reserving SIZE bytes for an appended signature"), 0},
+   { 0, 0, 0, 0, 0, 0 }
+@@ -135,6 +136,7 @@ struct arguments
+   int disable_shim_lock;
+   size_t appsig_size;
+   int disable_cli;
++  int disable_tpm_string_pcr;
+   const struct grub_install_image_target_desc *image_target;
+   grub_compression_t comp;
+ };
+@@ -265,6 +267,10 @@ argp_parser (int key, char *arg, struct argp_state *state)
+       arguments->disable_cli = 1;
+       break;
+ 
++    case GRUB_INSTALL_OPTIONS_DISABLE_TPM_STRING_PCR:
++      arguments->disable_tpm_string_pcr = 1;
++      break;
++
+     case 'v':
+       verbosity++;
+       break;
+@@ -354,7 +360,8 @@ main (int argc, char *argv[])
+ 			       arguments.appsig_size, arguments.comp,
+ 			       arguments.dtb, arguments.sbat,
+ 			       arguments.disable_shim_lock,
+-			       arguments.disable_cli);
++			       arguments.disable_cli,
++			       arguments.disable_tpm_string_pcr);
+ 
+   if (grub_util_file_sync (fp) < 0)
+     grub_util_error (_("cannot sync `%s': %s"), arguments.output ? : "stdout",
+diff --git a/util/mkimage.c b/util/mkimage.c
+index f92949d1d..7275a1b92 100644
+--- a/util/mkimage.c
++++ b/util/mkimage.c
+@@ -888,7 +888,8 @@ grub_install_generate_image (const char *dir, const char *prefix,
+ 			     const struct grub_install_image_target_desc *image_target,
+ 			     int note, size_t appsig_size, grub_compression_t comp,
+ 			     const char *dtb_path, const char *sbat_path,
+-			     int disable_shim_lock, int disable_cli)
++			     int disable_shim_lock, int disable_cli,
++			     int disable_tpm_string_pcr)
+ {
+   char *kernel_img, *core_img;
+   size_t total_module_size, core_size;
+@@ -966,6 +967,9 @@ grub_install_generate_image (const char *dir, const char *prefix,
+   if (disable_cli)
+     total_module_size += sizeof (struct grub_module_header);
+ 
++  if (disable_tpm_string_pcr)
++    total_module_size += sizeof (struct grub_module_header);
++
+   if (config_path)
+     {
+       config_size = ALIGN_ADDR (grub_util_get_image_size (config_path) + 1);
+@@ -1142,6 +1146,16 @@ grub_install_generate_image (const char *dir, const char *prefix,
+       offset += sizeof (*header);
+     }
+ 
++  if (disable_tpm_string_pcr)
++    {
++      struct grub_module_header *header;
++
++      header = (struct grub_module_header *) (kernel_img + offset);
++      header->type = grub_host_to_target32 (OBJ_TYPE_DISABLE_TPM_STRING_PCR);
++      header->size = grub_host_to_target32 (sizeof (*header));
++      offset += sizeof (*header);
++    }
++
+   if (config_path)
+     {
+       struct grub_module_header *header;
