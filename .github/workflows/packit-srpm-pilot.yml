@@ -43,22 +43,27 @@ jobs:
         if: ${{ github.event.inputs.package != '' && github.event.inputs.package != matrix.package }}
         run: |
           echo "Skipping ${{ matrix.package }} (not requested)"
-          exit 0
+          echo "skipped=true" >> $GITHUB_OUTPUT
+        id: skip_check
 
       - name: Checkout
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up podman
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq podman
 
       - name: Pull Fedora 44 build container
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         run: podman pull quay.io/fedora/fedora:44
 
       - name: Build SRPM in Fedora container
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         id: build
         run: |
           podman run --rm \
@@ -85,11 +90,13 @@ jobs:
           fi
 
       - name: Verify SRPM
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && success() && steps.build.outputs.srpm_path != '' }}
         run: |
           rpm -qip ${{ steps.build.outputs.srpm_path }}
           rpm -qlp ${{ steps.build.outputs.srpm_path }}
 
       - name: Upload SRPM
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && success() && steps.build.outputs.srpm_path != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: srpm-${{ matrix.package }}
