@@ -61,7 +61,7 @@ jobs:
         run: |
           python3 pigeon/tools/source_pipeline.py fetch "$PACKAGE" \
             --output work/sources \
-            --stage-into packages
+            --stage-into pigeon/packages
 
       - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
@@ -78,7 +78,7 @@ jobs:
             bash -exc '
               git config --global --add safe.directory "*"
               packit srpm --preserve-spec --output "/out/$PACKAGE.src.rpm" -p "$PACKAGE"
-              python3 pigeon/tools/source_pipeline.py fetch "$PACKAGE" --verify-staged packages
+              python3 pigeon/tools/source_pipeline.py fetch "$PACKAGE" --verify-staged pigeon/packages
               rpm -qp --qf "%{NAME}-%{VERSION}-%{RELEASE}\n" "/out/$PACKAGE.src.rpm"
             '
           # A build that produced no SRPM must fail here
