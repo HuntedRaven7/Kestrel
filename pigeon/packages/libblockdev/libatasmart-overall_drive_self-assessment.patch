@@ -1,0 +1,38 @@
+From 33be287e9dc082bf5925c85b025e2f97dafd81c7 Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Tue, 18 Mar 2025 16:48:36 +0100
+Subject: [PATCH] smart: Use drive self-assessment as an overall status
+
+The libatasmart attribute overall status differs slightly from
+the drive SMART self-assessment and is very sensitive for particular
+status values. Such status should fit more like a pre-fail warning,
+no reason to fail hard the global assessment. Even a single reallocated
+sector would cause a warning, while the drive could be quite healthy
+otherwise.
+---
+ src/plugins/smart/libatasmart.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/src/plugins/smart/libatasmart.c b/src/plugins/smart/libatasmart.c
+index c7f00685..ea81d10b 100644
+--- a/src/plugins/smart/libatasmart.c
++++ b/src/plugins/smart/libatasmart.c
+@@ -240,7 +240,6 @@ static void parse_attr_cb (G_GNUC_UNUSED SkDisk             *d,
+ static BDSmartATA * parse_sk_data (SkDisk *d, GError **error) {
+     SkBool good = FALSE;
+     SkBool available = FALSE;
+-    SkSmartOverall overall = SK_SMART_OVERALL_GOOD;
+     uint64_t power_on_msec = 0;
+     const SkSmartParsedData *parsed_data;
+     BDSmartATA *data;
+@@ -276,9 +275,7 @@ static BDSmartATA * parse_sk_data (SkDisk *d, GError **error) {
+      * sk_disk_smart_read_data() would've already returned an error.
+      */
+     data->smart_enabled = TRUE;
+-
+-    sk_disk_smart_get_overall (d, &overall);
+-    data->overall_status_passed = overall == SK_SMART_OVERALL_GOOD;
++    data->overall_status_passed = good;
+ 
+     switch (parsed_data->offline_data_collection_status) {
+         case SK_SMART_OFFLINE_DATA_COLLECTION_STATUS_NEVER:

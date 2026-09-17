@@ -1,0 +1,55 @@
+From 43156a656e4df68e8f51a35de7910eb8e3bb99ae Mon Sep 17 00:00:00 2001
+From: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Date: Thu, 3 Sep 2026 22:52:37 +0200
+Subject: [PATCH 22/22] fix(drm): add leds-qcom-lpg to aarch64 specific modules
+ needed by drm
+
+Upstream: https://github.com/dracut-ng/dracut/pull/2721
+
+Currently F45 aarch64 isos have a black display during the initramfs phase
+of boot on Windows on ARM laptops. This is caused by a missing pwm driver
+for the LCD backlight. Things work once the system switches to the rootfs
+with all modules, but users end up looking at a black screen for quite
+a while (30 sec - 1 min) and that is when not doing the default selected
+media check on the live isos. With the media check the screen is black
+during the entire media-check (easily a couple of minutes) making
+the system look dead. And if the media check stops on a failure then this
+will not be visible.
+
+This fix has been end-to-end tested on a ThinkPad T14s gen6 Snapdragon by
+including "packit build locally" rpms into a Fedora 45 aarch64 kiwi
+Workstation-Live image build and testing that image.
+
+Upstream commit message:
+
+leds-qcom-lpg is not only a LED class driver but it can also be a pwm class
+driver and sometimes its pwm function is used for panel backlight control
+in which case it is needed for drm/kms to work.
+
+Since leds-qcom-lpg lives under drivers/leds/rgb/ it is not automatically
+picked-up by the existing 'instmods "=drivers/pwm"', add it explicitly
+to the instmods argument to get it included into the initramfs.
+
+This follows the pattern of how the amdkfd and hyperv_fb special cases are
+already handled.
+
+Signed-off-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+---
+ modules.d/45drm/module-setup.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/modules.d/45drm/module-setup.sh b/modules.d/45drm/module-setup.sh
+index 45a458681..966d4180f 100755
+--- a/modules.d/45drm/module-setup.sh
++++ b/modules.d/45drm/module-setup.sh
+@@ -12,6 +12,7 @@ installkernel() {
+     if [[ ${DRACUT_ARCH} == arm* || ${DRACUT_ARCH} == aarch64 ]]; then
+         # arm/aarch64 specific modules needed by drm
+         hostonly=$(optional_hostonly) instmods \
++            leds-qcom-lpg \
+             "=drivers/gpu/drm/i2c" \
+             "=drivers/gpu/drm/panel" \
+             "=drivers/gpu/drm/bridge" \
+-- 
+2.55.0
+

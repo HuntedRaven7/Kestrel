@@ -1,0 +1,226 @@
+From 1fffc8ec7d47af1f00958110b908f912892292c2 Mon Sep 17 00:00:00 2001
+From: Vojtech Trefny <vtrefny@redhat.com>
+Date: Thu, 6 Mar 2025 14:41:16 +0100
+Subject: [PATCH] crypto: Add a function to set persistent flags for LUKS
+
+This will be used to set the allow-discards flag on LUKS devices
+during installation by Blivet.
+---
+ configure.ac                   |  2 +
+ src/lib/plugin_apis/crypto.api | 24 +++++++++++
+ src/plugins/crypto.c           | 76 ++++++++++++++++++++++++++++++++++
+ src/plugins/crypto.h           | 11 +++++
+ tests/crypto_test.py           | 29 +++++++++++++
+ 5 files changed, 142 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 6889d43a..98837611 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -207,6 +207,8 @@ AS_IF([test "x$with_crypto" != "xno"],
+             [AC_DEFINE([LIBCRYPTSETUP_26])], [])
+       AS_IF([$PKG_CONFIG --atleast-version=2.7.0 libcryptsetup],
+             [AC_DEFINE([LIBCRYPTSETUP_27])], [])
++      AS_IF([$PKG_CONFIG --atleast-version=2.8.0 libcryptsetup],
++            [AC_DEFINE([LIBCRYPTSETUP_28])], [])
+       AC_CHECK_HEADER([linux/sed-opal.h],
+                       [AC_DEFINE([HAVE_LINUX_OPAL])], [])
+       AS_IF([test "x$with_escrow" != "xno"],
+diff --git a/src/lib/plugin_apis/crypto.api b/src/lib/plugin_apis/crypto.api
+index cbd41d68..cab6cba7 100644
+--- a/src/lib/plugin_apis/crypto.api
++++ b/src/lib/plugin_apis/crypto.api
+@@ -380,6 +380,16 @@ typedef enum {
+     BD_CRYPTO_LUKS_HW_ENCRYPTION_OPAL_HW_AND_SW,
+ } BDCryptoLUKSHWEncryptionType;
+ 
++typedef enum {
++    BD_CRYPTO_LUKS_ACTIVATE_ALLOW_DISCARDS          = 1 << 0,
++    BD_CRYPTO_LUKS_ACTIVATE_SAME_CPU_CRYPT          = 1 << 1,
++    BD_CRYPTO_LUKS_ACTIVATE_SUBMIT_FROM_CRYPT_CPUS  = 1 << 2,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_JOURNAL              = 1 << 3,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_READ_WORKQUEUE       = 1 << 4,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_WRITE_WORKQUEUE      = 1 << 5,
++    BD_CRYPTO_LUKS_ACTIVATE_HIGH_PRIORITY           = 1 << 6,
++} BDCryptoLUKSPersistentFlags;
++
+ /**
+  * BDCryptoLUKSInfo:
+  * @version: LUKS version
+@@ -1111,6 +1121,20 @@ gboolean bd_crypto_luks_set_uuid (const gchar *device, const gchar *uuid, GError
+  */
+ gboolean bd_crypto_luks_convert (const gchar *device, BDCryptoLUKSVersion target_version, GError **error);
+ 
++/**
++ * bd_crypto_luks_set_persistent_flags:
++ * @device: a LUKS device to set the persistent flags on
++ * @flags: flags to set
++ * @error: (out) (optional): place to store error (if any)
++ *
++ * Note: This function is valid only for LUKS2.
++ *
++ * Returns: whether the given @flags were successfully set or not
++ *
++ * Tech category: %BD_CRYPTO_TECH_LUKS-%BD_CRYPTO_TECH_MODE_MODIFY
++ */
++gboolean bd_crypto_luks_set_persistent_flags (const gchar *device, BDCryptoLUKSPersistentFlags flags, GError **error);
++
+ /**
+  * bd_crypto_luks_info:
+  * @device: a device to get information about
+diff --git a/src/plugins/crypto.c b/src/plugins/crypto.c
+index b313d597..a3f9543d 100644
+--- a/src/plugins/crypto.c
++++ b/src/plugins/crypto.c
+@@ -2289,6 +2289,82 @@ gboolean bd_crypto_luks_convert (const gchar *device, BDCryptoLUKSVersion target
+     return TRUE;
+ }
+ 
++/**
++ * bd_crypto_luks_set_persistent_flags:
++ * @device: a LUKS device to set the persistent flags on
++ * @flags: flags to set
++ * @error: (out) (optional): place to store error (if any)
++ *
++ * Note: This function is valid only for LUKS2.
++ *
++ * Returns: whether the given @flags were successfully set or not
++ *
++ * Tech category: %BD_CRYPTO_TECH_LUKS-%BD_CRYPTO_TECH_MODE_MODIFY
++ */
++gboolean bd_crypto_luks_set_persistent_flags (const gchar *device, BDCryptoLUKSPersistentFlags flags, GError **error) {
++    struct crypt_device *cd = NULL;
++    gint ret = 0;
++    guint32 crypt_flags = 0;
++
++    ret = crypt_init (&cd, device);
++    if (ret != 0) {
++        g_set_error (error, BD_CRYPTO_ERROR, BD_CRYPTO_ERROR_DEVICE,
++                     "Failed to initialize device: %s", strerror_l (-ret, c_locale));
++        return FALSE;
++    }
++
++    ret = crypt_load (cd, CRYPT_LUKS, NULL);
++    if (ret != 0) {
++        g_set_error (error, BD_CRYPTO_ERROR, BD_CRYPTO_ERROR_DEVICE,
++                     "Failed to load device: %s", strerror_l (-ret, c_locale));
++        crypt_free (cd);
++        return FALSE;
++    }
++
++    if (g_strcmp0 (crypt_get_type (cd), CRYPT_LUKS2) != 0) {
++        g_set_error (error, BD_CRYPTO_ERROR, BD_CRYPTO_ERROR_DEVICE,
++                     "Persistent flags can be set only on LUKS v2");
++        crypt_free (cd);
++        return FALSE;
++    }
++
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_ALLOW_DISCARDS)
++        crypt_flags |= CRYPT_ACTIVATE_ALLOW_DISCARDS;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_SAME_CPU_CRYPT)
++        crypt_flags |= CRYPT_ACTIVATE_SAME_CPU_CRYPT;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_SUBMIT_FROM_CRYPT_CPUS)
++        crypt_flags |= CRYPT_ACTIVATE_SUBMIT_FROM_CRYPT_CPUS;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_NO_JOURNAL)
++        crypt_flags |= CRYPT_ACTIVATE_NO_JOURNAL;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_NO_READ_WORKQUEUE)
++        crypt_flags |= CRYPT_ACTIVATE_NO_READ_WORKQUEUE;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_NO_WRITE_WORKQUEUE)
++        crypt_flags |= CRYPT_ACTIVATE_NO_WRITE_WORKQUEUE;
++    if (flags & BD_CRYPTO_LUKS_ACTIVATE_HIGH_PRIORITY) {
++#ifdef LIBCRYPTSETUP_28
++        crypt_flags |= CRYPT_ACTIVATE_HIGH_PRIORITY;
++#else
++        g_set_error (error, BD_CRYPTO_ERROR, BD_CRYPTO_ERROR_TECH_UNAVAIL,
++                     "Libcryptsetup 2.8 or newer is needed for 'high priority' flag support");
++        crypt_free (cd);
++        return FALSE;
++#endif
++    }
++
++
++    ret = crypt_persistent_flags_set (cd, CRYPT_FLAGS_ACTIVATION, crypt_flags);
++    if (ret != 0) {
++        g_set_error (error, BD_CRYPTO_ERROR, BD_CRYPTO_ERROR_DEVICE,
++                     "Failed to set flags: %s", strerror_l (-ret, c_locale));
++        crypt_free (cd);
++        return FALSE;
++    }
++
++    crypt_free (cd);
++
++    return TRUE;
++}
++
+ static gint synced_close (gint fd) {
+     gint ret = 0;
+     ret = fsync (fd);
+diff --git a/src/plugins/crypto.h b/src/plugins/crypto.h
+index 2ac0788e..82f5b157 100644
+--- a/src/plugins/crypto.h
++++ b/src/plugins/crypto.h
+@@ -162,6 +162,16 @@ typedef enum {
+     BD_CRYPTO_LUKS_HW_ENCRYPTION_OPAL_HW_AND_SW,
+ } BDCryptoLUKSHWEncryptionType;
+ 
++typedef enum {
++    BD_CRYPTO_LUKS_ACTIVATE_ALLOW_DISCARDS          = 1 << 0,
++    BD_CRYPTO_LUKS_ACTIVATE_SAME_CPU_CRYPT          = 1 << 1,
++    BD_CRYPTO_LUKS_ACTIVATE_SUBMIT_FROM_CRYPT_CPUS  = 1 << 2,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_JOURNAL              = 1 << 3,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_READ_WORKQUEUE       = 1 << 4,
++    BD_CRYPTO_LUKS_ACTIVATE_NO_WRITE_WORKQUEUE      = 1 << 5,
++    BD_CRYPTO_LUKS_ACTIVATE_HIGH_PRIORITY           = 1 << 6,
++} BDCryptoLUKSPersistentFlags;
++
+ /**
+  * BDCryptoLUKSInfo:
+  * @version: LUKS version
+@@ -293,6 +303,7 @@ gboolean bd_crypto_luks_header_restore (const gchar *device, const gchar *backup
+ gboolean bd_crypto_luks_set_label (const gchar *device, const gchar *label, const gchar *subsystem, GError **error);
+ gboolean bd_crypto_luks_set_uuid (const gchar *device, const gchar *uuid, GError **error);
+ gboolean bd_crypto_luks_convert (const gchar *device, BDCryptoLUKSVersion target_version, GError **error);
++gboolean bd_crypto_luks_set_persistent_flags (const gchar *device, BDCryptoLUKSPersistentFlags flags, GError **error);
+ 
+ BDCryptoLUKSInfo* bd_crypto_luks_info (const gchar *device, GError **error);
+ BDCryptoBITLKInfo* bd_crypto_bitlk_info (const gchar *device, GError **error);
+diff --git a/tests/crypto_test.py b/tests/crypto_test.py
+index c3d8dfe7..a07de24e 100644
+--- a/tests/crypto_test.py
++++ b/tests/crypto_test.py
+@@ -1159,6 +1159,35 @@ def test_luks2_set_uuid(self):
+         self.assertNotEqual(info.uuid, self.test_uuid)
+ 
+ 
++class CryptoTestSetPersistentFlags(CryptoTestCase):
++
++    @tag_test(TestTags.SLOW, TestTags.CORE)
++    def test_luks_set_persistent_flags(self):
++        """Verify that we can set flags on a LUKS device"""
++
++        self._luks_format(self.loop_dev, PASSWD)
++
++        with self.assertRaisesRegex(GLib.GError, "Persistent flags can be set only on LUKS v2"):
++            BlockDev.crypto_luks_set_persistent_flags(self.loop_dev,
++                                                      BlockDev.CryptoLUKSPersistentFlags.ALLOW_DISCARDS)
++
++    @tag_test(TestTags.SLOW, TestTags.CORE)
++    def test_luks_set_persistent_flags(self):
++        """Verify that we can set flags on a LUKS 2 device"""
++
++        self._luks2_format(self.loop_dev, PASSWD)
++
++        succ = BlockDev.crypto_luks_set_persistent_flags(self.loop_dev,
++                                                         BlockDev.CryptoLUKSPersistentFlags.ALLOW_DISCARDS)
++        self.assertTrue(succ)
++
++        _ret, out, err = run_command("cryptsetup luksDump %s" % self.loop_dev)
++        m = re.search(r"Flags:\s*(\S+)\s*", out)
++        if not m or len(m.groups()) != 1:
++            self.fail("Failed to get label information from:\n%s %s" % (out, err))
++        self.assertEqual(m.group(1), "allow-discards")
++
++
+ class CryptoTestConvert(CryptoTestCase):
+ 
+     @tag_test(TestTags.SLOW, TestTags.CORE)

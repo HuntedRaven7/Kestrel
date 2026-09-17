@@ -1,0 +1,138 @@
+diff -up pciutils-2.2.10/lib/configure.multilib pciutils-2.2.10/lib/configure
+--- pciutils-2.2.10/lib/configure.multilib	2008-02-11 21:04:18.000000000 +0100
++++ pciutils-2.2.10/lib/configure	2008-02-20 11:04:18.000000000 +0100
+@@ -37,74 +37,60 @@ zlib=$5
+ 
+ c=config.h
+ m=config.mk
+-echo >$c "#define PCI_ARCH_`echo $cpu | tr '[a-z]' '[A-Z]'`"
+-echo >>$c "#define PCI_OS_`echo $sys | tr '[a-z]' '[A-Z]'`"
+-rm -f $m
+ 
++cm=config.h.mk
++cat >$c <<EOF
++#if defined(__x86_64__)
++#define PCI_ARCH_X86_64
++#elif defined(__ia64__)
++#define PCI_ARCH_IA64
++#elif defined(__i386__)
++#define PCI_ARCH_I386
++#define PCI_HAVE_PM_INTEL_CONF
++#elif defined(__ppc64__) || defined(__powerpc64__)
++#define PCI_ARCH_PPC64
++#elif defined(__ppc__)  || defined(__powerpc__)
++#define PCI_ARCH_PPC
++#elif defined(__s390x__)
++#define PCI_ARCH_S390X
++#elif defined(__s390__)
++#define PCI_ARCH_S390
++#elif defined(__alpha__)
++#define PCI_ARCH_ALPHA
++#else
++#error Unknown Arch
++#endif
++#define PCI_OS_LINUX
++#define PCI_HAVE_PM_LINUX_SYSFS
++#define PCI_HAVE_PM_LINUX_PROC
++#define PCI_HAVE_LINUX_BYTEORDER_H
++#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"
++#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"
++#define PCI_HAVE_64BIT_ADDRESS
++EOF
++
++rm -f $cm
++echo >$cm "#define PCI_ARCH_`echo $cpu | tr 'a-z' 'A-Z'`"
++echo >>$cm "#define PCI_OS_`echo $sys | tr 'a-z' 'A-Z'`"
++  
+ echo_n "Looking for access methods..."
+-
+-case $sys in
+-	linux*)
+-		echo_n " sysfs proc"
+-		echo >>$c '#define PCI_HAVE_PM_LINUX_SYSFS'
+-		echo >>$c '#define PCI_HAVE_PM_LINUX_PROC'
+-		echo >>$c '#define PCI_HAVE_LINUX_BYTEORDER_H'
+-		echo >>$c '#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"'
+-		echo >>$c '#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"'
+-		case $cpu in
+-				i386)		echo_n " i386-ports"
+-						echo >>$c '#define PCI_HAVE_PM_INTEL_CONF'
+-						;;
+-		esac
+-		echo >>$c '#define PCI_HAVE_64BIT_ADDRESS'
+-		;;
+-	sunos)
+-		case $cpu in
+-				i386)		echo_n " i386-ports"
+-						echo >>$c "#define PCI_HAVE_PM_INTEL_CONF"
+-						;;
+-				*)
+-						echo " The PCI library does not support Solaris for this architecture: $cpu"
+-						exit 1
+-						;;
+-		esac
+-		echo >>$c '#define PCI_HAVE_STDINT_H'
+-		;;
+-	freebsd)
+-		echo_n " fbsd-device"
+-		echo >>$c '#define PCI_HAVE_PM_FBSD_DEVICE'
+-		echo >>$c '#define PCI_PATH_FBSD_DEVICE "/dev/pci"'
+-		;;
+-        openbsd)
+-	        echo_n " obsd-device"
+-		echo >>$c '#define PCI_HAVE_PM_OBSD_DEVICE'
+-		echo >>$c '#define PCI_PATH_OBSD_DEVICE "/dev/pci"'
+-		;;
+-	aix)
+-		echo_n " aix-device"
+-		echo >>$c '#define PCI_HAVE_PM_AIX_DEVICE'
+-		echo >>$m 'CFLAGS=-g'
+-		echo >>$m 'INSTALL=installbsd'
+-		echo >>$m 'DIRINSTALL=mkdir -p'
+-		;;
+-	netbsd)
+-		echo_n " nbsd-libpci"
+-		echo >>$c '#define PCI_HAVE_PM_NBSD_LIBPCI'
+-		echo >>$c '#define PCI_PATH_NBSD_DEVICE "/dev/pci0"'
+-		echo >>$m 'PCILIB=lib/libpciutils.a'
+-		echo >>$m 'LDLIBS+=-lpci'
+-		;;
+-    	gnu)
+-		echo_n " i386-ports"
+-		echo >>$c '#define PCI_HAVE_PM_INTEL_CONF'
+-		;;
+-        *)
+-		echo " Unfortunately, your OS is not supported by the PCI Library"
+-		exit 1
+-		;;
++echo_n " sysfs proc"
++  
++echo >>$cm '#define PCI_HAVE_PM_LINUX_SYSFS'
++echo >>$cm '#define PCI_HAVE_PM_LINUX_PROC'
++echo >>$cm '#define PCI_HAVE_LINUX_BYTEORDER_H'
++echo >>$cm '#define PCI_PATH_PROC_BUS_PCI "/proc/bus/pci"'
++echo >>$cm '#define PCI_PATH_SYS_BUS_PCI "/sys/bus/pci"'
++case $cpu in
++	i386)		echo_n " i386-ports"
++	        echo >>$cm '#define PCI_HAVE_PM_INTEL_CONF'
++        ;;
+ esac
+ 
++echo >>$cm '#define PCI_HAVE_64BIT_ADDRESS'
++
+ echo >>$c '#define PCI_HAVE_PM_DUMP'
++echo >>$cm '#define PCI_HAVE_PM_DUMP'
+ echo " dump"
+ 
+ echo_n "Checking for zlib support... "
+@@ -127,6 +113,8 @@ else
+ 	echo >>$c '#define PCI_IDS "pci.ids"'
+ fi
+ echo >>$c "#define PCI_PATH_IDS_DIR \"$idsdir\""
+-
+ echo >>$c "#define PCILIB_VERSION \"$version\""
+-sed '/"/{s/^#define \([^ ]*\) "\(.*\)"$/\1=\2/;p;d;};s/^#define \(.*\)/\1=1/' <$c >>$m
++echo >>$cm "#define PCI_PATH_IDS_DIR \"$idsdir\""
++echo >>$cm "#define PCILIB_VERSION \"$version\""
++#sed '/"/{s/^#define \([^ ]*\) "\(.*\)"$/\1=\2/;p;d;};s/^#define \(.*\)/\1=1/' <$c >>$m
++sed '/"/{s/^#define \([^ ]*\) "\(.*\)"$/\1=\2/;p;d;};s/^#define \(.*\)/\1=1/' <$cm >>$m
