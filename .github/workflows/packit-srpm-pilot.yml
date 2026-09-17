@@ -51,9 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Packit
-        uses: packit/packit-actions@v1
-        with:
-          packit-version: "latest"
+        uses: packit/actions/srpm@main
 
       - name: Install dependencies
         run: |
