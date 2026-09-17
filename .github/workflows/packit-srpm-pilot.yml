@@ -18,7 +18,7 @@ jobs:
     name: Discover packages
     runs-on: ubuntu-24.04
     outputs:
-      packages: ${{ steps.discover.outputs.stdout }}
+      packages: ${{ steps.discover.outputs.packages }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +26,8 @@ jobs:
       - name: Discover packages
         id: discover
         run: |
-          python3 pigeon/tools/packit_workflow.py packages
+          python3 pigeon/tools/packit_workflow.py packages | tee /tmp/packages.json
+          echo "packages=$(cat /tmp/packages.json)" >> $GITHUB_OUTPUT
 
   srpm:
     name: Build SRPM
