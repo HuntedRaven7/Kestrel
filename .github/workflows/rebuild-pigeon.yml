@@ -41,20 +41,16 @@ jobs:
           import subprocess
           import sys
           
-          # Get all packages
           result = subprocess.run([sys.executable, "pigeon/tools/packit_workflow.py", "packages"], 
                                 capture_output=True, text=True)
           all_packages = json.loads(result.stdout.strip())
           
-          # For now, build all packages in all stages
-          # In the future, this would detect changes and only rebuild affected stages
           stages = {
             "0": ["wlroots", "scenefx"],
             "1": ["mango", "quickshell"],
             "2": ["awww", "rofi", "ghostty", "kestrel-gdm-config"]
           }
           
-          # Apply stage filter if provided
           stage_filter = "${{ github.event.inputs.stage }}"
           if stage_filter:
             stages = {k: v for k, v in stages.items() if k == stage_filter}
