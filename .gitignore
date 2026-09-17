@@ -6,3 +6,5 @@ work/
 __pycache__/
 .pytest_cache/
 pigeon/reports/
+pigeon/packages/*/*.tar.gz
+pigeon/packages/*/*.tar.bz2
