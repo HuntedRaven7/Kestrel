@@ -74,8 +74,7 @@ jobs:
               dnf install -y fedora-workstation-repositories &&
               printf '[hummingbird]\nname=Hummingbird Copr Repository\nbaseurl=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/\$basearch/\nenabled=1\ngpgcheck=1\ngpgkey=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/key/gpgkey\nrepo_gpgcheck=0\npriority=10\n' > /etc/yum.repos.d/hummingbird.repo &&
               dnf install -y packit python3-pip &&
-              cd pigeon/packages/${{ matrix.package }} &&
-              packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log &&
+              packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ --package ${{ matrix.package }} 2>&1 | tee /tmp/packit.log &&
               SRPM=\$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm 2>/dev/null | head -1) &&
               echo \"srpm_path=\$SRPM\" > /workspace/srpm_output.txt
             "
