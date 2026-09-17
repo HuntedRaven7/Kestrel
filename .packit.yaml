@@ -112,12 +112,12 @@ packages:
     downstream_package_name: pamixer
     paths:
       - pigeon/packages/pamixer
-  xfce-polkit:
-    specfile_path: xfce-polkit.spec
-    upstream_package_name: xfce-polkit
-    downstream_package_name: xfce-polkit
+  polkit-gnome:
+    specfile_path: polkit-gnome.spec
+    upstream_package_name: polkit-gnome
+    downstream_package_name: polkit-gnome
     paths:
-      - pigeon/packages/xfce-polkit
+      - pigeon/packages/polkit-gnome
   polkit:
     specfile_path: polkit.spec
     upstream_package_name: polkit
@@ -466,12 +466,6 @@ packages:
     downstream_package_name: wireguard-tools
     paths:
       - pigeon/packages/wireguard-tools
-  xfce-polkit:
-    specfile_path: xfce-polkit.spec
-    upstream_package_name: xfce-polkit
-    downstream_package_name: xfce-polkit
-    paths:
-      - pigeon/packages/xfce-polkit
 
 jobs:
   srpm_builds:

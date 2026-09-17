@@ -30,7 +30,7 @@ swayidle = "*"
 swaylock = "*"
 brightnessctl = "*"
 pamixer = "*"
-xfce-polkit = "*"
+polkit-gnome = "*"
 foot = "*"
 
 # System utilities
