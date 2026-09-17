@@ -129,8 +129,16 @@ def cmd_fetch(pkg: str, output: str | None) -> int:
         sig = verify_signature(entry, archive, workdir)
         # Gate: checksum must match; signature must pass when one is configured.
         ok = digest == recorded and (not sig["checked"] or sig.get("ok") is True)
+        
+        # Copy to output directory if specified
         if output:
             shutil.copy(archive, Path(output) / archive.name)
+        
+        # Also copy to package directory for packit Source0 lookup
+        pkg_dir = ROOT / "pigeon" / "packages" / pkg
+        if pkg_dir.exists():
+            shutil.copy(archive, pkg_dir / archive.name)
+        
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
             "sha512": digest, "expected": recorded, "signature": sig, "ok": ok,
@@ -172,6 +180,10 @@ def cmd_record(pkg: str, output: str | None) -> int:
             out = Path(output)
             out.mkdir(parents=True, exist_ok=True)
             shutil.copy(archive, out / archive.name)
+        # Also copy to package directory for packit Source0 lookup
+        pkg_dir = ROOT / "pigeon" / "packages" / pkg
+        if pkg_dir.exists():
+            shutil.copy(archive, pkg_dir / archive.name)
         entry["sha512"] = digest
         SOURCES.write_text(json.dumps(data, indent=2) + "\n")
         write_report(pkg, {

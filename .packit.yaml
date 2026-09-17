@@ -1,168 +1,477 @@
-# Packit owns spec + source bumps; merges require the verified RPM build gate
-# plus a recorded new digest/signature (see PLAN.md §3.2).
-specfile_path: pigeon/packages/mango/mango.spec
-upstream_package_name: mango
-upstream_tag_template: "{version}"
-
+# Root-level Packit monorepo config for Kestrel Pigeon factory.
+# Packit uses the factory's verified source archives (actions.create-archive).
+actions:
+  create-archive:
+    - bash -c 'python3 "$(git rev-parse --show-toplevel)/pigeon/tools/packit_source0.py"'
 packages:
   wlroots:
-    specfile_path: pigeon/packages/wlroots/wlroots0.20.spec
+    specfile_path: wlroots0.20.spec
+    upstream_package_name: wlroots
+    downstream_package_name: wlroots
+    paths:
+      - pigeon/packages/wlroots
   scenefx:
-    specfile_path: pigeon/packages/scenefx/scenefx.spec
+    specfile_path: scenefx.spec
+    upstream_package_name: scenefx
+    downstream_package_name: scenefx
+    paths:
+      - pigeon/packages/scenefx
   mango:
-    specfile_path: pigeon/packages/mango/mango.spec
-    upstream_tag_template: "{version}"
+    specfile_path: mango.spec
+    upstream_package_name: mango
+    downstream_package_name: mango
+    paths:
+      - pigeon/packages/mango
   quickshell:
-    specfile_path: pigeon/packages/quickshell/quickshell.spec
-    upstream_tag_template: "v{version}"
+    specfile_path: quickshell.spec
+    upstream_package_name: quickshell
+    downstream_package_name: quickshell
+    paths:
+      - pigeon/packages/quickshell
   awww:
-    specfile_path: pigeon/packages/awww/awww.spec
+    specfile_path: awww.spec
+    upstream_package_name: awww
+    downstream_package_name: awww
+    paths:
+      - pigeon/packages/awww
   rofi:
-    specfile_path: pigeon/packages/rofi/rofi.spec
+    specfile_path: rofi.spec
+    upstream_package_name: rofi
+    downstream_package_name: rofi
+    paths:
+      - pigeon/packages/rofi
   ghostty:
-    specfile_path: pigeon/packages/ghostty/ghostty.spec
+    specfile_path: ghostty.spec
+    upstream_package_name: ghostty
+    downstream_package_name: ghostty
+    paths:
+      - pigeon/packages/ghostty
   kestrel-gdm-config:
-    specfile_path: pigeon/packages/kestrel-gdm-config/kestrel-gdm-config.spec
+    specfile_path: kestrel-gdm-config.spec
+    upstream_package_name: kestrel-gdm-config
+    downstream_package_name: kestrel-gdm-config
+    paths:
+      - pigeon/packages/kestrel-gdm-config
   xdg-desktop-portal-wlr:
-    specfile_path: pigeon/packages/xdg-desktop-portal-wlr/xdg-desktop-portal-wlr.spec
+    specfile_path: xdg-desktop-portal-wlr.spec
+    upstream_package_name: xdg-desktop-portal-wlr
+    downstream_package_name: xdg-desktop-portal-wlr
+    paths:
+      - pigeon/packages/xdg-desktop-portal-wlr
   xdg-desktop-portal-gtk:
-    specfile_path: pigeon/packages/xdg-desktop-portal-gtk/xdg-desktop-portal-gtk.spec
+    specfile_path: xdg-desktop-portal-gtk.spec
+    upstream_package_name: xdg-desktop-portal-gtk
+    downstream_package_name: xdg-desktop-portal-gtk
+    paths:
+      - pigeon/packages/xdg-desktop-portal-gtk
   seatd:
-    specfile_path: pigeon/packages/seatd/seatd.spec
+    specfile_path: seatd.spec
+    upstream_package_name: seatd
+    downstream_package_name: seatd
+    paths:
+      - pigeon/packages/seatd
   wl-clipboard:
-    specfile_path: pigeon/packages/wl-clipboard/wl-clipboard.spec
+    specfile_path: wl-clipboard.spec
+    upstream_package_name: wl-clipboard
+    downstream_package_name: wl-clipboard
+    paths:
+      - pigeon/packages/wl-clipboard
   grim:
-    specfile_path: pigeon/packages/grim/grim.spec
+    specfile_path: grim.spec
+    upstream_package_name: grim
+    downstream_package_name: grim
+    paths:
+      - pigeon/packages/grim
   slurp:
-    specfile_path: pigeon/packages/slurp/slurp.spec
+    specfile_path: slurp.spec
+    upstream_package_name: slurp
+    downstream_package_name: slurp
+    paths:
+      - pigeon/packages/slurp
   swayidle:
-    specfile_path: pigeon/packages/swayidle/swayidle.spec
+    specfile_path: swayidle.spec
+    upstream_package_name: swayidle
+    downstream_package_name: swayidle
+    paths:
+      - pigeon/packages/swayidle
   swaylock:
-    specfile_path: pigeon/packages/swaylock/swaylock.spec
+    specfile_path: swaylock.spec
+    upstream_package_name: swaylock
+    downstream_package_name: swaylock
+    paths:
+      - pigeon/packages/swaylock
   brightnessctl:
-    specfile_path: pigeon/packages/brightnessctl/brightnessctl.spec
+    specfile_path: brightnessctl.spec
+    upstream_package_name: brightnessctl
+    downstream_package_name: brightnessctl
+    paths:
+      - pigeon/packages/brightnessctl
   pamixer:
-    specfile_path: pigeon/packages/pamixer/pamixer.spec
+    specfile_path: pamixer.spec
+    upstream_package_name: pamixer
+    downstream_package_name: pamixer
+    paths:
+      - pigeon/packages/pamixer
   xfce-polkit:
-    specfile_path: pigeon/packages/xfce-polkit/xfce-polkit.spec
+    specfile_path: xfce-polkit.spec
+    upstream_package_name: xfce-polkit
+    downstream_package_name: xfce-polkit
+    paths:
+      - pigeon/packages/xfce-polkit
   polkit:
-    specfile_path: pigeon/packages/polkit/polkit.spec
+    specfile_path: polkit.spec
+    upstream_package_name: polkit
+    downstream_package_name: polkit
+    paths:
+      - pigeon/packages/polkit
   foot:
-    specfile_path: pigeon/packages/foot/foot.spec
+    specfile_path: foot.spec
+    upstream_package_name: foot
+    downstream_package_name: foot
+    paths:
+      - pigeon/packages/foot
   fwupd:
-    specfile_path: pigeon/packages/fwupd/fwupd.spec
+    specfile_path: fwupd.spec
+    upstream_package_name: fwupd
+    downstream_package_name: fwupd
+    paths:
+      - pigeon/packages/fwupd
   libinput:
-    specfile_path: pigeon/packages/libinput/libinput.spec
+    specfile_path: libinput.spec
+    upstream_package_name: libinput
+    downstream_package_name: libinput
+    paths:
+      - pigeon/packages/libinput
   libwacom:
-    specfile_path: pigeon/packages/libwacom/libwacom.spec
+    specfile_path: libwacom.spec
+    upstream_package_name: libwacom
+    downstream_package_name: libwacom
+    paths:
+      - pigeon/packages/libwacom
   libratbag:
-    specfile_path: pigeon/packages/libratbag/libratbag.spec
+    specfile_path: libratbag.spec
+    upstream_package_name: libratbag
+    downstream_package_name: libratbag
+    paths:
+      - pigeon/packages/libratbag
   iio-sensor-proxy:
-    specfile_path: pigeon/packages/iio-sensor-proxy/iio-sensor-proxy.spec
+    specfile_path: iio-sensor-proxy.spec
+    upstream_package_name: iio-sensor-proxy
+    downstream_package_name: iio-sensor-proxy
+    paths:
+      - pigeon/packages/iio-sensor-proxy
   ddcutil:
-    specfile_path: pigeon/packages/ddcutil/ddcutil.spec
+    specfile_path: ddcutil.spec
+    upstream_package_name: ddcutil
+    downstream_package_name: ddcutil
+    paths:
+      - pigeon/packages/ddcutil
   ModemManager:
-    specfile_path: pigeon/packages/ModemManager/ModemManager.spec
+    specfile_path: ModemManager.spec
+    upstream_package_name: ModemManager
+    downstream_package_name: ModemManager
+    paths:
+      - pigeon/packages/ModemManager
   tailscale:
-    specfile_path: pigeon/packages/tailscale/tailscale.spec
+    specfile_path: tailscale.spec
+    upstream_package_name: tailscale
+    downstream_package_name: tailscale
+    paths:
+      - pigeon/packages/tailscale
   wireguard-tools:
-    specfile_path: pigeon/packages/wireguard-tools/wireguard-tools.spec
+    specfile_path: wireguard-tools.spec
+    upstream_package_name: wireguard-tools
+    downstream_package_name: wireguard-tools
+    paths:
+      - pigeon/packages/wireguard-tools
   firewalld:
-    specfile_path: pigeon/packages/firewalld/firewalld.spec
+    specfile_path: firewalld.spec
+    upstream_package_name: firewalld
+    downstream_package_name: firewalld
+    paths:
+      - pigeon/packages/firewalld
   containerd:
-    specfile_path: pigeon/packages/containerd/containerd.spec
+    specfile_path: containerd.spec
+    upstream_package_name: containerd
+    downstream_package_name: containerd
+    paths:
+      - pigeon/packages/containerd
   runc:
-    specfile_path: pigeon/packages/runc/runc.spec
+    specfile_path: runc.spec
+    upstream_package_name: runc
+    downstream_package_name: runc
+    paths:
+      - pigeon/packages/runc
   crun:
-    specfile_path: pigeon/packages/crun/crun.spec
+    specfile_path: crun.spec
+    upstream_package_name: crun
+    downstream_package_name: crun
+    paths:
+      - pigeon/packages/crun
   podman:
-    specfile_path: pigeon/packages/podman/podman.spec
+    specfile_path: podman.spec
+    upstream_package_name: podman
+    downstream_package_name: podman
+    paths:
+      - pigeon/packages/podman
   skopeo:
-    specfile_path: pigeon/packages/skopeo/skopeo.spec
+    specfile_path: skopeo.spec
+    upstream_package_name: skopeo
+    downstream_package_name: skopeo
+    paths:
+      - pigeon/packages/skopeo
   buildah:
-    specfile_path: pigeon/packages/buildah/buildah.spec
+    specfile_path: buildah.spec
+    upstream_package_name: buildah
+    downstream_package_name: buildah
+    paths:
+      - pigeon/packages/buildah
   dracut:
-    specfile_path: pigeon/packages/dracut/dracut.spec
+    specfile_path: dracut.spec
+    upstream_package_name: dracut
+    downstream_package_name: dracut
+    paths:
+      - pigeon/packages/dracut
   grub2:
-    specfile_path: pigeon/packages/grub2/grub2.spec
+    specfile_path: grub2.spec
+    upstream_package_name: grub2
+    downstream_package_name: grub2
+    paths:
+      - pigeon/packages/grub2
   smartmontools:
-    specfile_path: pigeon/packages/smartmontools/smartmontools.spec
+    specfile_path: smartmontools.spec
+    upstream_package_name: smartmontools
+    downstream_package_name: smartmontools
+    paths:
+      - pigeon/packages/smartmontools
   nvme-cli:
-    specfile_path: pigeon/packages/nvme-cli/nvme-cli.spec
+    specfile_path: nvme-cli.spec
+    upstream_package_name: nvme-cli
+    downstream_package_name: nvme-cli
+    paths:
+      - pigeon/packages/nvme-cli
   pciutils:
-    specfile_path: pigeon/packages/pciutils/pciutils.spec
+    specfile_path: pciutils.spec
+    upstream_package_name: pciutils
+    downstream_package_name: pciutils
+    paths:
+      - pigeon/packages/pciutils
   hwdata:
-    specfile_path: pigeon/packages/hwdata/hwdata.spec
+    specfile_path: hwdata.spec
+    upstream_package_name: hwdata
+    downstream_package_name: hwdata
+    paths:
+      - pigeon/packages/hwdata
   libblockdev:
-    specfile_path: pigeon/packages/libblockdev/libblockdev.spec
+    specfile_path: libblockdev.spec
+    upstream_package_name: libblockdev
+    downstream_package_name: libblockdev
+    paths:
+      - pigeon/packages/libblockdev
   libbytesize:
-    specfile_path: pigeon/packages/libbytesize/libbytesize.spec
+    specfile_path: libbytesize.spec
+    upstream_package_name: libbytesize
+    downstream_package_name: libbytesize
+    paths:
+      - pigeon/packages/libbytesize
   udisks2:
-    specfile_path: pigeon/packages/udisks2/udisks2.spec
+    specfile_path: udisks2.spec
+    upstream_package_name: udisks2
+    downstream_package_name: udisks2
+    paths:
+      - pigeon/packages/udisks2
   upower:
-    specfile_path: pigeon/packages/upower/upower.spec
+    specfile_path: upower.spec
+    upstream_package_name: upower
+    downstream_package_name: upower
+    paths:
+      - pigeon/packages/upower
   bluez:
-    specfile_path: pigeon/packages/bluez/bluez.spec
+    specfile_path: bluez.spec
+    upstream_package_name: bluez
+    downstream_package_name: bluez
+    paths:
+      - pigeon/packages/bluez
   colord:
-    specfile_path: pigeon/packages/colord/colord.spec
+    specfile_path: colord.spec
+    upstream_package_name: colord
+    downstream_package_name: colord
+    paths:
+      - pigeon/packages/colord
   colord-gtk:
-    specfile_path: pigeon/packages/colord-gtk/colord-gtk.spec
+    specfile_path: colord-gtk.spec
+    upstream_package_name: colord-gtk
+    downstream_package_name: colord-gtk
+    paths:
+      - pigeon/packages/colord-gtk
   lcms2:
-    specfile_path: pigeon/packages/lcms2/lcms2.spec
+    specfile_path: lcms2.spec
+    upstream_package_name: lcms2
+    downstream_package_name: lcms2
+    paths:
+      - pigeon/packages/lcms2
   alsa-firmware:
-    specfile_path: pigeon/packages/alsa-firmware/alsa-firmware.spec
+    specfile_path: alsa-firmware.spec
+    upstream_package_name: alsa-firmware
+    downstream_package_name: alsa-firmware
+    paths:
+      - pigeon/packages/alsa-firmware
   k0s:
-    specfile_path: pigeon/packages/k0s/k0s.spec
+    specfile_path: k0s.spec
+    upstream_package_name: k0s
+    downstream_package_name: k0s
+    paths:
+      - pigeon/packages/k0s
   kubeflex:
-    specfile_path: pigeon/packages/kubeflex/kubeflex.spec
+    specfile_path: kubeflex.spec
+    upstream_package_name: kubeflex
+    downstream_package_name: kubeflex
+    paths:
+      - pigeon/packages/kubeflex
   kubestellar:
-    specfile_path: pigeon/packages/kubestellar/kubestellar.spec
+    specfile_path: kubestellar.spec
+    upstream_package_name: kubestellar
+    downstream_package_name: kubestellar
+    paths:
+      - pigeon/packages/kubestellar
   kubestellar-console:
-    specfile_path: pigeon/packages/kubestellar-console/kubestellar-console.spec
+    specfile_path: kubestellar-console.spec
+    upstream_package_name: kubestellar-console
+    downstream_package_name: kubestellar-console
+    paths:
+      - pigeon/packages/kubestellar-console
   alsa-firmware:
-    specfile_path: pigeon/packages/alsa-firmware/alsa-firmware.spec
+    specfile_path: alsa-firmware.spec
+    upstream_package_name: alsa-firmware
+    downstream_package_name: alsa-firmware
+    paths:
+      - pigeon/packages/alsa-firmware
   bluez:
-    specfile_path: pigeon/packages/bluez/bluez.spec
+    specfile_path: bluez.spec
+    upstream_package_name: bluez
+    downstream_package_name: bluez
+    paths:
+      - pigeon/packages/bluez
   brightnessctl:
-    specfile_path: pigeon/packages/brightnessctl/brightnessctl.spec
+    specfile_path: brightnessctl.spec
+    upstream_package_name: brightnessctl
+    downstream_package_name: brightnessctl
+    paths:
+      - pigeon/packages/brightnessctl
   firewalld:
-    specfile_path: pigeon/packages/firewalld/firewalld.spec
+    specfile_path: firewalld.spec
+    upstream_package_name: firewalld
+    downstream_package_name: firewalld
+    paths:
+      - pigeon/packages/firewalld
   grub2:
-    specfile_path: pigeon/packages/grub2/grub2.spec
+    specfile_path: grub2.spec
+    upstream_package_name: grub2
+    downstream_package_name: grub2
+    paths:
+      - pigeon/packages/grub2
   hwdata:
-    specfile_path: pigeon/packages/hwdata/hwdata.spec
+    specfile_path: hwdata.spec
+    upstream_package_name: hwdata
+    downstream_package_name: hwdata
+    paths:
+      - pigeon/packages/hwdata
   libblockdev:
-    specfile_path: pigeon/packages/libblockdev/libblockdev.spec
+    specfile_path: libblockdev.spec
+    upstream_package_name: libblockdev
+    downstream_package_name: libblockdev
+    paths:
+      - pigeon/packages/libblockdev
   libbytesize:
-    specfile_path: pigeon/packages/libbytesize/libbytesize.spec
+    specfile_path: libbytesize.spec
+    upstream_package_name: libbytesize
+    downstream_package_name: libbytesize
+    paths:
+      - pigeon/packages/libbytesize
   nvme-cli:
-    specfile_path: pigeon/packages/nvme-cli/nvme-cli.spec
+    specfile_path: nvme-cli.spec
+    upstream_package_name: nvme-cli
+    downstream_package_name: nvme-cli
+    paths:
+      - pigeon/packages/nvme-cli
   pciutils:
-    specfile_path: pigeon/packages/pciutils/pciutils.spec
+    specfile_path: pciutils.spec
+    upstream_package_name: pciutils
+    downstream_package_name: pciutils
+    paths:
+      - pigeon/packages/pciutils
   pamixer:
-    specfile_path: pigeon/packages/pamixer/pamixer.spec
+    specfile_path: pamixer.spec
+    upstream_package_name: pamixer
+    downstream_package_name: pamixer
+    paths:
+      - pigeon/packages/pamixer
   polkit:
-    specfile_path: pigeon/packages/polkit/polkit.spec
+    specfile_path: polkit.spec
+    upstream_package_name: polkit
+    downstream_package_name: polkit
+    paths:
+      - pigeon/packages/polkit
   runc:
-    specfile_path: pigeon/packages/runc/runc.spec
+    specfile_path: runc.spec
+    upstream_package_name: runc
+    downstream_package_name: runc
+    paths:
+      - pigeon/packages/runc
   skopeo:
-    specfile_path: pigeon/packages/skopeo/skopeo.spec
+    specfile_path: skopeo.spec
+    upstream_package_name: skopeo
+    downstream_package_name: skopeo
+    paths:
+      - pigeon/packages/skopeo
   smartmontools:
-    specfile_path: pigeon/packages/smartmontools/smartmontools.spec
+    specfile_path: smartmontools.spec
+    upstream_package_name: smartmontools
+    downstream_package_name: smartmontools
+    paths:
+      - pigeon/packages/smartmontools
   swayidle:
-    specfile_path: pigeon/packages/swayidle/swayidle.spec
+    specfile_path: swayidle.spec
+    upstream_package_name: swayidle
+    downstream_package_name: swayidle
+    paths:
+      - pigeon/packages/swayidle
   swaylock:
-    specfile_path: pigeon/packages/swaylock/swaylock.spec
+    specfile_path: swaylock.spec
+    upstream_package_name: swaylock
+    downstream_package_name: swaylock
+    paths:
+      - pigeon/packages/swaylock
   tailscale:
-    specfile_path: pigeon/packages/tailscale/tailscale.spec
+    specfile_path: tailscale.spec
+    upstream_package_name: tailscale
+    downstream_package_name: tailscale
+    paths:
+      - pigeon/packages/tailscale
   udisks2:
-    specfile_path: pigeon/packages/udisks2/udisks2.spec
+    specfile_path: udisks2.spec
+    upstream_package_name: udisks2
+    downstream_package_name: udisks2
+    paths:
+      - pigeon/packages/udisks2
   upower:
-    specfile_path: pigeon/packages/upower/upower.spec
+    specfile_path: upower.spec
+    upstream_package_name: upower
+    downstream_package_name: upower
+    paths:
+      - pigeon/packages/upower
   wireguard-tools:
-    specfile_path: pigeon/packages/wireguard-tools/wireguard-tools.spec
+    specfile_path: wireguard-tools.spec
+    upstream_package_name: wireguard-tools
+    downstream_package_name: wireguard-tools
+    paths:
+      - pigeon/packages/wireguard-tools
   xfce-polkit:
-    specfile_path: pigeon/packages/xfce-polkit/xfce-polkit.spec
+    specfile_path: xfce-polkit.spec
+    upstream_package_name: xfce-polkit
+    downstream_package_name: xfce-polkit
+    paths:
+      - pigeon/packages/xfce-polkit
 
 jobs:
   srpm_builds:
