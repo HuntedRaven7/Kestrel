@@ -59,6 +59,7 @@ jobs:
         run: podman pull quay.io/fedora/fedora:44
 
       - name: Build SRPM in Fedora container
+        id: build
         run: |
           podman run --rm \
             -v "$(pwd):/workspace:Z" \
@@ -69,20 +70,30 @@ jobs:
               printf '[hummingbird]\nname=Hummingbird Copr Repository\nbaseurl=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/\$basearch/\nenabled=1\ngpgcheck=1\ngpgkey=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/key/gpgkey\nrepo_gpgcheck=0\npriority=10\n' > /etc/yum.repos.d/hummingbird.repo &&
               dnf install -y packit python3-pip &&
               cd pigeon/packages/${{ matrix.package }} &&
-              python3 -m packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log &&
-              echo 'srpm_path='\$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm | head -1) >> \$GITHUB_OUTPUT
+              packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log &&
+              SRPM=\$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm 2>/dev/null | head -1) &&
+              echo \"srpm_path=\$SRPM\" > /workspace/srpm_output.txt
             "
+          # Read the SRPM path from the output file
+          if [ -f srpm_output.txt ]; then
+            SRPM_PATH=$(cat srpm_output.txt | cut -d= -f2)
+            echo "srpm_path=$SRPM_PATH" >> $GITHUB_OUTPUT
+            echo "Found SRPM: $SRPM_PATH"
+          else
+            echo "ERROR: No SRPM output file found"
+            exit 1
+          fi
 
       - name: Verify SRPM
         run: |
-          rpm -qip ${{ steps.srpm.outputs.srpm_path }}
-          rpm -qlp ${{ steps.srpm.outputs.srpm_path }}
+          rpm -qip ${{ steps.build.outputs.srpm_path }}
+          rpm -qlp ${{ steps.build.outputs.srpm_path }}
 
       - name: Upload SRPM
         uses: actions/upload-artifact@v4
         with:
           name: srpm-${{ matrix.package }}
-          path: ${{ steps.srpm.outputs.srpm_path }}
+          path: ${{ steps.build.outputs.srpm_path }}
           retention-days: 7
 
   verify-all:
