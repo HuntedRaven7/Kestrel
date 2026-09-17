@@ -64,6 +64,16 @@ ssh_ciphers = "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@o
 ssh_macs = "hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com"
 ssh_kex_algorithms = "curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512"
 
+[kubernetes]
+# k0s + Kubestellar
+k0s_enabled = true
+k0s_controller_service = "k0scontroller.service"
+k0s_first_boot_service = "k0s-first-boot.service"
+k0s_api_port = 6443
+kubestellar_console_port = 8080
+kubestellar_console_namespace = "kubestellar-console"
+kubeflex_namespace = "kubeflex-system"
+
 [unavailable]
 # Tracking issues for missing server components
 # component = "issue-url"

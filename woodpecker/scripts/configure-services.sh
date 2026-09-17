@@ -38,6 +38,9 @@ systemctl disable wg-quick@wg0.service 2>/dev/null || true
 # Enable podman socket (rootless)
 systemctl --global enable podman.socket || true
 
+# Enable k0s first-boot service (sets up Kubestellar on first boot)
+systemctl enable k0s-first-boot.service
+
 # Set up SSH config (hardened defaults)
 mkdir -p /etc/ssh
 cat > /etc/ssh/sshd_config.d/99-woodpecker-hardening.conf << 'EOF'
@@ -90,6 +93,12 @@ EOF
 # Configure firewalld (allow cockpit, ssh if enabled)
 firewall-offline-cmd --add-service=cockpit --permanent || true
 firewall-offline-cmd --add-service=ssh --permanent || true
+
+# k0s API server
+firewall-offline-cmd --add-port=6443/tcp --permanent || true
+
+# Kubestellar console
+firewall-offline-cmd --add-port=8080/tcp --permanent || true
 
 # Configure cockpit
 mkdir -p /etc/cockpit

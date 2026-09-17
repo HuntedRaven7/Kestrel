@@ -1,0 +1,14 @@
+[Unit]
+Description=k0s First Boot Setup (Kubestellar)
+Documentation=https://github.com/HuntedRaven7/Kestrel
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/woodpecker/k0s-first-boot.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/woodpecker/k0s-first-boot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
