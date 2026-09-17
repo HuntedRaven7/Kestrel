@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Leo Sandoval <lsandova@redhat.com>
+Date: Tue, 1 Sep 2026 13:23:34 -0600
+Subject: [PATCH] platform: Return i386-pc when /proc/device-tree is present
+
+Newer kernels populate /proc/device-tree even on ordinary x86 BIOS
+machines, which made grub_install_get_default_x86_platform() select
+i386-ieee1275. Fedora does not ship that platform, so BIOS installs
+failed. Return i386-pc instead.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Signed-off-by: Leo Sandoval <lsandova@redhat.com>
+---
+ grub-core/osdep/linux/platform.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/osdep/linux/platform.c b/grub-core/osdep/linux/platform.c
+index e28a79dab..5ade32a01 100644
+--- a/grub-core/osdep/linux/platform.c
++++ b/grub-core/osdep/linux/platform.c
+@@ -144,11 +144,14 @@ grub_install_get_default_x86_platform (void)
+ 	return "i386-efi";
+     }
+ 
++  /* On Fedora the kernel populates /proc/device-tree, but Fedora does not
++     ship i386-ieee1275, so return i386-pc instead.  */
+   grub_util_info ("Looking for /proc/device-tree ..");
+   if (is_not_empty_directory ("/proc/device-tree"))
+     {
+       grub_util_info ("...found");
+-      return "i386-ieee1275";
++      grub_util_info ("Fedora does not support i386-ieee1275, return i386-pc instead");
++      return "i386-pc";
+     }
+ 
+   grub_util_info ("... not found");

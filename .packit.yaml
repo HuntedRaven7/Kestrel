@@ -119,6 +119,50 @@ packages:
     specfile_path: pigeon/packages/kubestellar/kubestellar.spec
   kubestellar-console:
     specfile_path: pigeon/packages/kubestellar-console/kubestellar-console.spec
+  alsa-firmware:
+    specfile_path: pigeon/packages/alsa-firmware/alsa-firmware.spec
+  bluez:
+    specfile_path: pigeon/packages/bluez/bluez.spec
+  brightnessctl:
+    specfile_path: pigeon/packages/brightnessctl/brightnessctl.spec
+  firewalld:
+    specfile_path: pigeon/packages/firewalld/firewalld.spec
+  grub2:
+    specfile_path: pigeon/packages/grub2/grub2.spec
+  hwdata:
+    specfile_path: pigeon/packages/hwdata/hwdata.spec
+  libblockdev:
+    specfile_path: pigeon/packages/libblockdev/libblockdev.spec
+  libbytesize:
+    specfile_path: pigeon/packages/libbytesize/libbytesize.spec
+  nvme-cli:
+    specfile_path: pigeon/packages/nvme-cli/nvme-cli.spec
+  pciutils:
+    specfile_path: pigeon/packages/pciutils/pciutils.spec
+  pamixer:
+    specfile_path: pigeon/packages/pamixer/pamixer.spec
+  polkit:
+    specfile_path: pigeon/packages/polkit/polkit.spec
+  runc:
+    specfile_path: pigeon/packages/runc/runc.spec
+  skopeo:
+    specfile_path: pigeon/packages/skopeo/skopeo.spec
+  smartmontools:
+    specfile_path: pigeon/packages/smartmontools/smartmontools.spec
+  swayidle:
+    specfile_path: pigeon/packages/swayidle/swayidle.spec
+  swaylock:
+    specfile_path: pigeon/packages/swaylock/swaylock.spec
+  tailscale:
+    specfile_path: pigeon/packages/tailscale/tailscale.spec
+  udisks2:
+    specfile_path: pigeon/packages/udisks2/udisks2.spec
+  upower:
+    specfile_path: pigeon/packages/upower/upower.spec
+  wireguard-tools:
+    specfile_path: pigeon/packages/wireguard-tools/wireguard-tools.spec
+  xfce-polkit:
+    specfile_path: pigeon/packages/xfce-polkit/xfce-polkit.spec
 
 jobs:
   srpm_builds:

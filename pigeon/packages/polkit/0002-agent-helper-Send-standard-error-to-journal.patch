@@ -1,0 +1,30 @@
+From 3d07db95a4734ca15f760468123207c8cc4a6827 Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>
+Date: Mon, 22 Dec 2025 15:08:38 +0100
+Subject: [PATCH 2/7] agent helper: Send standard error to journal
+
+Otherwise we will most likely get the default of
+`StandardError=inherit`, causing any log messages to be sent to the
+peer, which gets confused and fails the authentication session.
+
+See: https://github.com/polkit-org/polkit/issues/622
+See: https://gitlab.archlinux.org/archlinux/packaging/packages/polkit/-/issues/4
+---
+ data/polkit-agent-helper@.service.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/data/polkit-agent-helper@.service.in b/data/polkit-agent-helper@.service.in
+index f49c4ad..917f4f1 100644
+--- a/data/polkit-agent-helper@.service.in
++++ b/data/polkit-agent-helper@.service.in
+@@ -9,6 +9,7 @@ ExecStart=@libprivdir@/polkit-agent-helper-1 --socket-activated
+ SuccessExitStatus=2
+ StandardInput=socket
+ StandardOutput=socket
++StandardError=journal
+ LimitMEMLOCK=0
+ LockPersonality=yes
+ MemoryDenyWriteExecute=yes
+-- 
+2.53.0
+
