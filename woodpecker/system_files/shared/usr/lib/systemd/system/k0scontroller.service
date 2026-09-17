@@ -1,0 +1,15 @@
+[Unit]
+Description=k0s Controller
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/k0s
+ExecStart=/usr/bin/k0s controller
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

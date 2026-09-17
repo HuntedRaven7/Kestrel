@@ -566,6 +566,50 @@
         "datasource": "github-tags",
         "depName": "alsa-project/alsa-firmware"
       }
+    },
+    "k0s": {
+      "version": "1.32.0",
+      "url_template": "https://github.com/k0sproject/k0s/releases/download/{version}/k0s-{version}-amd64",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Zero-friction Kubernetes distribution. Binary download from GitHub releases.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "k0sproject/k0s"
+      }
+    },
+    "kubeflex": {
+      "version": "0.5.0",
+      "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Kubeflex operator for KubeStellar. Manages control planes as CRDs.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "kubestellar/kubeflex"
+      }
+    },
+    "kubestellar": {
+      "version": "0.25.0",
+      "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "KubeStellar core controller-manager. Multi-cluster management.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "kubestellar/kubestellar"
+      }
+    },
+    "kubestellar-console": {
+      "version": "0.3.34",
+      "url_template": "https://github.com/kubestellar/console/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "KubeStellar console UI. GitHub OAuth integration.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "kubestellar/console"
+      }
     }
   }
 }
