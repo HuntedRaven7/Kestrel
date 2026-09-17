@@ -1,0 +1,39 @@
+# Warbler OGC kernel cache image
+# Pre-builds OGC kernel + NVIDIA modules so main image flavors don't pay compile cost
+# Built from warbler/Containerfile.kernel, published as ghcr.io/huntedraven7/warbler-kernel-cache:<key>
+# Key = hash of OGC tag+commit, NVIDIA driver version, base image digest
+
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:TODO_BASE_IMAGE_SHA
+ARG BASE_IMAGE_SHA=sha256:TODO_BASE_IMAGE_SHA
+ARG PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon
+ARG PIGEON_IMAGE_SHA=sha256:TODO_PIGEON_IMAGE_SHA
+
+FROM ${BASE_IMAGE} AS builder
+
+# Enable repos for build toolchain (Hummingbird + Fedora 44)
+COPY packages/hummingbird.repo /etc/yum.repos.d/hummingbird.repo
+COPY packages/fedora-44.repo /etc/yum.repos.d/fedora-44.repo
+
+# Copy install scripts
+RUN mkdir -p /usr/local/libexec
+COPY scripts/install-ogc-kernel.sh /usr/local/libexec/warbler-install-ogc-kernel
+COPY scripts/install-nvidia.sh /usr/local/libexec/warbler-install-nvidia
+
+# Build OGC kernel + NVIDIA modules for nvidia-gaming (superset)
+# The cache output goes to /cache-out which is copied to the runtime stage
+RUN chmod 0755 /usr/local/libexec/warbler-install-ogc-kernel /usr/local/libexec/warbler-install-nvidia && \
+    mkdir -p /cache-out && \
+    WARBLER_KERNEL_CACHE_OUT=/cache-out/ogc.tar \
+    /usr/local/libexec/warbler-install-ogc-kernel && \
+    WARBLER_NVIDIA_MODULES_ONLY=1 WARBLER_KERNEL_CACHE_OUT_DIR=/cache-out \
+    /usr/local/libexec/warbler-install-nvidia nvidia-gaming && \
+    ls -l /cache-out
+
+# Runtime stage: base image + prebuilt kernel/modules archive
+FROM ${BASE_IMAGE}
+
+COPY --from=builder /cache-out /warbler-cache
+
+LABEL org.opencontainers.image.title="Warbler Kernel Cache"
+LABEL org.opencontainers.image.description="Prebuilt OGC kernel + NVIDIA modules for Warbler flavors"
+LABEL org.opencontainers.image.source="https://github.com/HuntedRaven7/Kestrel"

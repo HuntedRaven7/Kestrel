@@ -1,0 +1,571 @@
+{
+  "$comment": "Allow-list: a package with no entry here must not build or publish. Versions bumped by Renovate/Packit only.",
+  "packages": {
+    "wlroots": {
+      "version": "0.20.2",
+      "url_template": "https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/{version}/wlroots-{version}.tar.bz2",
+      "sha512": "0103d558b0cbcaaa527778f827da73a5baa1061c21de7b693766101703d07fc58dcafdc12df8860dc33502b8db8ae795d773b2e925111a4bc500c939f9b1fbff",
+      "stage": 0,
+      "note": "Mango 0.17.2 requires wlroots-0.20 (>=0.20.0). Versioned package wlroots0.20, parallel-installable.",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "wlroots/wlroots"
+      }
+    },
+    "scenefx": {
+      "version": "0.5",
+      "url_template": "https://github.com/wlrfx/scenefx/archive/refs/tags/{version}.tar.gz",
+      "sha512": "055511e88ba4036e6bb4a9f1c5f3a16c4841c518a57b98ad824dd0ecd53c251541a9801be9c760ebf78936400918a51c3b04300f22a47437077d444bc7bc2f08",
+      "stage": 0,
+      "note": "Mango 0.17.2 requires scenefx-0.5 (>=0.5.0). Built against our wlroots0.20.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "wlrfx/scenefx"
+      }
+    },
+    "mango": {
+      "version": "0.17.2",
+      "url_template": "https://github.com/mangowm/mango/archive/refs/tags/{version}.tar.gz",
+      "sha512": "bbfc9a6444ba2f282ddb1ab924d19a0a78c120b5d2649cd59bebc4ba97e507ac18fb3fdd7f3dad419e434bef4a7b1f8e90ebf0daa3a6a4cb6a4404622711c4a5",
+      "stage": 1,
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "mangowm/mango"
+      }
+    },
+    "quickshell": {
+      "version": "0.3.1",
+      "url_template": "https://github.com/quickshell-mirror/quickshell/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "7da5b37a20369e52f14cba2cf03b948522c8d79598f4a54e456034f2d0f868cf525539f15d86ebacde547e862eac8d029a597d5e360cd443ed2404dbd4781ad9",
+      "stage": 1,
+      "note": "Rebuild on every Qt bump (private-API ABI). Keep coupled to qt6-qtbase via Renovate group qt-quickshell.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "quickshell-mirror/quickshell"
+      }
+    },
+    "awww": {
+      "version": "0.12.1",
+      "url_template": "https://codeberg.org/LGFae/awww/archive/v{version}.tar.gz",
+      "sha512": "50b8f4c88c15fdaf053efccae578cecf261851df8c5b0731d87bd424a413f8b0fb7a7fad145b7757b459e1709377e32b430d1f5d3889f9641b04bfcc41a6b478",
+      "license": "GPL-3.0",
+      "stage": 2,
+      "note": "Direct archive download works (Codeberg blocks repo-page scraping only). Digest recorded 2026-09-17; re-verify on bump.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://codeberg.org/LGFae/awww"
+      }
+    },
+    "rofi": {
+      "version": "1.7.9.1",
+      "url_template": "https://github.com/davatorium/rofi/archive/refs/tags/{version}.tar.gz",
+      "sha512": "054903721f78baae19fa52e568d4eb29918275e28b54a5a2515a4c6b51a29353fac8511a59314b9a1a839e028a7ecb5c232ef8cd72f8056d625fc6e22cd2acf0",
+      "stage": 2,
+      "note": "Stock rofi (X11 via XWayland under Mango). Evaluate rofi-wayland fork later as separate package.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "davatorium/rofi"
+      }
+    },
+    "ghostty": {
+      "version": "1.3.1",
+      "url_template": "https://github.com/ghostty-org/ghostty/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "b9d2a35ba71111cab27a67279279a22bdb9ab6b371374cb6da5c0f543610a848f37d6114fb8f0555afd8817203df16a203257df8fa5bfe43482c2f2a115f2662",
+      "stage": 2,
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "ghostty-org/ghostty"
+      }
+    },
+    "kestrel-gdm-config": {
+      "version": "1",
+      "local": true,
+      "stage": 2,
+      "note": "Local config package: GDM autologin drop-in + mango.desktop session. No upstream."
+    },
+    "xdg-desktop-portal-wlr": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/xdg-desktop-portal-wlr/xdg-desktop-portal-wlr-{version}.tar.gz/sha512/{sha512}/xdg-desktop-portal-wlr-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Source from lookaside cache.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "wayland-project/xdg-desktop-portal-wlr"
+      }
+    },
+    "xdg-desktop-portal-gtk": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/xdg-desktop-portal-gtk/xdg-desktop-portal-gtk-{version}.tar.gz/sha512/{sha512}/xdg-desktop-portal-gtk-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Source from lookaside cache.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "wayland-project/xdg-desktop-portal-gtk"
+      }
+    },
+    "seatd": {
+      "version": "0.9.3",
+      "url_template": "https://github.com/kennylevinsen/seatd/archive/refs/tags/{version}.tar.gz",
+      "sha512": "8cb21cfbd9aa25966fe3f586de75d24a8625142ffb49e6ec357875c347d3e92d535467b817d79fdc704f80858a145f1107c488adbf22a1c337dbc6ccccc8b00a",
+      "stage": 2,
+      "note": "Fedora dist-git import. Seat management daemon.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "kennylevinsen/seatd"
+      }
+    },
+    "wl-clipboard": {
+      "version": "2.3.0",
+      "url_template": "https://github.com/bugaevc/wl-clipboard/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "101dd7a18fbaee0754318cf9ec8403068df4091ccc5d3dd0bd1e46627d56a183c718c206816c08e5dbadf6fd5c747fa0c95eca1925fa27c7eeda133909696f9b",
+      "stage": 2,
+      "note": "Fedora dist-git import. Wayland clipboard utilities.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "bugaevc/wl-clipboard"
+      }
+    },
+    "grim": {
+      "version": "1.4.0",
+      "url_template": "https://github.com/emersion/grim/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "d0b33528a00528b3ef7488a0984cde5034de4f5a211eb5c8d3299aea356d9348c5d02d08171802bc0315afb19d2446f5f132ea9dca0579ace803b7d5d90a89cc",
+      "stage": 2,
+      "note": "Fedora dist-git import. Screenshot utility for Wayland.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "emersion/grim"
+      }
+    },
+    "slurp": {
+      "version": "1.5.0",
+      "url_template": "https://github.com/emersion/slurp/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "77c4efdaa4ac411f43c598e5d654bcf61f969a5e403df6110757a7b217e02d55d0ba797729e42f8219d3bba79f58bcb36746799de765d3b25f301bf9ac3c1888",
+      "stage": 2,
+      "note": "Fedora dist-git import. Region selector for Wayland.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "emersion/slurp"
+      }
+    },
+    "swayidle": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/swayidle/swayidle-{version}.tar.gz/sha512/{sha512}/swayidle-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Idle management for Wayland.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "swaywm/swayidle"
+      }
+    },
+    "swaylock": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/swaylock/swaylock-{version}.tar.gz/sha512/{sha512}/swaylock-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Screen locker for Wayland.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "swaywm/swaylock"
+      }
+    },
+    "brightnessctl": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/brightnessctl/brightnessctl-{version}.tar.gz/sha512/{sha512}/brightnessctl-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Brightness control utility.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "Haikarainen/brightnessctl"
+      }
+    },
+    "pamixer": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/pamixer/pamixer-{version}.tar.gz/sha512/{sha512}/pamixer-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. PulseAudio mixer CLI.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "cdemoulins/pamixer"
+      }
+    },
+    "xfce-polkit": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/xfce-polkit/xfce-polkit-{version}.tar.gz/sha512/{sha512}/xfce-polkit-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Polkit authentication agent.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "xfce-mirror/xfce-polkit"
+      }
+    },
+    "polkit": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/polkit/polkit-{version}.tar.gz/sha512/{sha512}/polkit-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. PolicyKit framework.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "polkit-project/polkit"
+      }
+    },
+    "foot": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/foot/foot-{version}.tar.gz/sha512/{sha512}/foot-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Wayland terminal emulator (fallback).",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "dnkl/foot"
+      }
+    },
+    "fwupd": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/fwupd/fwupd-{version}.tar.gz/sha512/{sha512}/fwupd-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Firmware update daemon.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "fwupd/fwupd"
+      }
+    },
+    "libinput": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/libinput/libinput-{version}.tar.gz/sha512/{sha512}/libinput-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Input device library.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "wayland-project/libinput"
+      }
+    },
+    "libwacom": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/libwacom/libwacom-{version}.tar.gz/sha512/{sha512}/libwacom-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Wacom tablet library.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "linuxwacom/libwacom"
+      }
+    },
+    "libratbag": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/libratbag/libratbag-{version}.tar.gz/sha512/{sha512}/libratbag-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Gaming mouse configuration library.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "libratbag/libratbag"
+      }
+    },
+    "iio-sensor-proxy": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/iio-sensor-proxy/iio-sensor-proxy-{version}.tar.gz/sha512/{sha512}/iio-sensor-proxy-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. IIO sensor proxy.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "hadess/iio-sensor-proxy"
+      }
+    },
+    "ddcutil": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/ddcutil/ddcutil-{version}.tar.gz/sha512/{sha512}/ddcutil-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. DDC/CI monitor control.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "rockowitz/ddcutil"
+      }
+    },
+    "ModemManager": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/ModemManager/ModemManager-{version}.tar.gz/sha512/{sha512}/ModemManager-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Mobile broadband modem manager.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "Freedesktop/ModemManager"
+      }
+    },
+    "tailscale": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/tailscale/tailscale-{version}.tar.gz/sha512/{sha512}/tailscale-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. WireGuard-based VPN.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "tailscale/tailscale"
+      }
+    },
+    "wireguard-tools": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/wireguard-tools/wireguard-tools-{version}.tar.gz/sha512/{sha512}/wireguard-tools-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. WireGuard tools.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "WireGuard/wireguard-tools"
+      }
+    },
+    "firewalld": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/firewalld/firewalld-{version}.tar.gz/sha512/{sha512}/firewalld-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Firewall daemon.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "firewalld/firewalld"
+      }
+    },
+    "containerd": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/containerd/containerd-{version}.tar.gz/sha512/{sha512}/containerd-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Container runtime.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "containerd/containerd"
+      }
+    },
+    "runc": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/runc/runc-{version}.tar.gz/sha512/{sha512}/runc-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. OCI container runtime.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "opencontainers/runc"
+      }
+    },
+    "crun": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/crun/crun-{version}.tar.gz/sha512/{sha512}/crun-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. OCI container runtime (C).",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "containers/crun"
+      }
+    },
+    "podman": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/podman/podman-{version}.tar.gz/sha512/{sha512}/podman-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Podman container engine.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "containers/podman"
+      }
+    },
+    "skopeo": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/skopeo/skopeo-{version}.tar.gz/sha512/{sha512}/skopeo-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Container image tool.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "containers/skopeo"
+      }
+    },
+    "buildah": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/buildah/buildah-{version}.tar.gz/sha512/{sha512}/buildah-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Build container images.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "containers/buildah"
+      }
+    },
+    "dracut": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/dracut/dracut-{version}.tar.gz/sha512/{sha512}/dracut-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Initramfs generator.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "dracutdevs/dracut"
+      }
+    },
+    "grub2": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/grub2/grub2-{version}.tar.gz/sha512/{sha512}/grub2-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Bootloader.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "grub2/grub2"
+      }
+    },
+    "smartmontools": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/smartmontools/smartmontools-{version}.tar.gz/sha512/{sha512}/smartmontools-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. SMART monitoring.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "smartmontools/smartmontools"
+      }
+    },
+    "nvme-cli": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/nvme-cli/nvme-cli-{version}.tar.gz/sha512/{sha512}/nvme-cli-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. NVMe CLI tools.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "linux-nvme/nvme-cli"
+      }
+    },
+    "pciutils": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/pciutils/pciutils-{version}.tar.gz/sha512/{sha512}/pciutils-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. PCI utilities.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "pciutils/pciutils"
+      }
+    },
+    "hwdata": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/hwdata/hwdata-{version}.tar.gz/sha512/{sha512}/hwdata-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Hardware data.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "VincentHW/hwdata"
+      }
+    },
+    "libblockdev": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/libblockdev/libblockdev-{version}.tar.gz/sha512/{sha512}/libblockdev-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Block device library.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "storaged-project/libblockdev"
+      }
+    },
+    "libbytesize": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/libbytesize/libbytesize-{version}.tar.gz/sha512/{sha512}/libbytesize-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Byte size library.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "storaged-project/libbytesize"
+      }
+    },
+    "udisks2": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/udisks2/udisks2-{version}.tar.gz/sha512/{sha512}/udisks2-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Disk management.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "storaged-project/udisks"
+      }
+    },
+    "upower": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/upower/upower-{version}.tar.gz/sha512/{sha512}/upower-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Power management.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "upower/upower"
+      }
+    },
+    "bluez": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/bluez/bluez-{version}.tar.gz/sha512/{sha512}/bluez-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Bluetooth stack.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "bluez/bluez"
+      }
+    },
+    "colord": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/colord/colord-{version}.tar.gz/sha512/{sha512}/colord-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Color management.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "hughsie/colord"
+      }
+    },
+    "colord-gtk": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/colord-gtk/colord-gtk-{version}.tar.gz/sha512/{sha512}/colord-gtk-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Color management GTK.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "hughsie/colord-gtk"
+      }
+    },
+    "lcms2": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/lcms2/lcms2-{version}.tar.gz/sha512/{sha512}/lcms2-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. Color management engine.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "mm2/Little-CMS"
+      }
+    },
+    "alsa-firmware": {
+      "version": "TODO",
+      "url_template": "https://src.fedoraproject.org/lookaside/extras/alsa-firmware/alsa-firmware-{version}.tar.gz/sha512/{sha512}/alsa-firmware-{version}.tar.gz",
+      "sha512": "TODO-record-on-first-fetch",
+      "stage": 2,
+      "note": "Fedora dist-git import. ALSA firmware.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "alsa-project/alsa-firmware"
+      }
+    }
+  }
+}

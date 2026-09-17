@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: awww (Codeberg) is not in Fedora dist-git.",
+  "upstream": "https://codeberg.org/LGFae/awww",
+  "upstream_tag": "v0.12.1"
+}

@@ -1,0 +1,8 @@
+.packit_cache/
+work/
+*.rpm
+*.srpm
+*.log
+__pycache__/
+.pytest_cache/
+pigeon/reports/

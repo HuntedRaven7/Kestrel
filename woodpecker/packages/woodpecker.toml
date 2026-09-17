@@ -1,0 +1,299 @@
+# Woodpecker package contract
+# Server image: no GUI, no desktop stack.
+# Packages from Pigeon repo + Fedora/Hummingbird base.
+# Fedora repos NEVER enabled at runtime — only Pigeon + base image content.
+
+[woodpecker]
+# Container / orchestration
+podman = "*"
+skopeo = "*"
+buildah = "*"
+containers-common = "*"
+criu = "*"
+crun = "*"
+runc = "*"
+container-selinux = "*"
+containerd = "*"
+
+# Management
+cockpit = "*"
+cockpit-podman = "*"
+cockpit-storaged = "*"
+cockpit-system = "*"
+cockpit-networkmanager = "*"
+
+# Updates
+uupd = "0.1.0"
+bootc-auto-update = "*"
+rpm-ostree = "*"
+
+# Network / VPN
+tailscale = "*"
+wireguard-tools = "*"
+openssh-server = "*"
+openssh-clients = "*"
+NetworkManager = "*"
+NetworkManager-tui = "*"
+firewalld = "*"
+iptables = "*"
+nftables = "*"
+ModemManager = "*"
+samba = "*"
+libnfs = "*"
+
+# Storage
+lvm2 = "*"
+cryptsetup = "*"
+mdadm = "*"
+xfsprogs = "*"
+btrfs-progs = "*"
+dosfstools = "*"
+nvme-cli = "*"
+smartmontools = "*"
+udisks2 = "*"
+libblockdev = "*"
+libbytesize = "*"
+parted = "*"
+pciutils = "*"
+
+# Hardware enablement
+fwupd = "*"
+libinput = "*"
+libwacom = "*"
+libcamera = "*"
+libva = "*"
+libva-utils = "*"
+intel-media-driver-free = "*"
+intel-mediasdk = "*"
+intel-vpl-gpu-rt = "*"
+igt-gpu-tools = "*"
+iio-sensor-proxy = "*"
+ddcutil = "*"
+evtest = "*"
+i2c-tools = "*"
+libratbag = "*"
+input-remapper = "*"
+libei = "*"
+libevdev = "*"
+libglvnd = "*"
+libgudev = "*"
+libpciaccess = "*"
+hwdata = "*"
+
+# System
+systemd = "*"
+systemd-resolved = "*"
+systemd-container = "*"
+dbus = "*"
+polkit = "*"
+udev = "*"
+chrony = "*"
+sudo = "*"
+rsync = "*"
+vim = "*"
+nano = "*"
+tmux = "*"
+htop = "*"
+btop = "*"
+fzf = "*"
+ripgrep = "*"
+fd-find = "*"
+bat = "*"
+eza = "*"
+zoxide = "*"
+git = "*"
+
+# Monitoring
+prometheus-node-exporter = "*"
+grafana-loki = "*"
+
+# Development (optional)
+podman-compose = "*"
+python3 = "*"
+python3-pip = "*"
+python3-dnf = "*"
+python3-hawkey = "*"
+python3-libdnf5 = "*"
+golang = "*"
+rust = "*"
+cargo = "*"
+
+# Bootc
+bootc = "*"
+bootc-image-builder = "*"
+dracut = "*"
+grub2 = "*"
+grub2-efi-x64 = "*"
+grub2-efi-x64-modules = "*"
+shim-x64 = "*"
+mokutil = "*"
+efibootmgr = "*"
+
+# Firmware
+linux-firmware = "*"
+linux-firmware-whence = "*"
+alsa-firmware = "*"
+
+# Virtualization
+qemu-img = "*"
+qemu-kvm = "*"
+libvirt = "*"
+libvirt-daemon = "*"
+libvirt-daemon-kvm = "*"
+virt-manager = "*"
+virt-install = "*"
+virt-viewer = "*"
+
+# Network utilities
+iproute = "*"
+dnsmasq = "*"
+openresolv = "*"
+
+# File systems
+e2fsprogs = "*"
+ntfs-3g = "*"
+
+# Audio (for server multimedia if needed)
+pipewire = "*"
+pipewire-pulseaudio = "*"
+pipewire-alsa = "*"
+pipewire-jack = "*"
+wireplumber = "*"
+alsa-lib = "*"
+alsa-utils = "*"
+pulseaudio-utils = "*"
+
+# Utilities
+distrobox = "*"
+fuse = "*"
+fzf = "*"
+fish = "*"
+zsh = "*"
+
+# Security
+selinux-policy = "*"
+selinux-policy-targeted = "*"
+audit = "*"
+libselinux = "*"
+libsepol = "*"
+policycoreutils = "*"
+setroubleshoot = "*"
+
+# Flatpak
+flatpak = "*"
+flatpak-builder = "*"
+flatpak-session-helper = "*"
+
+# Internationalization
+glibc-langpack-en = "*"
+glibc-all-langpacks = "*"
+langtable = "*"
+liblangtag = "*"
+
+# Fonts
+dejavu-sans-fonts = "*"
+dejavu-serif-fonts = "*"
+dejavu-sans-mono-fonts = "*"
+google-noto-sans-fonts = "*"
+google-noto-serif-fonts = "*"
+google-noto-mono-fonts = "*"
+liberation-fonts = "*"
+liberation-sans-fonts = "*"
+liberation-serif-fonts = "*"
+liberation-mono-fonts = "*"
+
+# Printing
+cups = "*"
+cups-filters = "*"
+cups-pk-helper = "*"
+print-manager = "*"
+
+# Bluetooth
+bluez = "*"
+gnome-bluetooth = "*"
+
+# Mobile broadband
+ModemManager = "*"
+
+# Power management
+upower = "*"
+
+# Color management
+colord = "*"
+colord-gtk = "*"
+lcms2 = "*"
+
+# Graphics libraries
+mesa-dri-drivers = "*"
+mesa-vulkan-drivers = "*"
+mesa-filesystem = "*"
+vulkan-loader = "*"
+vulkan-headers = "*"
+spirv-tools = "*"
+libdrm = "*"
+
+# Input
+libxkbcommon = "*"
+xkeyboard-config = "*"
+xorg-x11-server-utils = "*"
+xorg-x11-xinit = "*"
+xorg-x11-xauth = "*"
+
+# Desktop portal (base)
+xdg-desktop-portal = "*"
+xdg-desktop-portal-gtk = "*"
+
+# Wayland
+wayland = "*"
+wayland-protocols = "*"
+waypipe = "*"
+
+# Additional libs
+cairo = "*"
+pango = "*"
+pixman = "*"
+graphene = "*"
+fribidi = "*"
+harfbuzz = "*"
+gdk-pixbuf2 = "*"
+gobject-introspection = "*"
+json-glib = "*"
+libsoup3 = "*"
+rest = "*"
+
+# Python ecosystem
+python3-argcomplete = "*"
+python3-dasbus = "*"
+python3-dbus-next = "*"
+python3-evdev = "*"
+python3-psutil = "*"
+python3-pydantic = "*"
+python3-pydantic-core = "*"
+
+# Rust tools
+rust-bootupd = "*"
+rust-just = "*"
+
+# JSON/RPC
+yyjson = "*"
+xmlrpc-c = "*"
+
+# Misc
+make = "*"
+sassc = "*"
+sdl2-compat = "*"
+shared-mime-info = "*"
+squashfs-tools = "*"
+startup-notification = "*"
+switcheroo-control = "*"
+tecla = "*"
+fastfetch = "*"
+gum = "*"
+isomd5sum = "*"
+zenity = "*"
+evtest = "*"
+
+[unavailable]
+# Each entry carries a tracking issue. Missing packages fail the build otherwise.
+# Example format when needed:
+# package-name = "https://github.com/HuntedRaven7/Kestrel/issues/XXX"

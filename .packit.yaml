@@ -1,0 +1,121 @@
+# Packit owns spec + source bumps; merges require the verified RPM build gate
+# plus a recorded new digest/signature (see PLAN.md §3.2).
+specfile_path: pigeon/packages/mango/mango.spec
+upstream_package_name: mango
+upstream_tag_template: "{version}"
+
+packages:
+  wlroots:
+    specfile_path: pigeon/packages/wlroots/wlroots0.20.spec
+  scenefx:
+    specfile_path: pigeon/packages/scenefx/scenefx.spec
+  mango:
+    specfile_path: pigeon/packages/mango/mango.spec
+    upstream_tag_template: "{version}"
+  quickshell:
+    specfile_path: pigeon/packages/quickshell/quickshell.spec
+    upstream_tag_template: "v{version}"
+  awww:
+    specfile_path: pigeon/packages/awww/awww.spec
+  rofi:
+    specfile_path: pigeon/packages/rofi/rofi.spec
+  ghostty:
+    specfile_path: pigeon/packages/ghostty/ghostty.spec
+  kestrel-gdm-config:
+    specfile_path: pigeon/packages/kestrel-gdm-config/kestrel-gdm-config.spec
+  xdg-desktop-portal-wlr:
+    specfile_path: pigeon/packages/xdg-desktop-portal-wlr/xdg-desktop-portal-wlr.spec
+  xdg-desktop-portal-gtk:
+    specfile_path: pigeon/packages/xdg-desktop-portal-gtk/xdg-desktop-portal-gtk.spec
+  seatd:
+    specfile_path: pigeon/packages/seatd/seatd.spec
+  wl-clipboard:
+    specfile_path: pigeon/packages/wl-clipboard/wl-clipboard.spec
+  grim:
+    specfile_path: pigeon/packages/grim/grim.spec
+  slurp:
+    specfile_path: pigeon/packages/slurp/slurp.spec
+  swayidle:
+    specfile_path: pigeon/packages/swayidle/swayidle.spec
+  swaylock:
+    specfile_path: pigeon/packages/swaylock/swaylock.spec
+  brightnessctl:
+    specfile_path: pigeon/packages/brightnessctl/brightnessctl.spec
+  pamixer:
+    specfile_path: pigeon/packages/pamixer/pamixer.spec
+  xfce-polkit:
+    specfile_path: pigeon/packages/xfce-polkit/xfce-polkit.spec
+  polkit:
+    specfile_path: pigeon/packages/polkit/polkit.spec
+  foot:
+    specfile_path: pigeon/packages/foot/foot.spec
+  fwupd:
+    specfile_path: pigeon/packages/fwupd/fwupd.spec
+  libinput:
+    specfile_path: pigeon/packages/libinput/libinput.spec
+  libwacom:
+    specfile_path: pigeon/packages/libwacom/libwacom.spec
+  libratbag:
+    specfile_path: pigeon/packages/libratbag/libratbag.spec
+  iio-sensor-proxy:
+    specfile_path: pigeon/packages/iio-sensor-proxy/iio-sensor-proxy.spec
+  ddcutil:
+    specfile_path: pigeon/packages/ddcutil/ddcutil.spec
+  ModemManager:
+    specfile_path: pigeon/packages/ModemManager/ModemManager.spec
+  tailscale:
+    specfile_path: pigeon/packages/tailscale/tailscale.spec
+  wireguard-tools:
+    specfile_path: pigeon/packages/wireguard-tools/wireguard-tools.spec
+  firewalld:
+    specfile_path: pigeon/packages/firewalld/firewalld.spec
+  containerd:
+    specfile_path: pigeon/packages/containerd/containerd.spec
+  runc:
+    specfile_path: pigeon/packages/runc/runc.spec
+  crun:
+    specfile_path: pigeon/packages/crun/crun.spec
+  podman:
+    specfile_path: pigeon/packages/podman/podman.spec
+  skopeo:
+    specfile_path: pigeon/packages/skopeo/skopeo.spec
+  buildah:
+    specfile_path: pigeon/packages/buildah/buildah.spec
+  dracut:
+    specfile_path: pigeon/packages/dracut/dracut.spec
+  grub2:
+    specfile_path: pigeon/packages/grub2/grub2.spec
+  smartmontools:
+    specfile_path: pigeon/packages/smartmontools/smartmontools.spec
+  nvme-cli:
+    specfile_path: pigeon/packages/nvme-cli/nvme-cli.spec
+  pciutils:
+    specfile_path: pigeon/packages/pciutils/pciutils.spec
+  hwdata:
+    specfile_path: pigeon/packages/hwdata/hwdata.spec
+  libblockdev:
+    specfile_path: pigeon/packages/libblockdev/libblockdev.spec
+  libbytesize:
+    specfile_path: pigeon/packages/libbytesize/libbytesize.spec
+  udisks2:
+    specfile_path: pigeon/packages/udisks2/udisks2.spec
+  upower:
+    specfile_path: pigeon/packages/upower/upower.spec
+  bluez:
+    specfile_path: pigeon/packages/bluez/bluez.spec
+  colord:
+    specfile_path: pigeon/packages/colord/colord.spec
+  colord-gtk:
+    specfile_path: pigeon/packages/colord-gtk/colord-gtk.spec
+  lcms2:
+    specfile_path: pigeon/packages/lcms2/lcms2.spec
+  alsa-firmware:
+    specfile_path: pigeon/packages/alsa-firmware/alsa-firmware.spec
+
+jobs:
+  srpm_builds:
+    trigger: pull_request
+    metadata:
+      targets:
+        fedora-44-x86_64:
+          distros: [fedora-44]

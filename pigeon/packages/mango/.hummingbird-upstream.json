@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: Mango is not in Fedora dist-git.",
+  "upstream": "https://github.com/mangowm/mango",
+  "upstream_tag": "0.17.2"
+}

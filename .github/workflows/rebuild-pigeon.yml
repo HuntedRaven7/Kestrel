@@ -1,0 +1,258 @@
+name: rebuild-pigeon
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_rebuild:
+        type: boolean
+        description: "Force full rebuild of all stages"
+        required: false
+        default: false
+      stage:
+        type: string
+        description: "Single stage to build (0-4), empty for all"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  prepare:
+    name: Prepare build plan
+    runs-on: ubuntu-24.04
+    outputs:
+      stages: ${{ steps.plan.outputs.stages }}
+      changed: ${{ steps.plan.outputs.changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed packages
+        id: plan
+        run: |
+          python3 << 'EOF'
+          import json
+          import subprocess
+          import sys
+          
+          # Get all packages
+          result = subprocess.run([sys.executable, "pigeon/tools/packit_workflow.py", "packages"], 
+                                capture_output=True, text=True)
+          all_packages = json.loads(result.stdout.strip())
+          
+          # For now, build all packages in all stages
+          # In the future, this would detect changes and only rebuild affected stages
+          stages = {
+            "0": ["wlroots", "scenefx"],
+            "1": ["mango", "quickshell"],
+            "2": ["awww", "rofi", "ghostty", "kestrel-gdm-config"]
+          }
+          
+          # Apply stage filter if provided
+          stage_filter = "${{ github.event.inputs.stage }}"
+          if stage_filter:
+            stages = {k: v for k, v in stages.items() if k == stage_filter}
+          
+          print(f"stages={json.dumps(stages)}")
+          print(f"changed={json.dumps(all_packages)}")
+          EOF
+
+  preflight:
+    name: Preflight BuildRequires check
+    runs-on: ubuntu-24.04
+    needs: prepare
+    if: ${{ needs.prepare.outputs.changed != '[]' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Pull Fedora 44 build container
+        run: podman pull quay.io/fedora/fedora:44
+
+      - name: Advisory BuildRequires resolution
+        run: |
+          for pkg in $(python3 pigeon/tools/packit_workflow.py packages | jq -r '.[]'); do
+            echo "Checking $pkg..."
+            podman run --rm \
+              -v "$(pwd)/pigeon/packages/$pkg:/spec:Z" \
+              -v "$(pwd)/pigeon/config/upstream-sources.json:/sources.json:Z" \
+              quay.io/fedora/fedora:44 \
+              bash -c "
+                dnf install -y fedora-workstation-repositories &&
+                dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo &&
+                dnf builddep -y /spec/*.spec 2>&1 | tail -20 || true
+              " || echo "Preflight warning for $pkg (continuing)"
+        continue-on-error: true
+
+  rebuild0:
+    name: Build Stage 0 (wlroots, scenefx)
+    needs: [prepare, preflight]
+    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '0') }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: "0"
+      packages: '[{"package": "wlroots"}, {"package": "scenefx"}]'
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  rebuild1:
+    name: Build Stage 1 (mango, quickshell)
+    needs: [prepare, preflight, rebuild0]
+    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '1') }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: "1"
+      packages: '[{"package": "mango"}, {"package": "quickshell"}]'
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  rebuild2:
+    name: Build Stage 2 (awww, rofi, ghostty, kestrel-gdm-config)
+    needs: [prepare, preflight, rebuild1]
+    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '2') }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: "2"
+      packages: '[{"package": "awww"}, {"package": "rofi"}, {"package": "ghostty"}, {"package": "kestrel-gdm-config"}]'
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  precedence:
+    name: Precedence check
+    runs-on: ubuntu-24.04
+    needs: [prepare, rebuild0, rebuild1, rebuild2]
+    if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all stage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: stage-*
+          path: ~/stages
+          merge-multiple: true
+
+      - name: Run precedence check
+        run: |
+          python3 pigeon/tools/publish_gate.py \
+            --repo-root ~/stages \
+            --base-image quay.io/hummingbird-community/bootc-os:latest \
+            --pigeon-suffix .hum1.pigeon
+
+  publish:
+    name: Publish to GHCR
+    runs-on: ubuntu-24.04
+    needs: [prepare, precedence]
+    if: ${{ github.ref == 'refs/heads/main' && needs.precedence.result == 'success' }}
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all stage artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: stage-*
+          path: ~/stages
+          merge-multiple: true
+
+      - name: Create repository structure
+        run: |
+          mkdir -p ~/repository
+          for stage in 0 1 2; do
+            if [ -d ~/stages/stage-$stage ]; then
+              cp -r ~/stages/stage-$stage/* ~/repository/ 2>/dev/null || true
+            fi
+          done
+
+      - name: Create repodata
+        run: |
+          cd ~/repository
+          createrepo_c .
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.4.0'
+
+      - name: Sign repomd.xml (keyless cosign)
+        run: |
+          cosign sign-blob --yes \
+            --output-signature ~/repository/repodata/repomd.xml.sig \
+            ~/repository/repodata/repomd.xml
+
+      - name: Build and push OCI image
+        run: |
+          cat > ~/Dockerfile.publish << 'EOF'
+          FROM scratch
+          COPY repository /repository
+          LABEL org.opencontainers.image.title="Pigeon RPM Repository"
+          LABEL org.opencontainers.image.description="Kestrel Pigeon package factory repository"
+          LABEL org.opencontainers.image.source="https://github.com/HuntedRaven7/Kestrel"
+          EOF
+          podman build -f ~/Dockerfile.publish -t ghcr.io/huntedraven7/pigeon:latest ~/.
+          podman push ghcr.io/huntedraven7/pigeon:latest
+
+      - name: Generate SBOM (syft)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ghcr.io/huntedraven7/pigeon:latest
+          format: spdx-json
+          output-file: ~/pigeon-sbom.spdx.json
+
+      - name: Attest SLSA provenance
+        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+        with:
+          base64-subjects: |
+            ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', hashFiles('~/repository/repodata/repomd.xml')) }}
+          provenance-name: pigeon-provenance
+
+      - name: Upload SBOM as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pigeon-sbom
+          path: ~/pigeon-sbom.spdx.json
+          retention-days: 30
+
+  trivy-scan:
+    name: Trivy vulnerability scan
+    runs-on: ubuntu-24.04
+    needs: publish
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Run Trivy scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/huntedraven7/pigeon:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'

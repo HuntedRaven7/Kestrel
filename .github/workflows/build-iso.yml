@@ -1,0 +1,97 @@
+name: build-iso
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Image to build ISO for (warbler, woodpecker)"
+        required: false
+        type: string
+        default: "warbler"
+      flavor:
+        description: "Flavor (main, nvidia, gaming, nvidia-gaming for warbler)"
+        required: false
+        type: string
+        default: "main"
+      push:
+        description: "Push ISO artifacts"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  iso:
+    name: Build ISO (${{ github.event.inputs.image }}-${{ github.event.inputs.flavor }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Pull bootc-image-builder
+        run: |
+          podman pull quay.io/centos-bootc/bootc-image-builder:latest
+
+      - name: Pull base image
+        run: |
+          if [ "${{ github.event.inputs.image }}" = "warbler" ]; then
+            podman pull ghcr.io/huntedraven7/warbler:${{ github.event.inputs.flavor }}-testing
+            IMAGE_REF="ghcr.io/huntedraven7/warbler:${{ github.event.inputs.flavor }}-testing"
+            ISO_NAME="warbler-${{ github.event.inputs.flavor }}-testing"
+          else
+            podman pull ghcr.io/huntedraven7/woodpecker:testing
+            IMAGE_REF="ghcr.io/huntedraven7/woodpecker:testing"
+            ISO_NAME="woodpecker-testing"
+          fi
+
+      - name: Build ISO with bootc-image-builder
+        run: |
+          mkdir -p /tmp/iso-output
+          podman run --rm --privileged \
+            -v /var/lib/containers:/var/lib/containers \
+            -v /tmp/iso-output:/output \
+            quay.io/centos-bootc/bootc-image-builder:latest \
+            --type iso \
+            --output-dir /output \
+            ${IMAGE_REF}
+
+      - name: Verify ISO
+        run: |
+          ls -la /tmp/iso-output/
+          ISO_FILE=$(find /tmp/iso-output -name "*.iso" | head -1)
+          if [ -z "$ISO_FILE" ]; then
+            echo "ERROR: No ISO file found"
+            exit 1
+          fi
+          echo "ISO built: $ISO_FILE"
+          echo "Size: $(du -h $ISO_FILE | cut -f1)"
+          file $ISO_FILE
+          echo "iso_path=$ISO_FILE" >> $GITHUB_OUTPUT
+        id: iso
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iso-${{ github.event.inputs.image }}-${{ github.event.inputs.flavor }}
+          path: ${{ steps.iso.outputs.iso_path }}
+          retention-days: 7
+
+      - name: Push ISO to registry (as OCI artifact)
+        if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
+        run: |
+          ISO_FILE="${{ steps.iso.outputs.iso_path }}"
+          # Push as OCI artifact using ORAS or similar
+          # For now, we'll just note the artifact is available via GitHub Actions
+          echo "ISO artifact available for download from workflow run"

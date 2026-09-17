@@ -1,0 +1,8 @@
+[hummingbird]
+name=Hummingbird Copr Repository
+baseurl=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/key/gpgkey
+repo_gpgcheck=0
+priority=10

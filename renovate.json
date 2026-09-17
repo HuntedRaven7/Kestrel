@@ -1,0 +1,104 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["renovate"],
+  "packageRules": [
+    {
+      "description": "Pigeon upstream sources - grouped PRs",
+      "matchFileNames": ["pigeon/config/upstream-sources.json"],
+      "groupName": "pigeon upstream sources"
+    },
+    {
+      "description": "Quickshell must rebuild whenever Qt moves — keep coupled",
+      "matchFileNames": ["pigeon/config/upstream-sources.json"],
+      "matchDepNames": ["qt6-qtbase", "quickshell-mirror/quickshell"],
+      "groupName": "qt-quickshell"
+    },
+    {
+      "description": "Keep digest pins fresh (base image, pigeon SHA, uupd)",
+      "matchFileNames": ["warbler/Containerfile", "woodpecker/Containerfile", "config/flavors.json"],
+      "groupName": "digest pins"
+    },
+    {
+      "description": "Shared bootc actions stay on v1",
+      "matchPackageNames": ["projectbluefin/actions"],
+      "allowedVersions": "/^v1\\./"
+    },
+    {
+      "description": "Auto-merge patch/minor updates after CI passes",
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json github-tags packages",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"github-tags\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
+      ],
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json gitlab-tags packages (wlroots)",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"gitlab-tags\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
+      ],
+      "datasourceTemplate": "gitlab-tags"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json custom regex for Codeberg (awww)",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"regex\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
+      ],
+      "datasourceTemplate": "regex"
+    },
+    {
+      "customType": "regex",
+      "description": "Containerfile BASE_IMAGE digest pin",
+      "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
+      "matchStrings": [
+        "ARG BASE_IMAGE=quay\\.io/hummingbird-community/bootc-os@sha256:(?<currentValue>[a-f0-9]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "quay.io/hummingbird-community/bootc-os"
+    },
+    {
+      "customType": "regex",
+      "description": "Containerfile PIGEON_IMAGE_SHA digest pin",
+      "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
+      "matchStrings": [
+        "ARG PIGEON_IMAGE_SHA=sha256:(?<currentValue>[a-f0-9]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/huntedraven7/pigeon"
+    },
+    {
+      "customType": "regex",
+      "description": "config/flavors.json uupd version+SHA",
+      "fileMatch": ["config/flavors\\.json$"],
+      "matchStrings": [
+        "\"uupd_version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "depNameTemplate": "uupd/uupd"
+    }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"url_template\":\\s*\"(?<depName>https://codeberg\\.org/[^\"]+)\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "versioningTemplate": "semver",
+      "datasourceTemplate": "regex"
+    }
+  ]
+}
