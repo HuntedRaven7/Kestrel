@@ -5,7 +5,7 @@ check:
     python3 pigeon/tools/validate.py
 
 test:
-    python3 -m pytest tests pigeon/tests -q
+    python3 -m pytest pigeon/tests -q
 
 build-pigeon:
     echo "TODO(phase-2): local pigeon stage build (podman + fedora:44 container)"
