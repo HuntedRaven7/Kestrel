@@ -238,7 +238,8 @@ jobs:
     needs: publish
     if: ${{ github.ref == 'refs/heads/main' }}
     permissions:
-      contents: read
+      contents: write
+      actions: read
       id-token: write
       attestations: write
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
