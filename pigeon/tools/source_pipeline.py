@@ -132,12 +132,14 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         
         # Copy to output directory if specified
         if output:
+            Path(output).mkdir(parents=True, exist_ok=True)
             shutil.copy(archive, Path(output) / archive.name)
         
         # Also copy to package directory for packit Source0 lookup
-        pkg_dir = ROOT / "pigeon" / "packages" / pkg
-        if pkg_dir.exists():
-            shutil.copy(archive, pkg_dir / archive.name)
+        if stage_into:
+            pkg_dir = ROOT / stage_into / pkg
+            if pkg_dir.exists():
+                shutil.copy(archive, pkg_dir / archive.name)
         
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
