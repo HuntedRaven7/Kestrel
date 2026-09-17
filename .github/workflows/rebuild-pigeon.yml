@@ -218,19 +218,26 @@ jobs:
           format: spdx-json
           output-file: ~/pigeon-sbom.spdx.json
 
-      - name: Attest SLSA provenance
-        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
-        with:
-          base64-subjects: |
-            ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', hashFiles('~/repository/repodata/repomd.xml')) }}
-          provenance-name: pigeon-provenance
-
       - name: Upload SBOM as artifact
         uses: actions/upload-artifact@v4
         with:
           name: pigeon-sbom
           path: ~/pigeon-sbom.spdx.json
           retention-days: 30
+
+  slsa-provenance:
+    name: Attest SLSA provenance
+    needs: publish
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: |
+        ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', hashFiles('~/repository/repodata/repomd.xml')) }}
+      provenance-name: pigeon-provenance
 
   trivy-scan:
     name: Trivy vulnerability scan
