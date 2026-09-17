@@ -50,9 +50,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Packit
-        uses: packit/actions/srpm@main
-
       - name: Install dependencies
         run: |
           sudo dnf install -y fedora-workstation-repositories
@@ -66,7 +63,7 @@ jobs:
         id: srpm
         run: |
           cd pigeon/packages/${{ matrix.package }}
-          packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log
+          python3 -m packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log
           echo "srpm_path=$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm | head -1)" >> $GITHUB_OUTPUT
 
       - name: Verify SRPM
