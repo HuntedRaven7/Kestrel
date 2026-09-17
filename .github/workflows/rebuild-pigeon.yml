@@ -80,17 +80,30 @@ jobs:
 
       - name: Advisory BuildRequires resolution
         run: |
-          for pkg in $(python3 pigeon/tools/packit_workflow.py packages | jq -r '.[]'); do
-            echo "Checking $pkg..."
-            podman run --rm \
-              -v "$(pwd)/pigeon/packages/$pkg:/spec:Z" \
-              -v "$(pwd)/pigeon/config/upstream-sources.json:/sources.json:Z" \
-              quay.io/fedora/fedora:44 \
-              bash -c "
-                dnf install -y fedora-workstation-repositories &&
-                dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo &&
-                dnf builddep -y /spec/*.spec 2>&1 | tail -20 || true
-              " || echo "Preflight warning for $pkg (continuing)"
+          python3 << 'EOF'
+          import subprocess
+          import sys
+          
+          result = subprocess.run([sys.executable, "pigeon/tools/packit_workflow.py", "packages"], 
+                                capture_output=True, text=True)
+          packages = [p for p in result.stdout.strip().split('\n') if p]
+          
+          for pkg in packages:
+              print(f"Checking {pkg}...")
+              try:
+                  subprocess.run([
+                      "podman", "run", "--rm",
+                      "-v", f"$(pwd)/pigeon/packages/{pkg}:/spec:Z",
+                      "-v", "$(pwd)/pigeon/config/upstream-sources.json:/sources.json:Z",
+                      "quay.io/fedora/fedora:44",
+                      "bash", "-c",
+                      "dnf install -y fedora-workstation-repositories && "
+                      "dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo && "
+                      "dnf builddep -y /spec/*.spec 2>&1 | tail -20 || true"
+                  ], check=False)
+              except Exception as e:
+                  print(f"Preflight warning for {pkg} (continuing): {e}")
+          EOF
         continue-on-error: true
 
   rebuild0:
