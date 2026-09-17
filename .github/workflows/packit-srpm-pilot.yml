@@ -30,7 +30,7 @@ jobs:
           echo "packages=$(cat /tmp/packages.json)" >> $GITHUB_OUTPUT
 
   srpm:
-    name: Build SRPM
+    name: Build SRPM (${{ matrix.package }})
     needs: discover
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -50,21 +50,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
+      - name: Set up podman
         run: |
-          sudo dnf install -y fedora-workstation-repositories
-          sudo dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
 
-      - name: Download source via source_pipeline.py
-        run: |
-          python3 pigeon/tools/source_pipeline.py fetch ${{ matrix.package }} --output ~/rpmbuild/SOURCES/
+      - name: Pull Fedora 44 build container
+        run: podman pull quay.io/fedora/fedora:44
 
-      - name: Generate SRPM with Packit
-        id: srpm
+      - name: Build SRPM in Fedora container
         run: |
-          cd pigeon/packages/${{ matrix.package }}
-          python3 -m packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log
-          echo "srpm_path=$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm | head -1)" >> $GITHUB_OUTPUT
+          podman run --rm \
+            -v "$(pwd):/workspace:Z" \
+            -w /workspace \
+            quay.io/fedora/fedora:44 \
+            bash -c "
+              dnf install -y fedora-workstation-repositories &&
+              dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo &&
+              dnf install -y packit python3-pip &&
+              cd pigeon/packages/${{ matrix.package }} &&
+              python3 -m packit srpm --preserve-spec --output ~/rpmbuild/SRPMS/ 2>&1 | tee /tmp/packit.log &&
+              echo 'srpm_path='\$(ls ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm | head -1) >> \$GITHUB_OUTPUT
+            "
 
       - name: Verify SRPM
         run: |
