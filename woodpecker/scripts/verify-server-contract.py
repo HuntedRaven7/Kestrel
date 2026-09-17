@@ -82,6 +82,16 @@ def main() -> int:
         if not check_file_exists("/etc/ssh/banner"):
             errors.append("SSH banner not found")
 
+    # Check Kubernetes/k0s
+    if "kubernetes" in data:
+        k = data["kubernetes"]
+        if k.get("k0s_enabled") and not check_service_enabled("k0scontroller.service"):
+            errors.append("k0s controller service not enabled")
+        if k.get("k0s_enabled") and not check_service_enabled("k0s-first-boot.service"):
+            errors.append("k0s first-boot service not enabled")
+        if not check_file_exists("/usr/bin/k0s"):
+            errors.append("k0s binary not found at /usr/bin/k0s")
+
     if errors:
         print("SERVER CONTRACT VIOLATIONS:", file=sys.stderr)
         for e in errors:

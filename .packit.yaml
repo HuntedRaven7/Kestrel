@@ -111,6 +111,14 @@ packages:
     specfile_path: pigeon/packages/lcms2/lcms2.spec
   alsa-firmware:
     specfile_path: pigeon/packages/alsa-firmware/alsa-firmware.spec
+  k0s:
+    specfile_path: pigeon/packages/k0s/k0s.spec
+  kubeflex:
+    specfile_path: pigeon/packages/kubeflex/kubeflex.spec
+  kubestellar:
+    specfile_path: pigeon/packages/kubestellar/kubestellar.spec
+  kubestellar-console:
+    specfile_path: pigeon/packages/kubestellar-console/kubestellar-console.spec
 
 jobs:
   srpm_builds:
