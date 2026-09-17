@@ -1,0 +1,17 @@
+[fedora-44]
+name=Fedora 44 - $basearch
+baseurl=https://archives.fedoraproject.org/pub/fedora/linux/releases/44/Everything/$basearch/os/
+enabled=1
+gpgcheck=1
+gpgkey=https://archives.fedoraproject.org/pub/fedora/linux/releases/44/Everything/$basearch/os/RPM-GPG-KEY-fedora-44-$basearch
+repo_gpgcheck=0
+priority=20
+
+[fedora-44-updates]
+name=Fedora 44 - Updates - $basearch
+baseurl=https://archives.fedoraproject.org/pub/fedora/linux/updates/44/Everything/$basearch/
+enabled=1
+gpgcheck=1
+gpgkey=https://archives.fedoraproject.org/pub/fedora/linux/releases/44/Everything/$basearch/os/RPM-GPG-KEY-fedora-44-$basearch
+repo_gpgcheck=0
+priority=20

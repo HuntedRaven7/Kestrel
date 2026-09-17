@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: Ghostty is not in Fedora dist-git. Needs zig >= 0.15.2 (see spec).",
+  "upstream": "https://github.com/ghostty-org/ghostty",
+  "upstream_tag": "v1.3.1"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: rebuilt for .hum1.pigeon tagging, not a dist-git import.",
+  "upstream": "https://github.com/davatorium/rofi",
+  "upstream_tag": "1.7.9.1"
+}

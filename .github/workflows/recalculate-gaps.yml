@@ -1,0 +1,268 @@
+name: recalculate-gaps
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
+
+jobs:
+  gaps:
+    name: Recalculate package gaps
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman jq
+
+      - name: Pull Hummingbird base image
+        run: |
+          podman pull quay.io/hummingbird-community/bootc-os:latest
+
+      - name: Extract base image RPMs
+        id: base-rpms
+        run: |
+          # Create a container from the base image and query RPMs
+          cid=$(podman create quay.io/hummingbird-community/bootc-os:latest)
+          podman cp $cid:/var/lib/rpm /tmp/base-rpm-db
+          podman rm $cid
+
+          # Query installed packages
+          rpm --dbpath /tmp/base-rpm-db -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' | sort > /tmp/base-rpms.txt
+          echo "base_rpms_count=$(wc -l < /tmp/base-rpms.txt)" >> $GITHUB_OUTPUT
+
+      - name: Pull Pigeon repo image
+        run: |
+          podman pull ghcr.io/huntedraven7/pigeon:latest || echo "Pigeon image not yet published, skipping"
+
+      - name: Extract Pigeon repo packages
+        id: pigeon-rpms
+        run: |
+          if podman image exists ghcr.io/huntedraven7/pigeon:latest; then
+            cid=$(podman create ghcr.io/huntedraven7/pigeon:latest)
+            podman cp $cid:/repository /tmp/pigeon-repo
+            podman rm $cid
+
+            # List all RPMs in the Pigeon repo
+            find /tmp/pigeon-repo -name "*.rpm" -exec rpm -qp --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' {} \; | sort -u > /tmp/pigeon-rpms.txt
+            echo "pigeon_rpms_count=$(wc -l < /tmp/pigeon-rpms.txt)" >> $GITHUB_OUTPUT
+          else
+            echo "pigeon_rpms_count=0" >> $GITHUB_OUTPUT
+            touch /tmp/pigeon-rpms.txt
+          fi
+
+      - name: Pull Warbler images
+        run: |
+          for flavor in main nvidia gaming nvidia-gaming; do
+            podman pull ghcr.io/huntedraven7/warbler:${flavor}-testing 2>/dev/null || echo "Warbler ${flavor} not available"
+          done
+          podman pull ghcr.io/huntedraven7/woodpecker:testing 2>/dev/null || echo "Woodpecker not available"
+
+      - name: Extract Warbler/Woodpecker installed RPMs
+        id: image-rpms
+        run: |
+          mkdir -p /tmp/image-rpms
+          for flavor in main nvidia gaming nvidia-gaming; do
+            if podman image exists ghcr.io/huntedraven7/warbler:${flavor}-testing; then
+              cid=$(podman create ghcr.io/huntedraven7/warbler:${flavor}-testing)
+              podman cp $cid:/var/lib/rpm /tmp/image-rpms/warbler-${flavor}-rpm-db
+              podman rm $cid
+              rpm --dbpath /tmp/image-rpms/warbler-${flavor}-rpm-db -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' | sort > /tmp/image-rpms/warbler-${flavor}-rpms.txt
+            fi
+          done
+
+          if podman image exists ghcr.io/huntedraven7/woodpecker:testing; then
+            cid=$(podman create ghcr.io/huntedraven7/woodpecker:testing)
+            podman cp $cid:/var/lib/rpm /tmp/image-rpms/woodpecker-rpm-db
+            podman rm $cid
+            rpm --dbpath /tmp/image-rpms/woodpecker-rpm-db -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' | sort > /tmp/image-rpms/woodpecker-rpms.txt
+          fi
+
+      - name: Load contract packages
+        id: contracts
+        run: |
+          # Parse warbler.toml for expected packages
+          python3 << 'EOF'
+          import tomllib
+          from pathlib import Path
+
+          # Warbler contract
+          warbler_data = tomllib.loads(Path("warbler/packages/warbler.toml").read_text())
+          warbler_pkgs = set()
+          if "warbler" in warbler_data:
+              warbler_pkgs.update(warbler_data["warbler"].keys())
+
+          # Woodpecker contract
+          woodpecker_data = tomllib.loads(Path("woodpecker/packages/woodpecker.toml").read_text())
+          woodpecker_pkgs = set()
+          if "woodpecker" in woodpecker_data:
+              woodpecker_pkgs.update(woodpecker_data["woodpecker"].keys())
+
+          # Write contract package lists
+          with open("/tmp/warbler-contract.txt", "w") as f:
+              for p in sorted(warbler_pkgs):
+                  f.write(f"{p}\n")
+
+          with open("/tmp/woodpecker-contract.txt", "w") as f:
+              for p in sorted(woodpecker_pkgs):
+                  f.write(f"{p}\n")
+
+          print(f"warbler_contract_count={len(warbler_pkgs)}")
+          print(f"woodpecker_contract_count={len(woodpecker_pkgs)}")
+          EOF
+
+      - name: Compute gaps
+        id: gaps
+        run: |
+          # Combine base + pigeon = available packages
+          cat /tmp/base-rpms.txt /tmp/pigeon-rpms.txt 2>/dev/null | awk '{print $1}' | sort -u > /tmp/available.txt
+
+          # Warbler gaps
+          if [ -f /tmp/image-rpms/warbler-main-rpms.txt ]; then
+            # Missing from image (in contract but not installed)
+            comm -23 /tmp/warbler-contract.txt /tmp/image-rpms/warbler-main-rpms.txt > /tmp/warbler-missing.txt || true
+            # Extra in image (installed but not in contract)
+            comm -13 /tmp/warbler-contract.txt /tmp/image-rpms/warbler-main-rpms.txt > /tmp/warbler-extra.txt || true
+            # Available but not in contract (should be in base/pigeon)
+            comm -23 /tmp/available.txt /tmp/warbler-contract.txt > /tmp/warbler-available-not-contracted.txt || true
+          fi
+
+          # Woodpecker gaps
+          if [ -f /tmp/image-rpms/woodpecker-rpms.txt ]; then
+            comm -23 /tmp/woodpecker-contract.txt /tmp/image-rpms/woodpecker-rpms.txt > /tmp/woodpecker-missing.txt || true
+            comm -13 /tmp/woodpecker-contract.txt /tmp/image-rpms/woodpecker-rpms.txt > /tmp/woodpecker-extra.txt || true
+            comm -23 /tmp/available.txt /tmp/woodpecker-contract.txt > /tmp/woodpecker-available-not-contracted.txt || true
+          fi
+
+          # Count gaps
+          warbler_missing=$(wc -l < /tmp/warbler-missing.txt 2>/dev/null || echo 0)
+          warbler_extra=$(wc -l < /tmp/warbler-extra.txt 2>/dev/null || echo 0)
+          woodpecker_missing=$(wc -l < /tmp/woodpecker-missing.txt 2>/dev/null || echo 0)
+          woodpecker_extra=$(wc -l < /tmp/woodpecker-extra.txt 2>/dev/null || echo 0)
+
+          echo "warbler_missing=$warbler_missing" >> $GITHUB_OUTPUT
+          echo "warbler_extra=$warbler_extra" >> $GITHUB_OUTPUT
+          echo "woodpecker_missing=$woodpecker_missing" >> $GITHUB_OUTPUT
+          echo "woodpecker_extra=$woodpecker_extra" >> $GITHUB_OUTPUT
+
+      - name: Generate gap report
+        run: |
+          cat > /tmp/gap-report.md << 'EOF'
+          # Package Gap Report
+          Generated: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ## Summary
+          | Image | Missing from Contract | Extra in Image | Available Not Contracted |
+          |-------|---------------------|----------------|-------------------------|
+          | Warbler (main) | ${{ steps.gaps.outputs.warbler_missing }} | ${{ steps.gaps.outputs.warbler_extra }} | TBD |
+          | Woodpecker | ${{ steps.gaps.outputs.woodpecker_missing }} | ${{ steps.gaps.outputs.woodpecker_extra }} | TBD |
+
+          ## Warbler Missing Packages
+          EOF
+
+          if [ -f /tmp/warbler-missing.txt ] && [ -s /tmp/warbler-missing.txt ]; then
+            echo '```' >> /tmp/gap-report.md
+            cat /tmp/warbler-missing.txt >> /tmp/gap-report.md
+            echo '```' >> /tmp/gap-report.md
+          else
+            echo "None" >> /tmp/gap-report.md
+          fi
+
+          cat >> /tmp/gap-report.md << 'EOF'
+
+          ## Warbler Extra Packages (not in contract)
+          EOF
+
+          if [ -f /tmp/warbler-extra.txt ] && [ -s /tmp/warbler-extra.txt ]; then
+            echo '```' >> /tmp/gap-report.md
+            cat /tmp/warbler-extra.txt >> /tmp/gap-report.md
+            echo '```' >> /tmp/gap-report.md
+          else
+            echo "None" >> /tmp/gap-report.md
+          fi
+
+          cat >> /tmp/gap-report.md << 'EOF'
+
+          ## Woodpecker Missing Packages
+          EOF
+
+          if [ -f /tmp/woodpecker-missing.txt ] && [ -s /tmp/woodpecker-missing.txt ]; then
+            echo '```' >> /tmp/gap-report.md
+            cat /tmp/woodpecker-missing.txt >> /tmp/gap-report.md
+            echo '```' >> /tmp/gap-report.md
+          else
+            echo "None" >> /tmp/gap-report.md
+          fi
+
+          cat >> /tmp/gap-report.md << 'EOF'
+
+          ## Woodpecker Extra Packages (not in contract)
+          EOF
+
+          if [ -f /tmp/woodpecker-extra.txt ] && [ -s /tmp/woodpecker-extra.txt ]; then
+            echo '```' >> /tmp/gap-report.md
+            cat /tmp/woodpecker-extra.txt >> /tmp/gap-report.md
+            echo '```' >> /tmp/gap-report.md
+          else
+            echo "None" >> /tmp/gap-report.md
+          fi
+
+          cat /tmp/gap-report.md
+
+      - name: Upload gap report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gap-report
+          path: /tmp/gap-report.md
+          retention-days: 30
+
+      - name: Create gap summary JSON
+        run: |
+          cat > /tmp/gap-summary.json << EOF
+          {
+            "generated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "warbler": {
+              "missing": $(cat /tmp/warbler-missing.txt 2>/dev/null | jq -R . | jq -s . || echo '[]'),
+              "extra": $(cat /tmp/warbler-extra.txt 2>/dev/null | jq -R . | jq -s . || echo '[]')
+            },
+            "woodpecker": {
+              "missing": $(cat /tmp/woodpecker-missing.txt 2>/dev/null | jq -R . | jq -s . || echo '[]'),
+              "extra": $(cat /tmp/woodpecker-extra.txt 2>/dev/null | jq -R . | jq -s . || echo '[]')
+            },
+            "counts": {
+              "warbler_missing": ${{ steps.gaps.outputs.warbler_missing }},
+              "warbler_extra": ${{ steps.gaps.outputs.warbler_extra }},
+              "woodpecker_missing": ${{ steps.gaps.outputs.woodpecker_missing }},
+              "woodpecker_extra": ${{ steps.gaps.outputs.woodpecker_extra }}
+            }
+          }
+          EOF
+          cat /tmp/gap-summary.json
+
+      - name: Upload gap summary JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: gap-summary
+          path: /tmp/gap-summary.json
+          retention-days: 30
+
+      - name: Fail if critical gaps exist
+        if: ${{ steps.gaps.outputs.warbler_missing > 0 || steps.gaps.outputs.woodpecker_missing > 0 }}
+        run: |
+          echo "::warning::Package gaps detected - review gap report artifact"
+          # Don't fail the scheduled run, just warn
+          # For workflow_dispatch, we could fail if desired
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            exit 1
+          fi

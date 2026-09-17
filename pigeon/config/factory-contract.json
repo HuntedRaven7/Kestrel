@@ -1,0 +1,6 @@
+{
+  "contract": "kestrel-factory",
+  "registry": "ghcr.io/huntedraven7/pigeon",
+  "rpm_suffix": ".hum1.pigeon",
+  "allow_list": "pigeon/config/upstream-sources.json"
+}

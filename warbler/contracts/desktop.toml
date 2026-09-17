@@ -1,0 +1,59 @@
+# Desktop contract asserted post-install
+# verify-desktop-contract.py reads this file and asserts the installed system matches.
+
+[session]
+# GDM + Mango Wayland session
+session_name = "mango"
+session_exec = "/usr/bin/mango"
+session_type = "wayland"
+desktop_names = "mango"
+autologin_user = "kestrel"  # Created at install time; never baked
+
+[compositor]
+# Mango compositor
+mango_config = "/etc/mango/config.conf"  # Upstream default; user overrides in ~/.config/mango
+mango_autostart = "quickshell"  # Mango config launches quickshell.service --user
+
+[shell]
+# Quickshell (user-owned config, no default shell.qml shipped)
+quickshell_autostart = true
+quickshell_service = "quickshell.service --user"
+# User config: ~/.config/quickshell/ (not managed by image)
+
+[wallpaper]
+# awww wallpaper daemon (user unit)
+awww_service = "awww.service --user"
+awww_autostart = true
+
+[launcher]
+# rofi (X11 via XWayland)
+rofi_theme = "/usr/share/rofi/themes/kestrel.rasi"
+rofi_keybind = "Super+Space"
+
+[terminal]
+# ghostty
+ghostty_config = "/usr/share/ghostty/kestrel.conf"
+ghostty_shell = "/usr/bin/fish"
+
+[portal]
+# xdg-desktop-portal-wlr for screen capture, etc.
+portal_impl = "xdg-desktop-portal-wlr"
+portal_extra = ["xdg-desktop-portal-gtk"]
+
+[services]
+# System services
+gdm_enabled = true
+seatd_enabled = true
+# User services (enabled via Mango autostart)
+quickshell_user_enabled = true
+awww_user_enabled = true
+
+[graphics]
+# Required drivers (asserted present)
+dri_driver = "mesa"
+vulkan_driver = "mesa"
+wayland_protocols = ">= 1.36"
+
+[unavailable]
+# Tracking issues for missing desktop components
+# component = "issue-url"

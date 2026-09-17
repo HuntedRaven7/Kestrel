@@ -1,0 +1,89 @@
+name: build-stage (reusable wave)
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      packages:
+        required: true
+        type: string
+    secrets:
+      GHCR_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(inputs.packages) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Pull Fedora 44 build container
+        run: |
+          podman pull quay.io/fedora/fedora:44
+
+      - name: Prepare build directories
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p ~/stages
+
+      - name: Download sources via source_pipeline.py
+        id: fetch
+        run: |
+          for pkg in $(python3 pigeon/tools/packit_workflow.py packages | jq -r '.[]'); do
+            python3 pigeon/tools/source_pipeline.py fetch "$pkg" --output ~/rpmbuild/SOURCES/
+          done
+
+      - name: Copy spec file
+        run: |
+          cp "pigeon/packages/${{ matrix.package }}/${{ matrix.package }}.spec" ~/rpmbuild/SPECS/
+        env:
+          package: ${{ matrix.package }}
+
+      - name: Install build dependencies
+        run: |
+          sudo dnf install -y fedora-workstation-repositories
+          sudo dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo
+          sudo dnf builddep -y ~/rpmbuild/SPECS/${{ matrix.package }}.spec
+
+      - name: Build SRPM
+        run: |
+          rpmbuild -br ~/rpmbuild/SPECS/${{ matrix.package }}.spec \
+            --define "_sourcedir ~/rpmbuild/SOURCES" \
+            --define "_specdir ~/rpmbuild/SPECS" \
+            --define "_srcrpmdir ~/rpmbuild/SRPMS"
+
+      - name: Build RPMs
+        run: |
+          rpmbuild -ba ~/rpmbuild/SPECS/${{ matrix.package }}.spec \
+            --define "_sourcedir ~/rpmbuild/SOURCES" \
+            --define "_specdir ~/rpmbuild/SPECS" \
+            --define "_rpmdir ~/rpmbuild/RPMS" \
+            --define "_srcrpmdir ~/rpmbuild/SRPMS"
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p ~/stages/${{ inputs.stage }}/${{ matrix.package }}
+          cp ~/rpmbuild/RPMS/*/${{ matrix.package }}*.rpm ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null || true
+          cp ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null || true
+
+      - name: Upload stage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-${{ inputs.stage }}-${{ matrix.package }}
+          path: ~/stages/${{ inputs.stage }}/${{ matrix.package }}/
+          retention-days: 7

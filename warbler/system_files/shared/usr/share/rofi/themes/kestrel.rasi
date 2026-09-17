@@ -1,0 +1,86 @@
+/* Kestrel Warbler rofi theme */
+configuration {
+    font: "JetBrains Mono 10";
+    show-icons: true;
+    icon-theme: "Adwaita";
+    theme: "kestrel";
+}
+
+@theme "kestrel" {
+    window {
+        location: center;
+        anchor: center;
+        fullscreen: false;
+        width: 60;
+        lines: 10;
+        padding: 20;
+        border: 2;
+        border-radius: 12;
+        background-color: #1e1e2e;
+        border-color: #89b4fa;
+    }
+
+    mainbox {
+        children: [ "inputbar", "listview" ];
+    }
+
+    inputbar {
+        children: [ "prompt", "entry" ];
+        padding: 10;
+        background-color: #1e1e2e;
+        border-radius: 8;
+    }
+
+    prompt {
+        enabled: true;
+        padding: 0 10 0 0;
+        text-color: #cdd6f4;
+        font: "JetBrains Mono Bold 10";
+    }
+
+    entry {
+        placeholder: "Search...";
+        padding: 5 10;
+        text-color: #cdd6f4;
+        background-color: #313244;
+        border-radius: 6;
+    }
+
+    listview {
+        lines: 10;
+        columns: 1;
+        fixed-height: true;
+        spacing: 5;
+        padding: 10;
+        background-color: #1e1e2e;
+        border-radius: 8;
+    }
+
+    element {
+        padding: 5 10;
+        background-color: transparent;
+        text-color: #cdd6f4;
+    }
+
+    element selected {
+        background-color: #89b4fa;
+        text-color: #1e1e2e;
+    }
+
+    element-text {
+        text-color: inherit;
+    }
+
+    element-icon {
+        size: 24;
+        padding: 0 10 0 0;
+    }
+
+    scrollbar {
+        width: 6;
+        background-color: #313244;
+        handle-color: #6c7086;
+        handle-width: 6;
+        border-radius: 3;
+    }
+}

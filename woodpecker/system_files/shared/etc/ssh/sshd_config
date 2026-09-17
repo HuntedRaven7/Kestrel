@@ -1,0 +1,5 @@
+# Woodpecker SSH server config
+# Hardened defaults - see contracts/server.toml
+
+# This file is managed by woodpecker/scripts/configure-services.sh
+# User customizations go in /etc/ssh/sshd_config.d/*.conf

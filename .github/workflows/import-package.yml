@@ -1,0 +1,108 @@
+name: import-package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Fedora dist-git package name to import"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  import:
+    name: Import from Fedora dist-git
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up git
+        run: |
+          git config user.name "kestrel-bot"
+          git config user.email "kestrel-bot@users.noreply.github.com"
+
+      - name: Import package from Fedora dist-git
+        id: import
+        env:
+          PACKAGE: ${{ github.event.inputs.package }}
+        run: |
+          set -euo pipefail
+          
+          pkg="$PACKAGE"
+          dest="pigeon/packages/$pkg"
+          
+          if [ -d "$dest" ]; then
+            echo "Package $pkg already exists at $dest"
+            exit 1
+          fi
+          
+          # Clone Fedora dist-git rawhide
+          tmpdir=$(mktemp -d)
+          git clone "https://src.fedoraproject.org/rpms/$pkg.git" "$tmpdir/$pkg" --branch rawhide --depth 1
+          
+          # Create destination
+          mkdir -p "$dest"
+          
+          # Copy spec and patches
+          cp "$tmpdir/$pkg"/*.spec "$dest/" 2>/dev/null || true
+          cp "$tmpdir/$pkg"/*.patch "$dest/" 2>/dev/null || true
+          
+          # Find the spec file
+          spec=$(ls "$dest"/*.spec 2>/dev/null | head -1)
+          if [ -z "$spec" ]; then
+            echo "No spec file found in $pkg"
+            exit 1
+          fi
+          
+          # Extract version from spec
+          version=$(rpmspec -q --queryformat "%{VERSION}" "$spec" 2>/dev/null | head -1)
+          
+          # Record upstream provenance
+          cd "$tmpdir/$pkg"
+          remote_url=$(git config --get remote.origin.url)
+          commit=$(git rev-parse HEAD)
+          tree=$(git rev-parse HEAD^{tree})
+          commit_time=$(git log -1 --format=%ct HEAD)
+          
+          cat > "$OLDPWD/$dest/.hummingbird-upstream.json" << EOF
+          {
+            "remote": "$remote_url",
+            "commit": "$commit",
+            "tree": "$tree",
+            "time": $commit_time
+          }
+          EOF
+          
+          # Rename spec to match package name if needed
+          spec_name=$(basename "$spec")
+          if [ "$spec_name" != "$pkg.spec" ]; then
+            mv "$dest/$spec_name" "$dest/$pkg.spec"
+          fi
+          
+          echo "Imported $pkg version $version"
+          
+          # Clean up
+          rm -rf "$tmpdir"
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "import: add $pkg from Fedora dist-git rawhide"
+          title: "[import] Add $pkg from Fedora rawhide"
+          body: |
+            This PR imports `$pkg` from Fedora dist-git rawhide branch.
+            
+            - Spec file: `pigeon/packages/$pkg/$pkg.spec`
+            - Upstream provenance: `pigeon/packages/$pkg/.hummingbird-upstream.json`
+            
+            After review, this will be built in Pigeon and published to `ghcr.io/huntedraven7/pigeon`.
+          branch: import/${{ github.event.inputs.package }}
+          labels: import

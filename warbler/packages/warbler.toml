@@ -1,0 +1,52 @@
+# Warbler package contract
+# Packages sourced from Pigeon repo (ghcr.io/huntedraven7/pigeon) + Fedora/Hummingbird base.
+# Fedora repos are NEVER enabled at runtime — only Pigeon + base image content.
+# verify-rpm-contract.py asserts this exact set is installed.
+# [unavailable] entries carry tracking issues; missing packages fail the build otherwise.
+
+[warbler]
+# Stage 0: wlroots + scenefx (foundation)
+wlroots0.20 = "0.20.2"
+scenefx = "0.5"
+
+# Stage 1: Mango compositor + Quickshell
+mango = "0.17.2"
+quickshell = "0.3.1"
+
+# Stage 2: Desktop integration
+awww = "0.12.1"
+rofi = "1.7.9.1"
+ghostty = "1.3.1"
+kestrel-gdm-config = "1"
+
+# Portal stack (from Fedora/Hummingbird base where available)
+xdg-desktop-portal-wlr = "*"
+xdg-desktop-portal-gtk = "*"
+seatd = "*"
+wl-clipboard = "*"
+grim = "*"
+slurp = "*"
+swayidle = "*"
+swaylock = "*"
+brightnessctl = "*"
+pamixer = "*"
+xfce-polkit = "*"
+foot = "*"
+
+# System utilities
+polkit = "*"
+udev = "*"
+dbus = "*"
+systemd = "*"
+
+# Graphics stack (from base)
+mesa-dri-drivers = "*"
+mesa-vulkan-drivers = "*"
+libdrm = "*"
+libva = "*"
+libva-utils = "*"
+
+[unavailable]
+# Each entry carries a tracking issue. Missing packages fail the build otherwise.
+# Example format when needed:
+# package-name = "https://github.com/HuntedRaven7/Kestrel/issues/XXX"
