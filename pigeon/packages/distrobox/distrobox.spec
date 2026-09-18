@@ -9,13 +9,14 @@
 %global tag 1.8.2.5
 %forgemeta
 
+Name: distrobox
+Version: 1.8.2.5
 Release: 1.hum1.pigeon
 Summary: Another tool for containerized command line environments on Linux
 License: GPL-3.0-only
 URL:     https://github.com/89luca89/distrobox
 Source0: https://github.com/89luca89/distrobox/archive/refs/tags/1.8.2.5/distrobox-1.8.2.5.tar.gz
 
-Name: distrobox
 BuildArch: noarch
 
 Requires: (podman or %{_bindir}/docker)

@@ -237,12 +237,20 @@ Complete and free FFmpeg build
 %install
 %make_install
 
+%package libs
+Summary:        FFmpeg runtime libraries
+%description libs
+FFmpeg runtime libraries.
+
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/ffmpeg
 %{_bindir}/ffprobe
 %{_bindir}/ffplay
+
+%package libs
+Summary:        FFmpeg runtime libraries
 
 %files libs
 %license LICENSE
