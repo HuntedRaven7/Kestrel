@@ -14,7 +14,14 @@
 # and it is *awful* to update this.
 %global gnulibversion 9f48fb992a3d7e96610c4ce8be969cff2d61a01b
 
-Name:		grub2
+# Kestrel: default for parsers without system macros (packit's parser does
+# not load /usr/lib/rpm/macros.d, where efi-srpm-macros defines this as 1
+# on x86_64). Real buildroots install efi-srpm-macros via BuildRequires,
+# which takes precedence over this fallback; values must agree or the SRPM
+# file list mismatches the binary build. Pigeon is x86_64-only.
+%{!?with_legacy_arch: %global with_legacy_arch 1 }
+
+Name:	grub2
 Epoch:		1
 Version:	2.12
 Release:	79%{?dist}

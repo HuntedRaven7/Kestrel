@@ -30,3 +30,14 @@ def test_packages_skips_entries_without_recipe(tmp_path, monkeypatch, capsys):
 def test_packages_empty_without_recipes(tmp_path, monkeypatch):
     _root(tmp_path, monkeypatch, ["todo"], [])
     assert pw.packages() == []
+
+
+def test_is_local(tmp_path, monkeypatch):
+    import importlib.util
+    tool = Path(__file__).resolve().parents[2] / "pigeon" / "tools" / "is_local.py"
+    spec = importlib.util.spec_from_file_location("is_local", tool)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    assert mod.main(["kestrel-gdm-config"]) == 0
+    assert mod.main(["mango"]) == 1
+    assert mod.main([]) == 2
