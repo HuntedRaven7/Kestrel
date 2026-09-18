@@ -33,54 +33,72 @@ jobs:
           sudo apt-get install -y -qq podman
 
       - name: Pull Fedora 44 build container
-        run: |
-          podman pull quay.io/fedora/fedora:44
+        run: podman pull quay.io/fedora/fedora:44
 
-      - name: Prepare build directories
+      - name: Fetch verified source for this package
         run: |
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p ~/stages
+          mkdir -p work/src
+          python3 pigeon/tools/source_pipeline.py fetch "${{ matrix.package }}" \
+            --output work/src --stage-into pigeon/packages
 
-      - name: Download sources via source_pipeline.py
-        id: fetch
-        run: |
-          for pkg in $(python3 pigeon/tools/packit_workflow.py packages | jq -r '.[]'); do
-            python3 pigeon/tools/source_pipeline.py fetch "$pkg" --output ~/rpmbuild/SOURCES/
-          done
+      - name: Download prior-stage RPMs
+        uses: actions/download-artifact@v4
+        with:
+          # Earlier waves (and any already-finished same-wave jobs).
+          # Later waves cannot exist yet: the caller serializes stages
+          # via needs. Empty on stage 0.
+          pattern: stage-*
+          path: work/prior
+          merge-multiple: true
+        continue-on-error: true
 
-      - name: Copy spec file
+      - name: Build in Fedora container
         run: |
-          SPEC=$(ls pigeon/packages/${{ matrix.package }}/*.spec | head -1)
-          cp "$SPEC" ~/rpmbuild/SPECS/${{ matrix.package }}.spec
-        env:
-          package: ${{ matrix.package }}
-
-      - name: Install build dependencies
-        run: |
-          sudo dnf install -y fedora-workstation-repositories
-          sudo dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo
-          sudo dnf builddep -y ~/rpmbuild/SPECS/${{ matrix.package }}.spec
-
-      - name: Build SRPM
-        run: |
-          rpmbuild -br ~/rpmbuild/SPECS/${{ matrix.package }}.spec \
-            --define "_sourcedir ~/rpmbuild/SOURCES" \
-            --define "_specdir ~/rpmbuild/SPECS" \
-            --define "_srcrpmdir ~/rpmbuild/SRPMS"
-
-      - name: Build RPMs
-        run: |
-          rpmbuild -ba ~/rpmbuild/SPECS/${{ matrix.package }}.spec \
-            --define "_sourcedir ~/rpmbuild/SOURCES" \
-            --define "_specdir ~/rpmbuild/SPECS" \
-            --define "_rpmdir ~/rpmbuild/RPMS" \
-            --define "_srcrpmdir ~/rpmbuild/SRPMS"
+          mkdir -p work/out
+          podman run --rm \
+            -v "$PWD:/repo:Z" \
+            -v "$PWD/work/src:/src:Z" \
+            -v "$PWD/work/prior:/prior:Z" \
+            -v "$PWD/work/out:/out:Z" \
+            -e PACKAGE="${{ matrix.package }}" \
+            quay.io/fedora/fedora:44 \
+            bash -exc '
+              dnf install -qy dnf-plugins-core rpm-build createrepo_c python3
+              # Hummingbird overlay repo (same source preflight uses).
+              curl -fsSL --max-time 60 \
+                https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo \
+                -o /etc/yum.repos.d/hummingbird-community-bootc-os-fedora-44.repo
+              # Prior waves as a local repo (empty on stage 0).
+              if [ -n "$(find /prior -name "*.rpm" | head -1)" ]; then
+                createrepo_c /prior
+                printf "[pigeon-prior]\nname=pigeon-prior\nbaseurl=file:///prior\nenabled=1\ngpgcheck=0\n" \
+                  > /etc/yum.repos.d/pigeon-prior.repo
+              fi
+              SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
+              cp "$SPEC" /tmp/pkg.spec
+              dnf builddep -y /tmp/pkg.spec
+              export RPMBUILD="$HOME/rpmbuild"
+              mkdir -p "$RPMBUILD"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+              cp /tmp/pkg.spec "$RPMBUILD/SPECS/"
+              # Verified archive plus every committed recipe input
+              # (patches, .sig/keys, sysusers units, vendor trees).
+              cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
+              cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
+              rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \
+                --define "_topdir $RPMBUILD"
+              rpmbuild -ba "$RPMBUILD/SPECS/$(basename $SPEC)" \
+                --define "_topdir $RPMBUILD" \
+                --define "dist .hum1.pigeon"
+              cp "$RPMBUILD"/RPMS/*/*.rpm /out/ 2>/dev/null || true
+              cp "$RPMBUILD"/SRPMS/*.src.rpm /out/ 2>/dev/null || true
+            '
 
       - name: Collect artifacts
         run: |
           mkdir -p ~/stages/${{ inputs.stage }}/${{ matrix.package }}
-          cp ~/rpmbuild/RPMS/*/${{ matrix.package }}*.rpm ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null || true
-          cp ~/rpmbuild/SRPMS/${{ matrix.package }}*.src.rpm ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null || true
+          cp work/out/*.rpm ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null || true
+          test -n "$(ls ~/stages/${{ inputs.stage }}/${{ matrix.package }}/ 2>/dev/null)" \
+            || echo "WARNING: no RPMs produced for ${{ matrix.package }}"
 
       - name: Upload stage artifacts
         uses: actions/upload-artifact@v4
