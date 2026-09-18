@@ -7,4 +7,5 @@ __pycache__/
 .pytest_cache/
 pigeon/reports/
 pigeon/packages/*/*.tar.gz
+pigeon/packages/*/*.tar.xz
 pigeon/packages/*/*.tar.bz2
