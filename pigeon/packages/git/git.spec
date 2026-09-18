@@ -114,14 +114,6 @@ Documentation for %{name}.
 %{_mandir}/man5/git*.5*
 %{_mandir}/man7/git*.7*
 
-%package doc
-Summary:        Documentation for %{name}
-Requires:       %{name} = %{version}-%{release}
-
-%files doc
-%doc Documentation/*.txt Documentation/*.html
-%{_datadir}/gitweb/
-
 %changelog
 * Thu Sep 18 2026 Kestrel <kestrel@localhost> - 2.47.0-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
