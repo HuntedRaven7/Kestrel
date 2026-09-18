@@ -92,15 +92,15 @@
     },
     "xdg-desktop-portal-wlr": {
       "version": "0.8.4",
-      "url_template": "https://github.com/emersion/xdg-desktop-portal-wlr/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "05c4ec1148aec480f38d83cfe99be19144315e9848584664956dd56e36c07792df90807d0e674318dda87be012c0ecdea58f49e54a5401aba4f8673c63714221",
+      "url_template": "https://github.com/emersion/xdg-desktop-portal-wlr/releases/download/v{version}/xdg-desktop-portal-wlr-{version}.tar.gz",
+      "sha512": "f06db8b524935807582770bb41fcc16440d6d26809e790f54a1b9d164783d8b10410107544a18ad16ba38876649d052f591192f845421dea44fa562fa3d4ea01",
       "stage": 2,
       "note": "Fedora dist-git import. Source from lookaside cache.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "wayland-project/xdg-desktop-portal-wlr"
       },
-      "filename": "v0.8.4.tar.gz"
+      "filename": "xdg-desktop-portal-wlr-0.8.4.tar.gz"
     },
     "xdg-desktop-portal-gtk": {
       "version": "1.15.3",
@@ -140,7 +140,7 @@
     },
     "grim": {
       "version": "1.4.0",
-      "url_template": "https://github.com/emersion/grim/archive/refs/tags/v{version}.tar.gz",
+      "url_template": "https://github.com/emersion/grim/releases/download/v{version}/grim-{version}.tar.gz",
       "sha512": "d0b33528a00528b3ef7488a0984cde5034de4f5a211eb5c8d3299aea356d9348c5d02d08171802bc0315afb19d2446f5f132ea9dca0579ace803b7d5d90a89cc",
       "stage": 2,
       "note": "Fedora dist-git import. Screenshot utility for Wayland.",
@@ -148,43 +148,43 @@
         "datasource": "github-tags",
         "depName": "emersion/grim"
       },
-      "filename": "v1.4.0.tar.gz"
+      "filename": "grim-1.4.0.tar.gz"
     },
     "slurp": {
       "version": "1.5.0",
-      "url_template": "https://github.com/emersion/slurp/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "77c4efdaa4ac411f43c598e5d654bcf61f969a5e403df6110757a7b217e02d55d0ba797729e42f8219d3bba79f58bcb36746799de765d3b25f301bf9ac3c1888",
+      "url_template": "https://github.com/emersion/slurp/releases/download/v{version}/slurp-{version}.tar.gz",
+      "sha512": "743c0c4c4b9fd1778734486691d979c0414db041ca052bec477e89a4f1309d1d50d6f4d7c80a98b991b42583e5e44516e4a0ab4944910b7b9076122b54b735a7",
       "stage": 2,
       "note": "Fedora dist-git import. Region selector for Wayland.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "emersion/slurp"
       },
-      "filename": "v1.5.0.tar.gz"
+      "filename": "slurp-1.5.0.tar.gz"
     },
     "swayidle": {
       "version": "1.9.0",
-      "url_template": "https://github.com/swaywm/swayidle/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "89fd24929a741270836af7a6d6049cdfe0c7717ae0913285af2e3c8540f7f0a95e839675a9a4e40e57ac86c35094b676591f3f358378c803d08c65b43b91899f",
+      "url_template": "https://github.com/swaywm/swayidle/releases/download/v{version}/swayidle-{version}.tar.gz",
+      "sha512": "158bce330b4d4f17e0d12358361e52abb881e3da61b3da0013ddbd1f99339b490e1c8078e539740707582b62fde80b8e1325c65800096e292d96c7e1abfd1462",
       "stage": 2,
       "note": "Fedora dist-git import. Idle management for Wayland.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "swaywm/swayidle"
       },
-      "filename": "v1.9.0.tar.gz"
+      "filename": "swayidle-1.9.0.tar.gz"
     },
     "swaylock": {
       "version": "1.8.6",
-      "url_template": "https://github.com/swaywm/swaylock/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "833d25d580ed082e3fcce7366867fa931f3588e38d7dedd692039c41510dcb364f2bbe6941a7173aacb746827643da4feff94ec62790fe5094b38fff71048ef2",
+      "url_template": "https://github.com/swaywm/swaylock/releases/download/v{version}/swaylock-{version}.tar.gz",
+      "sha512": "547fc23f11afd143887b16c743be501753e01d42d978af556c1adee615818eea8837eba573dfd9a14ad2588b52ea735c636d95f5208f578e137490d65aab1239",
       "stage": 2,
       "note": "Fedora dist-git import. Screen locker for Wayland.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "swaywm/swaylock"
       },
-      "filename": "v1.8.6.tar.gz"
+      "filename": "swaylock-1.8.6.tar.gz"
     },
     "brightnessctl": {
       "version": "0.5.1",
