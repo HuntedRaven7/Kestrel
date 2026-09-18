@@ -201,6 +201,7 @@ def cmd_record(pkg: str, output: str | None) -> int:
         if pkg_dir.exists():
             shutil.copy(archive, pkg_dir / archive.name)
         entry["sha512"] = digest
+        entry["filename"] = archive.name  # keep staged name in sync; packit_source0.py reads it
         SOURCES.write_text(json.dumps(data, indent=2) + "\n")
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
