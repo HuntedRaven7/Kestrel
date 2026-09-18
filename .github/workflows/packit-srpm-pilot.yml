@@ -99,6 +99,14 @@ jobs:
         run: |
           python3 pigeon/tools/audit_sources.py --fix --package "$PACKAGE"
 
+      - name: Stage additional sources (signatures, etc.)
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && matrix.package == 'swayidle' }}
+        run: |
+          # Copy .sig file for swayidle if it exists
+          if [ -f "pigeon/packages/swayidle/swayidle-1.9.0.tar.gz.sig" ]; then
+            cp "pigeon/packages/swayidle/swayidle-1.9.0.tar.gz.sig" "pigeon/packages/swayidle/swayidle-1.9.0.tar.gz.sig"
+          fi
+
       - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         env:
