@@ -18,7 +18,9 @@ Summary: Bluetooth utilities
 License: GPL-2.0-or-later
 URL:     http://www.bluez.org/
 
-Source0: https://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
+# Kestrel: upstream https mirror (the kernel.org snapshot URL 404s outside
+# lookaside; our verified Source0 in upstream-sources.json). Do not revert.
+Source0: https://github.com/bluez/bluez/archive/refs/tags/%{version}.tar.gz
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel

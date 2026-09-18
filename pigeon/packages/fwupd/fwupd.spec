@@ -39,7 +39,9 @@ Version:   2.1.7
 Release:   %autorelease
 License:   LGPL-2.1-or-later
 URL:       https://github.com/fwupd/fwupd
-Source0:   http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
+# Kestrel: upstream https mirror (the dist-git URL 404s outside lookaside;
+# our verified Source0 in upstream-sources.json). Do not revert on re-import.
+Source0:   https://github.com/fwupd/fwupd/archive/refs/tags/%{version}.tar.gz
 
 BuildRequires: gettext
 BuildRequires: hwdata

@@ -57,6 +57,11 @@ def parse_spec(path: Path):
         version = m.group(1)
     macros.setdefault("name", name)
     macros.setdefault("version", version)
+    # rpm defines lowercase %{url} from the URL: tag.
+    m = re.search(r"^URL:\s*(\S+)", text, re.M)
+    if m:
+        macros.setdefault("url", m.group(1))
+        macros.setdefault("URL", m.group(1))
     lines = []
     for m in re.finditer(r"^(Source\d*|Patch\d*)\s*:\s*(\S+)", text, re.M):
         lines.append((m.group(1), m.group(2)))
