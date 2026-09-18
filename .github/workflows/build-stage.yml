@@ -65,10 +65,11 @@ jobs:
             quay.io/fedora/fedora:44 \
             bash -exc '
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3
-              # Hummingbird overlay repo (same source preflight uses).
-              curl -fsSL --max-time 60 \
-                https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo \
-                -o /etc/yum.repos.d/hummingbird-community-bootc-os-fedora-44.repo
+              # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
+              # the live yum repo is the pulp-content endpoint below.
+              # gpgcheck=0: no signing key is published for it (revisit).
+              printf "[hummingbird]\nname=Hummingbird public\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\nenabled=1\ngpgcheck=0\n" \
+                > /etc/yum.repos.d/hummingbird.repo
               # Prior waves as a local repo (empty on stage 0).
               if [ -n "$(find /prior -name "*.rpm" | head -1)" ]; then
                 createrepo_c /prior
