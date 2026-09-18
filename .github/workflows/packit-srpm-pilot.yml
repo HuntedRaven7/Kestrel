@@ -48,10 +48,17 @@ jobs:
         run: |
           python3 << 'EOF'
           import json
-          with open('pigeon/config/upstream-sources.json') as f:
-              data = json.load(f)
-          vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
-          print(f"vendored={json.dumps(vendored)}")
+          import sys
+          try:
+              with open('pigeon/config/upstream-sources.json') as f:
+                  data = json.load(f)
+              vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
+              result = json.dumps(vendored)
+          except Exception as e:
+              # Always output valid JSON, even on error
+              result = "[]"
+              print(f"Error identifying vendored packages: {e}", file=sys.stderr)
+          print(f"vendored={result}")
           EOF
 
   srpm:
