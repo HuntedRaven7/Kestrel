@@ -110,7 +110,7 @@ jobs:
             -v "$PWD:/repo:Z" \
             -v "$PWD/work/srpm:/out:Z" \
             -w /repo \
-            quay.io/packit/packit@sha256:5fcd2b08f116bdfa421973d65180c0fa8d7ab2830df70590dfe0e56f163bd067 \
+            quay.io/packit/packit@sha256:430bc0548547ab8d69b9e5dd91ad18a659d3abc45f256797a11263a2a7935fa2 \
             bash -exc '
               git config --global --add safe.directory "*"
               # grub2.spec needs with_legacy_arch from efi-srpm-macros at
