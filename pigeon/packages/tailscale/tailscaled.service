@@ -1,0 +1,35 @@
+[Unit]
+Description=Tailscale node agent
+Documentation=https://tailscale.com/kb/
+Wants=network-pre.target
+# upstream
+After=network-pre.target NetworkManager.service systemd-resolved.service
+# fedora
+# https://bugzilla.redhat.com/show_bug.cgi?id=2440864
+# https://github.com/tailscale/tailscale/issues/3932#issuecomment-3924041096
+After=wpa_supplicant.service iwd.service
+
+[Service]
+# Set the port to listen on for incoming VPN packets.
+# Remote nodes will automatically be informed about the new port number,
+# but you might want to configure this in order to set external firewall
+# settings.
+Environment="PORT=41641"
+# Prefer nftables over iptables with automatic detection and fallback to iptables
+# https://tailscale.com/docs/features/firewall-mode#heuristic
+Environment="TS_DEBUG_FIREWALL_MODE=auto"
+ExecStart=/usr/bin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=${PORT}
+ExecStopPost=/usr/bin/tailscaled --cleanup
+
+Restart=on-failure
+
+RuntimeDirectory=tailscale
+RuntimeDirectoryMode=0755
+StateDirectory=tailscale
+StateDirectoryMode=0700
+CacheDirectory=tailscale
+CacheDirectoryMode=0750
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

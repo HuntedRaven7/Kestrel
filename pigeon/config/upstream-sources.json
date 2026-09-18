@@ -224,11 +224,11 @@
     },
     "foot": {
       "version": "1.28.0",
-      "url_template": "https://codeberg.org/dnkl/foot/archive/{version}.tar.gz",
-      "sha512": "4286464e84b298a08b0ce1a7fc703670b4acec9af401cedc06b9e6c2e2aefde88829ad99aae4ee0cd4c7696b0ba46e1345f8a7090c46791e847daadf6da34867",
+      "url_template": "https://codeberg.org/dnkl/foot/releases/download/{version}/foot-{version}.tar.gz",
+      "sha512": "7ca9cf5a980d728f3fe4a37a56ba12bdbc0373598ba30ffad1b93041514621c4d4e3fb44837ea120fde9685b33130bbcba8d151b44389d776f08cc4c12fafbe7",
       "stage": 2,
       "note": "Fedora dist-git import. Wayland terminal emulator (fallback). Upstream lives on Codeberg (no Renovate datasource); bumps are manual.",
-      "filename": "1.28.0.tar.gz"
+      "filename": "foot-1.28.0.tar.gz"
     },
     "fwupd": {
       "version": "2.1.7",
@@ -516,15 +516,15 @@
     },
     "udisks2": {
       "version": "2.11.2",
-      "url_template": "https://github.com/storaged-project/udisks/archive/refs/tags/udisks-{version}.tar.gz",
-      "sha512": "0b62d57cb258fcde54cbd01c7ec44bae446ca1f49f411e1c0187fa8d348422480bc52d640f1773d497faacd79a688adfdde0450fc3137e5f8a92713534bd1683",
+      "url_template": "https://github.com/storaged-project/udisks/releases/download/udisks-{version}/udisks-{version}.tar.bz2",
+      "sha512": "3996ac935cb330eb7f286f25a716da52ca374b14cc7b4f2e60a7e4b0b0745559607fa8c6d1e96e777b44eb8e07eb16e1ad6bc00b3051adea14e865df3efa2662",
       "stage": 2,
       "note": "Fedora dist-git import. Disk management.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "storaged-project/udisks"
       },
-      "filename": "udisks-2.11.2.tar.gz"
+      "filename": "udisks-2.11.2.tar.bz2"
     },
     "upower": {
       "version": "1.91.4",
