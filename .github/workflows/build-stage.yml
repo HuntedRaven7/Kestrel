@@ -54,7 +54,8 @@ jobs:
 
       - name: Build in Fedora container
         run: |
-          mkdir -p work/out
+          # Bind-mount sources must exist even when empty (stage 0 has no priors).
+          mkdir -p work/prior work/out
           podman run --rm \
             -v "$PWD:/repo:Z" \
             -v "$PWD/work/src:/src:Z" \
