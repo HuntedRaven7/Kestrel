@@ -323,7 +323,8 @@
         "datasource": "github-tags",
         "depName": "tailscale/tailscale"
       },
-      "filename": "v1.98.8.tar.gz"
+      "filename": "v1.98.8.tar.gz",
+      "srpm": "rpmbuild"
     },
     "wireguard-tools": {
       "version": "1.0.20260223",
@@ -359,7 +360,8 @@
         "datasource": "github-tags",
         "depName": "containerd/containerd"
       },
-      "filename": "v2.3.5.tar.gz"
+      "filename": "v2.3.5.tar.gz",
+      "srpm": "rpmbuild"
     },
     "runc": {
       "version": "1.5.1",
@@ -371,7 +373,8 @@
         "datasource": "github-tags",
         "depName": "opencontainers/runc"
       },
-      "filename": "v1.5.1.tar.gz"
+      "filename": "v1.5.1.tar.gz",
+      "srpm": "rpmbuild"
     },
     "crun": {
       "version": "1.29.1",

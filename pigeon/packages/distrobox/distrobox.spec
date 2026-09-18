@@ -15,6 +15,7 @@ License: GPL-3.0-only
 URL:     https://github.com/89luca89/distrobox
 Source0: https://github.com/89luca89/distrobox/archive/refs/tags/1.8.2.5/distrobox-1.8.2.5.tar.gz
 
+Name: distrobox
 BuildArch: noarch
 
 Requires: (podman or %{_bindir}/docker)

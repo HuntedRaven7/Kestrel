@@ -83,6 +83,14 @@ Git is a fast, scalable, distributed revision control system with an
 unusually rich command set that provides both high-level operations
 and full access to internals.
 
+%if %{with docs}
+%package doc
+Summary:        Documentation for %{name}
+Requires:       %{name} = %{version}-%{release}
+%description doc
+Documentation for %{name}.
+%endif
+
 %prep
 %autosetup -n git-2.47.0 -p1
 
