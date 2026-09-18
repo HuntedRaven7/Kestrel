@@ -159,9 +159,31 @@ def staged_names() -> dict:
     return out
 
 
+def srpm_methods() -> dict:
+    """SRPM lane per package: `packit` (default) or `rpmbuild`.
+
+    The rpmbuild lane has no packit download step, so its remote sources
+    must be vendored into the recipe dir.
+    """
+    import json
+
+    out = {}
+    try:
+        data = json.loads((ROOT / "pigeon" / "config" / "upstream-sources.json").read_text())
+        for pkg, e in data["packages"].items():
+            if e.get("local") or e.get("srpm") == "rpmbuild":
+                out[pkg] = "rpmbuild"
+            else:
+                out[pkg] = "packit"
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def audit(fix: bool = False, only: str | None = None) -> int:
     missing, warnings = {}, []
     staged = staged_names()
+    methods = srpm_methods()
     dirs = [PKGS / only] if only else sorted(PKGS.iterdir())
     for pkgdir in dirs:
         if not pkgdir.is_dir():
@@ -189,6 +211,18 @@ def audit(fix: bool = False, only: str | None = None) -> int:
                 # A committed file satisfying a remote URL (e.g. .sig fetched
                 # from lookaside) needs no network; rpmbuild uses the local copy.
                 if (pkgdir / val.rsplit("/", 1)[-1]).is_file():
+                    continue
+                # rpmbuild-lane packages get no packit download step, so a
+                # remote source is a hard miss: fetch the URL itself.
+                if methods.get(pkgdir.name) == "rpmbuild":
+                    base = val.rsplit("/", 1)[-1].split("#", 1)[0]
+                    missing.setdefault(pkgdir.name, []).append(f"{tag} -> {base}")
+                    if fix:
+                        print(f"  fetching {pkgdir.name}/{base} ...")
+                        if fetch(val.split("#", 1)[0], pkgdir / base):
+                            missing[pkgdir.name].remove(f"{tag} -> {base}")
+                            continue
+                        print(f"    STILL MISSING: {pkgdir.name}/{base}")
                     continue
                 # rpm URL#file fragments (openpgpkey keys): stage the file
                 # so rpmbuild finds it without network.
