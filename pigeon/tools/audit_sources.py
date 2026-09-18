@@ -72,11 +72,15 @@ def parse_spec(path: Path):
             skipped_first_source = True
             continue
         checks.append((tag, val))
-    # %autosetup/%setup -n expectation
+    # %autosetup/%setup -n expectation (only when fully expandable with
+    # spec-defined macros; conditional -n values like %{?commitdate:...}
+    # for snapshot builds are skipped).
     topdir = None
     m = re.search(r"^%(?:auto)?setup\b[^\n]*-n\s+(\S+)", text, re.M)
     if m:
-        topdir = expand(m.group(1), macros)
+        expanded = expand(m.group(1), macros)
+        if "%{" not in expanded:
+            topdir = expanded
     return macros, checks, topdir
 
 

@@ -27,9 +27,14 @@ def test_fetch_refuses_unversioned_package(tmp_path, monkeypatch, capsys):
     assert sp.cmd_record("future", None) == 1
 
 
-def test_local_package_needs_no_fetch(capsys):
-    assert sp.cmd_fetch("kestrel-gdm-config", None) == 0
-    assert sp.cmd_record("kestrel-gdm-config", None) == 0
+def test_local_package_needs_no_fetch(tmp_path, monkeypatch, capsys):
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": {
+        "filepkg": {"version": "1", "local": True},
+    }}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    assert sp.cmd_fetch("filepkg", None) == 0
+    assert sp.cmd_record("filepkg", None) == 0
 
 
 def test_entry_ready_gate():

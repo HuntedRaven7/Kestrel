@@ -12,7 +12,7 @@
 | 1 | Single repo `HuntedRaven7/Kestrel` with Bluefin-style digest seam: `pigeon/` publishes `ghcr.io/huntedraven7/pigeon` OCI repo image; `warbler/` + `woodpecker/` consume via `COPY --from=` pinned by digest. Every branch publishes under its own tag. |
 | 2 | GHCR owner is `huntedraven7` (lowercase). RPM release suffix is `.hum1.pigeon` (e.g. `mango-0.17.2-1.hum1.pigeon`). Never reuse `.hum1.bfin`. |
 | 3 | Pigeon scope: **full desktop-stack fork** in the style of `projectbluefin/utah-packages` (~190 RPMs over time), but land the 6 priority packages first to reach first boot, then expand. |
-| 4 | Warbler session: **GDM + Mango session** with GDM autologin drop-in. Mango autostarts Quickshell; **no default Quickshell config shipped** — user owns `~/.config/quickshell`. |
+| 4 | Warbler session: **SDDM + Mango session** with SDDM autologin drop-in (`sddm.conf.d`, maldives theme, no breeze dep). Mango autostarts Quickshell; **no default Quickshell config shipped** — user owns `~/.config/quickshell`. |
 | 5 | Quickshell: **build whatever Quickshell v0.3.1 needs** (Qt + private headers, full feature set). Couple Quickshell rebuilds to Qt updates via Renovate + Packit. |
 | 6 | Launcher/terminal: stock **`rofi`** + **`ghostty`** (build ghostty in Pigeon). |
 | 7 | Flavors: v1 includes **NVIDIA + OGC kernel** path (like Utah `nvidia`/`gaming` flavors). OGC kernel builds/asserts before NVIDIA module. |
@@ -57,7 +57,7 @@ Kestrel/
     Containerfile.kernel
     packages/{bluefin.toml,warbler.toml}
     contracts/desktop.toml
-    system_files/shared/     # gdm autologin, mango.desktop, mango defaults, rofi theme, ghostty preset, awww user unit
+    system_files/shared/     # sddm autologin, mango.desktop, mango defaults, rofi theme, ghostty preset, awww user unit
     scripts/{install-packages.py,verify-rpm-contract.py,configure-services.sh,configure-branding.sh,clean-stage.sh,install-ogc-kernel.sh,install-nvidia.sh}
     iso/
   woodpecker/
@@ -66,7 +66,7 @@ Kestrel/
     system_files/shared/
     scripts/
   docs/{architecture.md,building.md,targeting-hummingbird.md,verification/,skills/}
-  .agents/skills/{pigeon-packaging,pigeon-source-verify,warbler-image,woodpecker-server,mango-quickshell,gdm-autologin,ci-release,review}/
+  .agents/skills/{pigeon-packaging,pigeon-source-verify,warbler-image,woodpecker-server,mango-quickshell,sddm-autologin,ci-release,review}/
 ```
 
 ## 3. Pigeon — package factory
@@ -110,7 +110,7 @@ Kestrel/
 | 2 | `awww` | **v0.12.1**, `https://codeberg.org/LGFae/awww/archive/v0.12.1.tar.gz`, GPL-3.0 | Codeberg blocks scraping → human vendors tarball once, records SHA-512; pipeline verifies locally thereafter. Confirm Rust vs C on download; if Rust, add offline cargo vendor step. Ship `awww.service --user`. |
 | 2 | `rofi` | stock `rofi` (X11) per request | Note: stock rofi is X11-only; works via XWayland under Mango. If native Wayland launcher needed later, evaluate `rofi-wayland` fork as separate package. |
 | 2 | `ghostty` | latest stable, `github.com/ghostty-org/ghostty` | Likely Zig; needs Zig toolchain in buildroot + shell/completion assets. Renovate `github-tags`. |
-| 2 | `kestrel-gdm-config` | local package | GDM autologin drop-in + `mango.desktop` session file + polkit/udev rules (see §4). No GDM fork. |
+| 2 | `sddm` | **0.21.0**, `github.com/sddm/sddm` | Fedora dist-git import. Display manager; autologin into Mango via `sddm.conf.d` drop-in, maldives theme (no breeze/plasma dep). No custom config package (dropped `kestrel-gdm-config`). |
 | 2 | support set | from Fedora/Hummingbird where present, else Pigeon | `xdg-desktop-portal-wlr, seatd, wl-clipboard, grim, slurp, swayidle, swaylock, brightnessctl, pamixer, xfce-polkit, foot (fallback)` |
 
 ### 3.4 Build pipeline
@@ -123,18 +123,18 @@ Kestrel/
 ## 4. Warbler — desktop image
 
 * `warbler/Containerfile` (follow Utah layer discipline: few COPYs, fold small RUNs, declare `VERSION`/flavor ARGs late):
-  `BASE_IMAGE` (pinned Hummingbird digest) + `PIGEON_IMAGE_REF` (pinned digest) + `common`/`brew` sidecars (optional; decide: include `projectbluefin/common` + `ublue-os/brew` like Utah, or go without for v1 — recommend **without** for first boot, add when branding/flatpaks needed) → copy manifests + repo files + `/etc/pigeon` → `install-packages.py` → `verify-rpm-contract.py` → Quickshell/Mango/awww/rofi/ghostty config → `configure-services.sh` (desktop service policy, GDM enable, login defaults, update policy) → `configure-branding.sh` → `verify-desktop-contract.py` → OGC/NVIDIA per flavor → `clean-stage.sh` + `bootc container lint --fatal-warnings`.
-* Contracts: `packages/bluefin.toml` byte-copy of Bluefin `base.toml` (CI diffs, drift fails build) + `packages/warbler.toml` (Mango, quickshell, awww, rofi, ghostty, `kestrel-gdm-config`, portal stack, `[unavailable]` with issue links). Resolved list written to `/usr/share/warbler/contract.txt`; verify asserts that file.
-* GDM autologin (`system_files/shared/etc/gdm/custom.conf.d/10-warbler-autologin.conf`):
-  `AutomaticLoginEnable=true`, `AutomaticLogin=<user>`, `WaylandEnable=true`. User created at install; document as opt-in kiosk default, never a baked known password.
+  `BASE_IMAGE` (pinned Hummingbird digest) + `PIGEON_IMAGE_REF` (pinned digest) + `common`/`brew` sidecars (optional; decide: include `projectbluefin/common` + `ublue-os/brew` like Utah, or go without for v1 — recommend **without** for first boot, add when branding/flatpaks needed) → copy manifests + repo files + `/etc/pigeon` → `install-packages.py` → `verify-rpm-contract.py` → Quickshell/Mango/awww/rofi/ghostty config → `configure-services.sh` (desktop service policy, SDDM enable, login defaults, update policy) → `configure-branding.sh` → `verify-desktop-contract.py` → OGC/NVIDIA per flavor → `clean-stage.sh` + `bootc container lint --fatal-warnings`.
+* Contracts: `packages/bluefin.toml` byte-copy of Bluefin `base.toml` (CI diffs, drift fails build) + `packages/warbler.toml` (Mango, quickshell, awww, rofi, ghostty, `sddm`, portal stack, `[unavailable]` with issue links). Resolved list written to `/usr/share/warbler/contract.txt`; verify asserts that file.
+* SDDM autologin (`system_files/shared/etc/sddm.conf.d/10-warbler-autologin.conf`):
+  `[Autologin] User=<user>, Session=mango.desktop` + `[Theme] Current=maldives`. User created at install; document as opt-in kiosk default, never a baked known password.
 * Mango session (`share/wayland-sessions/mango.desktop`): `Exec=/usr/bin/mango`, `DesktopNames=mango`. Mango config = upstream default; user overrides in `~/.config/mango`.
 * Quickshell: autostart `quickshell.service --user` from Mango config; **ship no `shell.qml`** (user-owned). Ensure `qs -c` / `qs -p` work + QML debugger path documented.
 * Flavors (`config/flavors.json` single source): `warbler` (main), `warbler-nvidia`, `warbler-gaming`, `warbler-nvidia-gaming`. `Containerfile.kernel` builds OGC kernel (`sched_ext`, `binderfs`); `install-nvidia.sh` binds module to exact kernel tree. OGC asserts before NVIDIA.
-* ISO: `bootc-image-builder` live ISO (`just iso`); installer payload = next milestone after GDM→Mango verified.
+* ISO: `bootc-image-builder` live ISO (`just iso`); installer payload = next milestone after SDDM→Mango verified.
 
 ## 5. Woodpecker — server image
 
-* Bluefin-server-like: Hummingbird base + `cockpit, podman, skopeo, uupd (pinned version+SHA, Renovate-owned), bootc-auto-update timer, tailscale/wireguard-tools, openssh-server (ENABLE_SSHD=0 default)`, dev/container tooling. No GDM/Mango/Quickshell/rofi/awww/ghostty.
+* Bluefin-server-like: Hummingbird base + `cockpit, podman, skopeo, uupd (pinned version+SHA, Renovate-owned), bootc-auto-update timer, tailscale/wireguard-tools, openssh-server (ENABLE_SSHD=0 default)`, dev/container tooling. No SDDM/Mango/Quickshell/rofi/awww/ghostty.
 * Shares Warbler base stages where possible (same `Containerfile` preamble pattern), stops before GUI layer. Same signing/SBOM/Trivy/QEMU-boot gates.
 
 ## 6. CI (projectbluefin/actions)
@@ -145,7 +145,7 @@ Kestrel/
 
 ## 7. Docs + agent skills (Dakota-style)
 
-* `AGENTS.md` = authority for agents; skill router table (`pigeon-packaging, pigeon-source-verify, warbler-image, woodpecker-server, mango-quickshell, gdm-autologin, ci-release, review`). Load only matching skill.
+* `AGENTS.md` = authority for agents; skill router table (`pigeon-packaging, pigeon-source-verify, warbler-image, woodpecker-server, mango-quickshell, sddm-autologin, ci-release, review`). Load only matching skill.
 * `just check` (factory contract + package config) / `just test` (pytest). No committed changelogs or session notes; skills are evergreen invariants, not dated logs.
 * Human docs: `docs/building.md, docs/architecture.md, docs/targeting-hummingbird.md, docs/verification/`.
 
@@ -154,7 +154,7 @@ Kestrel/
 1. **Scaffold**: dirs above + `AGENTS.md`, `Justfile`, `renovate.json`, `.packit.yaml`, `validate.yml`, `factory_contract.py`, `SKILL.md` stubs.
 2. **Pigeon bootstrap**: `upstream-sources.json` (wlroots, scenefx, mango, quickshell, awww, rofi, ghostty) + `source_pipeline.py` + `build-stage.yml` + publish `:latest`.
 3. **Packit+Renovate wiring**: `.packit.yaml` all-recipes coverage, Renovate rules (upstream tags, Codeberg custom, digest pins, Qt→quickshell coupling). Verify a bump PR end-to-end.
-4. **Warbler boot**: `Containerfile` + contracts + GDM/Mango, QEMU to GDM, `bootc lint` clean. No NVIDIA yet.
+4. **Warbler boot**: `Containerfile` + contracts + SDDM/Mango, QEMU to SDDM, `bootc lint` clean. No NVIDIA yet.
 5. **Shell integration**: Mango autostart of user Quickshell, rofi keybind, awww user unit, ghostty default, autologin verify.
 6. **NVIDIA/OGC + Woodpecker + ISO**: `Containerfile.kernel`, flavor matrix, server image, live ISO.
 7. **Hardening**: cosign/SLSA/SBOM/Trivy, `recalculate-gaps`, promotion `:testing→:stable`, verification screenshots (`docs/verification/`).
@@ -166,7 +166,7 @@ Kestrel/
 * Quickshell Qt private-API ABI — every Qt bump needs quickshell rebuild; Renovate coupling is load-bearing.
 * Full-fork maintenance (~190 pkgs on 4vCPU/6h runners) — phase 8 is long; phases 2-5 deliver value first.
 * awww Codeberg anti-AI scraping — manual vendor step, keep tarball+SHA in-repo.
-* GDM autologin security — opt-in, documented, no default passwords.
+* SDDM autologin security — opt-in, documented, no default passwords.
 * NVIDIA-on-OGC + gaming flavors unproven (same caveat as Utah) — isolate in flavor matrix so `main` stays green.
 
 ## 10. `just` starting set

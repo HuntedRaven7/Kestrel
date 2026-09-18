@@ -84,11 +84,17 @@
       },
       "filename": "v1.3.1.tar.gz"
     },
-    "kestrel-gdm-config": {
-      "version": "1",
-      "local": true,
+    "sddm": {
+      "version": "0.21.0",
+      "url_template": "https://github.com/sddm/sddm/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "2e8e460e7f318f20a406dcbb1a9fa1dc78b6a5b8d888bfbbaae22b9c642dbc49cf2ac682b4ea9ed847bbafa9bdc361ba08795e59cad970088b370caaaa70f458",
       "stage": 2,
-      "note": "Local config package: GDM autologin drop-in + mango.desktop session. No upstream."
+      "note": "Fedora dist-git import. Display manager for the Mango autologin (maldives theme, no breeze dep).",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "sddm/sddm"
+      },
+      "filename": "v0.21.0.tar.gz"
     },
     "xdg-desktop-portal-wlr": {
       "version": "0.8.4",
