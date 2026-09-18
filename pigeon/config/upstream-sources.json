@@ -378,7 +378,11 @@
         "depName": "opencontainers/runc"
       },
       "filename": "v1.5.1.tar.gz",
-      "srpm": "rpmbuild"
+      "srpm": "rpmbuild",
+      "vendored": true,
+      "vendor_url": "https://kojipkgs.fedoraproject.org//packages/runc/1.5.1/2.eln159/src/runc-1.5.1-2.eln159.src.rpm",
+      "vendor_filename": "runc-1.5.1-vendor.tar.bz2",
+      "source_filename": "runc-1.5.1.tar.gz"
     },
     "crun": {
       "version": "1.29.1",
