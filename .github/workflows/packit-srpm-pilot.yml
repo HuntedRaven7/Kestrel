@@ -96,6 +96,8 @@ jobs:
                 SPEC=$(ls pigeon/packages/$PACKAGE/*.spec | head -1)
                 rpmbuild -bs --define "_srcrpmdir /out" \
                   --define "_sourcedir /repo/pigeon/packages/$PACKAGE" "$SPEC"
+                # rpmbuild names the file NVR; the lane expects $PACKAGE.src.rpm.
+                mv -f /out/*.src.rpm "/out/$PACKAGE.src.rpm"
               else
                 packit srpm --preserve-spec --output "/out/$PACKAGE.src.rpm" -p "$PACKAGE"
               fi
