@@ -25,7 +25,9 @@ jobs:
     name: Prepare build plan
     runs-on: ubuntu-24.04
     outputs:
-      stages: ${{ steps.plan.outputs.stages }}
+      matrix0: ${{ steps.plan.outputs.matrix0 }}
+      matrix1: ${{ steps.plan.outputs.matrix1 }}
+      matrix2: ${{ steps.plan.outputs.matrix2 }}
       changed: ${{ steps.plan.outputs.changed }}
     steps:
       - name: Checkout
@@ -38,25 +40,34 @@ jobs:
         run: |
           python3 << 'EOF'
           import json
+          import os
           import subprocess
           import sys
-          
-          result = subprocess.run([sys.executable, "pigeon/tools/packit_workflow.py", "packages"], 
-                                capture_output=True, text=True)
-          all_packages = json.loads(result.stdout.strip())
-          
-          stages = {
-            "0": ["wlroots", "scenefx"],
-            "1": ["mango", "quickshell"],
-            "2": ["awww", "rofi", "ghostty", "kestrel-gdm-config"]
-          }
-          
+
+          # Buildable packages (recipe dir + spec on disk).
+          result = subprocess.run(
+              [sys.executable, "pigeon/tools/packit_workflow.py", "packages"],
+              capture_output=True, text=True, check=True,
+          )
+          buildable = sorted(json.loads(result.stdout.strip()))
+          lock = json.loads(
+              open("pigeon/config/upstream-sources.json").read())["packages"]
+
+          # Group by the lock `stage` field (0-2 today); optional manual
+          # single-stage filter. Membership is data-driven so deleted or
+          # not-yet-written recipes can never desync this workflow.
           stage_filter = "${{ github.event.inputs.stage }}"
-          if stage_filter:
-            stages = {k: v for k, v in stages.items() if k == stage_filter}
-          
-          print(f"stages={json.dumps(stages)}")
-          print(f"changed={json.dumps(all_packages)}")
+          stages = {}
+          for name in buildable:
+              stage = str(lock.get(name, {}).get("stage", "2"))
+              if stage_filter and stage != stage_filter:
+                  continue
+              stages.setdefault(stage, []).append({"package": name})
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              for n in ("0", "1", "2"):
+                  f.write(f"matrix{n}={json.dumps(stages.get(n, []))}\n")
+              f.write(f"changed={json.dumps(buildable)}\n")
           EOF
 
   preflight:
@@ -107,35 +118,35 @@ jobs:
         continue-on-error: true
 
   rebuild0:
-    name: Build Stage 0 (wlroots, scenefx)
+    name: Build Stage 0
     needs: [prepare, preflight]
-    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '0') }}
+    if: ${{ needs.prepare.outputs.matrix0 != '' && needs.prepare.outputs.matrix0 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: "0"
-      packages: '[{"package": "wlroots"}, {"package": "scenefx"}]'
+      packages: ${{ needs.prepare.outputs.matrix0 }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   rebuild1:
-    name: Build Stage 1 (mango, quickshell)
+    name: Build Stage 1
     needs: [prepare, preflight, rebuild0]
-    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '1') }}
+    if: ${{ needs.prepare.outputs.matrix1 != '' && needs.prepare.outputs.matrix1 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: "1"
-      packages: '[{"package": "mango"}, {"package": "quickshell"}]'
+      packages: ${{ needs.prepare.outputs.matrix1 }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   rebuild2:
-    name: Build Stage 2 (awww, rofi, ghostty, kestrel-gdm-config)
+    name: Build Stage 2
     needs: [prepare, preflight, rebuild1]
-    if: ${{ needs.prepare.outputs.stages != '{}' && contains(fromJson(needs.prepare.outputs.stages), '2') }}
+    if: ${{ needs.prepare.outputs.matrix2 != '' && needs.prepare.outputs.matrix2 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
       stage: "2"
-      packages: '[{"package": "awww"}, {"package": "rofi"}, {"package": "ghostty"}, {"package": "kestrel-gdm-config"}]'
+      packages: ${{ needs.prepare.outputs.matrix2 }}
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
