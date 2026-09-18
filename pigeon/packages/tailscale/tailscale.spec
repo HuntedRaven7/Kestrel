@@ -32,6 +32,10 @@ Source0:        tailscale-%{version}-vendored.tar.xz
 Source1:        tailscaled.service
 Source2:        tailscale-systray-user.service
 Source10:       create-vendor-tarball.sh
+# Kestrel: pre-generated Go vendor tree (hermetic builds cannot fetch
+# modules). Regenerate on version bumps: go mod tidy && go mod vendor,
+# tar -czf tailscale-%{version}-vendor.tar.gz vendor
+Source20:       tailscale-%{version}-vendor.tar.gz
 
 # Fedora-specific patch to handle pre-installed user unit
 Patch:          tailscale-1.92.5-systray-unit.patch
@@ -1042,6 +1046,8 @@ Provides:       bundled(golang(sigs.k8s.io/json)) = v0.0.0~20241014173422~cfa47c
 
 %prep
 %goprep %{?with_vendor:-k}
+# Kestrel: unpack the committed vendor tree into the source root.
+tar -xzf %{SOURCE20}
 %autopatch -p1
 
 
