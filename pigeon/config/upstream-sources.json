@@ -823,7 +823,8 @@
         "datasource": "regex",
         "depName": "https://ffmpeg.org/releases/"
       },
-      "filename": "ffmpeg-7.1.tar.xz"
+      "filename": "ffmpeg-7.1.tar.xz",
+      "srpm": "rpmbuild"
     },
     "git": {
       "version": "2.47.0",
