@@ -132,6 +132,45 @@ def extract_srpm(srpm_path: Path, dest_dir: Path) -> bool:
         return False
 
 
+def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
+    """Rename vendor tarball to match spec expectations."""
+    # Known vendor tarball renames needed
+    renames = {
+        "tailscale": {
+            "from_pattern": "tailscale-*-vendored.tar.xz",
+            "to_template": "tailscale-{version}-vendor.tar.xz",
+        },
+    }
+    
+    if pkg_name not in renames:
+        return
+    
+    rename_info = renames[pkg_name]
+    from_pattern = rename_info["from_pattern"]
+    to_template = rename_info["to_template"]
+    
+    # Find the file matching the from_pattern
+    matches = list(pkg_dir.glob(from_pattern))
+    if not matches:
+        return
+    
+    src = matches[0]
+    # Get version from upstream-sources.json
+    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+        data = json.load(f)
+    version = data["packages"][pkg_name].get("version", "")
+    
+    if not version:
+        return
+    
+    dst_name = to_template.format(version=version)
+    dst = pkg_dir / dst_name
+    
+    if src != dst:
+        print(f"  Renaming {src.name} -> {dst.name}")
+        src.rename(dst)
+
+
 def fetch_vendored_source(pkg_name: str) -> bool:
     """Fetch vendored source for a package from Fedora Koji or dist-git."""
     # Load package info from upstream-sources.json
@@ -178,6 +217,7 @@ def fetch_vendored_source(pkg_name: str) -> bool:
             # Extract here while temp dir is still alive
             if srpm_path:
                 if extract_srpm(srpm_path, PKGS / pkg_name):
+                    rename_vendor_tarball(pkg_name, PKGS / pkg_name)
                     return True
 
     # If Koji failed, try dnf download from dist-git
@@ -191,6 +231,7 @@ def fetch_vendored_source(pkg_name: str) -> bool:
                 srpm_path = tmp_path
                 if not extract_srpm(srpm_path, PKGS / pkg_name):
                     return False
+                rename_vendor_tarball(pkg_name, PKGS / pkg_name)
                 return True
 
     print(f"  Failed to fetch sources for {pkg_name}")
