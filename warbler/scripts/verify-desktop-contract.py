@@ -57,8 +57,8 @@ def main() -> int:
     # Check services
     if "services" in data:
         svc = data["services"]
-        if svc.get("gdm_enabled") and not check_service_enabled("gdm.service"):
-            errors.append("GDM service not enabled")
+        if svc.get("sddm_enabled") and not check_service_enabled("sddm.service"):
+            errors.append("SDDM service not enabled")
         if svc.get("seatd_enabled") and not check_service_enabled("seatd.service"):
             errors.append("seatd service not enabled")
 

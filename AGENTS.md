@@ -2,7 +2,7 @@
 
 Kestrel is a monorepo for Fedora Hummingbird bootc images. `pigeon/`
 builds RPMs and publishes `ghcr.io/huntedraven7/pigeon` (OCI repo image).
-`warbler/` (desktop: Mango + Quickshell + GDM autologin) and `woodpecker/`
+`warbler/` (desktop: Mango + Quickshell + SDDM autologin) and `woodpecker/`
 (server) consume it via `COPY --from=` pinned by digest. See `PLAN.md`.
 
 Skills live in `.agents/skills/` and are discovered by Pi and GitHub Copilot.
@@ -17,7 +17,7 @@ Load only the skill matching the task; do not read every skill.
 | Warbler Containerfile, contracts, system_files, ISO | `warbler-image` |
 | Woodpecker server image, services, uupd | `woodpecker-server` |
 | Mango compositor, Quickshell, rofi, ghostty, awww integration | `mango-quickshell` |
-| GDM autologin, session files, login policy | `gdm-autologin` |
+| SDDM autologin, session files, login policy | `sddm-autologin` |
 | GitHub Actions, `projectbluefin/actions`, signing, promotion | `ci-release` |
 | Reviewing PRs, triage, issue labels | `review` |
 
@@ -26,7 +26,7 @@ Load only the skill matching the task; do not read every skill.
 - Never push directly to `main`. Work on a feature branch; human merges.
 - Never expose secrets or weaken signing, provenance, or supply-chain checks.
 - Do not post GitHub comments/reviews unless explicitly asked.
-- GDM autologin is opt-in kiosk behavior: never bake in a known password.
+- SDDM autologin is opt-in kiosk behavior: never bake in a known password.
 - A package with no `upstream-sources.json` entry must not build or publish.
 
 ## Sources of truth

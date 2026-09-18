@@ -7,6 +7,6 @@
 | `warbler-image` | Warbler Containerfile, contracts, ISO |
 | `woodpecker-server` | server image, services, uupd |
 | `mango-quickshell` | Mango, Quickshell, rofi, ghostty, awww |
-| `gdm-autologin` | GDM session + autologin policy |
+| `sddm-autologin` | SDDM session + autologin policy |
 | `ci-release` | actions, signing, promotion |
 | `review` | PR review, triage, labels |

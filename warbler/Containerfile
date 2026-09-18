@@ -49,7 +49,7 @@ RUN /usr/libexec/warbler/verify-rpm-contract.py \
     --contract /etc/warbler/packages/warbler.toml \
     --installed-db /var/lib/rpm
 
-# Configure desktop services (GDM, seatd, etc.)
+# Configure desktop services (SDDM, seatd, etc.)
 RUN /usr/libexec/warbler/configure-services.sh
 
 # Configure branding (os-release, etc.)
@@ -91,7 +91,7 @@ RUN if [[ "${IMAGE_FLAVOR}" == *"nvidia"* ]]; then \
 RUN /usr/libexec/warbler/clean-stage.sh \
     && bootc container lint --fatal-warnings
 
-# Copy system files (GDM autologin, mango.desktop, awww service, etc.)
+# Copy system files (SDDM autologin, mango.desktop, awww service, etc.)
 COPY system_files/shared/ /
 
 # Final labels

@@ -2,7 +2,7 @@
 # verify-desktop-contract.py reads this file and asserts the installed system matches.
 
 [session]
-# GDM + Mango Wayland session
+# SDDM + Mango Wayland session
 session_name = "mango"
 session_exec = "/usr/bin/mango"
 session_type = "wayland"
@@ -42,7 +42,7 @@ portal_extra = ["xdg-desktop-portal-gtk"]
 
 [services]
 # System services
-gdm_enabled = true
+sddm_enabled = true
 seatd_enabled = true
 # User services (enabled via Mango autostart)
 quickshell_user_enabled = true
