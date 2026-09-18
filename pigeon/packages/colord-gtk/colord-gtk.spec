@@ -4,7 +4,9 @@ Version:   0.3.1
 Release:   %autorelease
 License:   LGPL-2.1-or-later
 URL:       http://www.freedesktop.org/software/colord/
-Source0:   http://www.freedesktop.org/software/colord/releases/%{name}-%{version}.tar.xz
+# Kestrel: upstream https mirror (freedesktop.org 418s automation; our
+# verified Source0 in upstream-sources.json). Do not revert on re-import.
+Source0:   https://github.com/hughsie/colord-gtk/archive/refs/tags/%{version}.tar.gz
 
 BuildRequires: meson
 BuildRequires: docbook5-style-xsl
