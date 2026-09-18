@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Fetch vendored sources from Fedora Koji or dist-git SRPM.
+
+For packages that can't be downloaded directly (GitLab auth, etc.),
+fetch the source RPM from Fedora's Koji and extract sources.
+"""
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
+import tempfile
+import urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+PKGS = ROOT / "pigeon" / "packages"
+
+
+def fetch_srpm_from_koji(pkg_name: str, version: str) -> Path | None:
+    """Fetch SRPM from Fedora Koji for the given package and version."""
+    print(f"  Searching Koji for {pkg_name}-{version}...")
+
+    # Search Koji for the package build
+    url = f"https://koji.fedoraproject.org/koji/search?match=glob&type=build&terms={pkg_name}-{version}*"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "kestrel-vendored-sources/1"})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            html = resp.read().decode()
+    except Exception as exc:
+        print(f"  Failed to search Koji: {exc}")
+        return None
+
+    # Parse build IDs from the search results
+    build_ids = re.findall(r'buildinfo\?buildID=(\d+)', html)
+    if not build_ids:
+        print("  No builds found in Koji")
+        return None
+
+    # Try each build ID to find the correct version
+    for build_id in build_ids[:10]:  # Try first 10 builds
+        try:
+            url = f"https://koji.fedoraproject.org/koji/buildinfo?buildID={build_id}"
+            req = urllib.request.Request(url, headers={"User-Agent": "kestrel-vendored-sources/1"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                build_html = resp.read().decode()
+
+            # Check if this is the right version
+            if f"{pkg_name}-{version}" not in build_html:
+                continue
+
+            # Find SRPM link - look for koji pkg URL pattern
+            srpm_match = re.search(r'href="(https://kojipkgs\.fedoraproject\.org//packages/' + re.escape(pkg_name) + r'/\d+\.\d+/\d+\.\w+/src/' + re.escape(pkg_name) + r'-[^"]+\.src\.rpm)"', build_html)
+            if not srpm_match:
+                # Try more generic pattern
+                srpm_match = re.search(r'href="(https://kojipkgs\.fedoraproject\.org//packages/[^"]+\.src\.rpm)"', build_html)
+                if not srpm_match:
+                    continue
+
+            srpm_url = srpm_match.group(1)
+            if not srpm_url.startswith("http"):
+                srpm_url = f"https://koji.fedoraproject.org{srpm_url}"
+
+            print(f"  Found SRPM: {srpm_url}")
+            return srpm_url
+
+        except Exception as exc:
+            print(f"  Error checking build {build_id}: {exc}")
+            continue
+
+    return None
+
+
+def fetch_srpm_from_distgit(pkg_name: str, version: str) -> Path | None:
+    """Fetch SRPM from Fedora dist-git using dnf download."""
+    print(f"  Trying dnf download for {pkg_name}-{version}...")
+
+    with tempfile.TemporaryDirectory(prefix=f"kestrel-{pkg_name}-") as tmp:
+        workdir = Path(tmp)
+        try:
+            # Try to download SRPM using dnf
+            result = subprocess.run(
+                ["dnf", "download", "--source", f"{pkg_name}-{version}"],
+                cwd=workdir,
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+            if result.returncode == 0:
+                srpms = list(workdir.glob("*.src.rpm"))
+                if srpms:
+                    print(f"  Downloaded SRPM: {srpms[0].name}")
+                    return srpms[0]
+        except Exception as exc:
+            print(f"  dnf download failed: {exc}")
+
+    return None
+
+
+def extract_srpm(srpm_path: Path, dest_dir: Path) -> bool:
+    """Extract SRPM sources to destination directory."""
+    print(f"  Extracting {srpm_path.name} (size: {srpm_path.stat().st_size} bytes)...")
+    try:
+        # Use rpm2cpio and cpio to extract
+        result = subprocess.run(
+            ["rpm2cpio", str(srpm_path)],
+            capture_output=True,
+            timeout=60
+        )
+        print(f"  rpm2cpio returncode: {result.returncode}")
+        if result.returncode != 0:
+            print(f"  rpm2cpio failed: stderr={result.stderr.decode()[:200]}")
+            return False
+
+        # Extract cpio
+        result = subprocess.run(
+            ["cpio", "-idmv"],
+            input=result.stdout,
+            cwd=dest_dir,
+            capture_output=True,
+            timeout=60
+        )
+        print(f"  cpio returncode: {result.returncode}")
+        if result.returncode != 0:
+            print(f"  cpio extraction failed: {result.stderr.decode()[:200]}")
+            return False
+
+        return True
+    except Exception as exc:
+        print(f"  Extraction failed: {exc}")
+        return False
+
+
+def fetch_vendored_source(pkg_name: str) -> bool:
+    """Fetch vendored source for a package from Fedora Koji or dist-git."""
+    # Load package info from upstream-sources.json
+    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+        data = json.load(f)
+
+    entry = data["packages"].get(pkg_name)
+    if not entry:
+        print(f"  No upstream-sources entry for {pkg_name}")
+        return False
+
+    version = entry.get("version")
+    if not version:
+        print(f"  No version for {pkg_name}")
+        return False
+
+    pkg_dir = PKGS / pkg_name
+    if not pkg_dir.is_dir():
+        print(f"  Package directory not found: {pkg_dir}")
+        return False
+
+    print(f"Fetching vendored sources for {pkg_name} {version}...")
+
+# Try Koji first
+    srpm_url = fetch_srpm_from_koji(pkg_name, version)
+    srpm_path = None
+
+    if srpm_url:
+        with tempfile.TemporaryDirectory(prefix=f"kestrel-{pkg_name}-") as tmp:
+            srpm_path = Path(tmp) / f"{pkg_name}.src.rpm"
+            print(f"  Downloading SRPM from Koji...")
+            try:
+                req = urllib.request.Request(srpm_url, headers={"User-Agent": "kestrel-vendored-sources/1"})
+                with urllib.request.urlopen(req, timeout=120) as resp, open(srpm_path, "wb") as f:
+                    total = 0
+                    while chunk := resp.read(1 << 20):
+                        f.write(chunk)
+                        total += len(chunk)
+                    print(f"  Downloaded {total} bytes")
+            except Exception as exc:
+                print(f"  Failed to download SRPM from Koji: {exc}")
+                srpm_path = None
+
+            # Extract here while temp dir is still alive
+            if srpm_path:
+                if extract_srpm(srpm_path, PKGS / pkg_name):
+                    return True
+
+    # If Koji failed, try dnf download from dist-git
+    if not srpm_path:
+        srpm_path = fetch_srpm_from_distgit(pkg_name, version)
+        if srpm_path:
+            # Move to temp location for extraction
+            with tempfile.TemporaryDirectory() as tmp:
+                tmp_path = Path(tmp) / srpm_path.name
+                srpm_path.rename(tmp_path)
+                srpm_path = tmp_path
+                if not extract_srpm(srpm_path, PKGS / pkg_name):
+                    return False
+                return True
+
+    print(f"  Failed to fetch sources for {pkg_name}")
+    return False
+
+
+def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description="Fetch vendored sources from Fedora Koji/dist-git")
+    ap.add_argument("--package", "-p", required=True, help="Package name")
+    args = ap.parse_args()
+
+    success = fetch_vendored_source(args.package)
+    return 0 if success else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

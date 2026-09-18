@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       packages: ${{ steps.discover.outputs.packages }}
+      vendored: ${{ steps.discover.outputs.vendored }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,9 +32,20 @@ jobs:
           python3 pigeon/tools/packit_workflow.py packages | tee /tmp/packages.json
           echo "packages=$(cat /tmp/packages.json)" >> $GITHUB_OUTPUT
 
+      - name: Identify vendored packages
+        id: vendored
+        run: |
+          python3 << 'EOF'
+          import json
+          with open('pigeon/config/upstream-sources.json') as f:
+              data = json.load(f)
+          vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
+          print(f"vendored={json.dumps(vendored)}")
+          EOF
+
   srpm:
     name: Build SRPM (${{ matrix.package }})
-    needs: discover
+    needs: [discover, vendored]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -54,8 +66,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch vendored sources from Fedora
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(needs.vendored.outputs.vendored), matrix.package) }}
+        run: |
+          python3 pigeon/tools/fetch_vendored.py --package "${{ matrix.package }}"
+
       - name: Fetch and stage verified sources
-        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && !contains(fromJson(needs.vendored.outputs.vendored), matrix.package) }}
         env:
           PACKAGE: ${{ matrix.package }}
         run: |
