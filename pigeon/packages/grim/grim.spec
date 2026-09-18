@@ -5,7 +5,9 @@ Summary:	Screenshot tool for Sway
 
 License:	MIT
 URL:		https://gitlab.freedesktop.org/emersion/grim
-Source0:	%{url}/-/releases/v%{version}/downloads/%{name}-%{version}.tar.gz
+# Kestrel: upstream moved to GitHub (the fd.o release URL 404s; our
+# verified Source0 in upstream-sources.json). Do not revert on re-import.
+Source0:	https://github.com/emersion/grim/releases/download/v%{version}/%{name}-%{version}.tar.gz
 Source1:	%{url}/-/releases/v%{version}/downloads/%{name}-%{version}.tar.gz.sig
 Source2:	dj3498u4hyyarh35rkjfnghbjxug6b19
 
