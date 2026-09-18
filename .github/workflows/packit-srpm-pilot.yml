@@ -87,12 +87,15 @@ jobs:
               # grub2.spec needs with_legacy_arch from efi-srpm-macros at
               # parse time (real buildroots get it via BuildRequires).
               if [ "$PACKAGE" = grub2 ]; then dnf install -qy efi-srpm-macros; fi
-              if python3 pigeon/tools/is_local.py "$PACKAGE"; then
-                # Local file package: no upstream archive exists, so packit
-                # has nothing to create. Plain rpmbuild packs the spec +
-                # committed Sources directly.
+              METHOD=$(python3 pigeon/tools/srpm_method.py "$PACKAGE")
+              if [ "$METHOD" = rpmbuild ]; then
+                # Local file packages (no upstream archive) and specs
+                # packit's parser cannot handle (grub2): plain rpmbuild
+                # packs the spec + committed Sources directly. _sourcedir
+                # must point at the recipe dir (rpmbuild defaults to ~/rpmbuild).
+                SPEC=$(ls pigeon/packages/$PACKAGE/*.spec | head -1)
                 rpmbuild -bs --define "_srcrpmdir /out" \
-                  "pigeon/packages/$PACKAGE/$PACKAGE.spec"
+                  --define "_sourcedir /repo/pigeon/packages/$PACKAGE" "$SPEC"
               else
                 packit srpm --preserve-spec --output "/out/$PACKAGE.src.rpm" -p "$PACKAGE"
               fi

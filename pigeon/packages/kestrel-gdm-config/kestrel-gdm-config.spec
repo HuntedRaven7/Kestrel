@@ -20,5 +20,5 @@ install -Dm0644 %{SOURCE0} %{buildroot}%{_sysconfdir}/gdm/custom.conf.d/10-warbl
 %config(noreplace) %{_sysconfdir}/gdm/custom.conf.d/10-warbler-autologin.conf
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 1-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 1-1.hum1.pigeon
 - Initial Kestrel config package

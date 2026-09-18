@@ -57,5 +57,5 @@ default config, and systemd session target.
 %config(noreplace) %{_sysconfdir}/mango/config.conf
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 0.17.2-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.17.2-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

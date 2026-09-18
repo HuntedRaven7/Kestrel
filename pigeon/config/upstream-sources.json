@@ -436,7 +436,8 @@
       "url_template": "https://ftp.gnu.org/gnu/grub/grub-{version}.tar.xz",
       "sha512": "761c060a4c3da9c0e810b0ea967e3ebc66baa4ddd682a503ae3d30a83707626bccaf49359304a16b3a26fc4435fe6bea1ee90be910c84de3c2b5485a31a15be3",
       "stage": 2,
-      "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive).",
+      "srpm": "rpmbuild",
+      "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive). SRPM via plain rpmbuild: packit's parser cannot evaluate the system-macros.d %ifs (with_legacy_arch et al.); real rpmbuild gets them from efi-srpm-macros (a BuildRequires).",
       "filename": "grub-2.12.tar.xz"
     },
     "smartmontools": {

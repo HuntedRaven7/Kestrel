@@ -48,5 +48,5 @@ zig build -Doptimize=ReleaseFast -Dversion=v%{version} -p %{buildroot}%{_prefix}
 %{_mandir}/man5/ghostty.5*
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 1.3.1-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 1.3.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

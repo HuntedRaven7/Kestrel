@@ -57,5 +57,5 @@ Headers, pkgconfig file, and the unversioned .so link for scenefx 0.5.
 %{_libdir}/pkgconfig/scenefx-0.5.pc
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 0.5-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.5-1.hum1.pigeon
 - Initial Kestrel package (independent recipe, wlroots-0.20 backend)

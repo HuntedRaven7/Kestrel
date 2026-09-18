@@ -83,5 +83,5 @@ Headers, pkgconfig file, and the unversioned .so link for wlroots 0.20.
 %{_libdir}/pkgconfig/wlroots-0.20.pc
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 0.20.2-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.20.2-1.hum1.pigeon
 - Initial Kestrel package (independent recipe for Mango 0.17.2)

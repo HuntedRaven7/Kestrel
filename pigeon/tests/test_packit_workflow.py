@@ -32,12 +32,27 @@ def test_packages_empty_without_recipes(tmp_path, monkeypatch):
     assert pw.packages() == []
 
 
-def test_is_local(tmp_path, monkeypatch):
+def _load_tool(name):
     import importlib.util
-    tool = Path(__file__).resolve().parents[2] / "pigeon" / "tools" / "is_local.py"
-    spec = importlib.util.spec_from_file_location("is_local", tool)
+    tool = Path(__file__).resolve().parents[2] / "pigeon" / "tools" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, tool)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.main(["kestrel-gdm-config"]) == 0
-    assert mod.main(["mango"]) == 1
+    return mod
+
+
+def test_srpm_method(tmp_path, monkeypatch):
+    mod = _load_tool("srpm_method")
+    src = tmp_path / "pigeon" / "config" / "upstream-sources.json"
+    src.parent.mkdir(parents=True)
+    src.write_text(json.dumps({"packages": {
+        "filepkg": {"local": True},
+        "weirdspec": {"srpm": "rpmbuild"},
+        "normal": {"version": "1"},
+    }}))
+    monkeypatch.setattr(mod, "ROOT", tmp_path)
+    assert mod.method("filepkg") == "rpmbuild"
+    assert mod.method("weirdspec") == "rpmbuild"
+    assert mod.method("normal") == "packit"
+    assert mod.method("unknown") == "packit"
     assert mod.main([]) == 2

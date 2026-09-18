@@ -57,5 +57,5 @@ install -Dm0755 target/release/awww-daemon %{buildroot}%{_bindir}/awww-daemon
 %doc README.md CHANGELOG.md
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 0.12.1-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.12.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe; vendor tree pending)
