@@ -182,6 +182,10 @@ def audit(fix: bool = False, only: str | None = None) -> int:
                 )
                 continue
             if "://" in val:
+                # A committed file satisfying a remote URL (e.g. .sig fetched
+                # from lookaside) needs no network; rpmbuild uses the local copy.
+                if (pkgdir / val.rsplit("/", 1)[-1]).is_file():
+                    continue
                 # rpm URL#file fragments (openpgpkey keys): stage the file
                 # so rpmbuild finds it without network.
                 if "#/" in val:
