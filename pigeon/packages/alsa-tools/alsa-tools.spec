@@ -14,9 +14,9 @@
 
 %ifarch ppc ppc64
 # sb16_csp doesn't build on PPC; see bug #219010
-%{?!_without_tools:     %global builddirstools as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sscape_ctl us428control hda-verb hdajackretask hdajacksensetest }
+%{?!_without_tools:     %global builddirstools "as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sscape_ctl us428control hda-verb hdajackretask hdajacksensetest" }
 %else
-%{?!_without_tools:     %global builddirstools as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sb16_csp sscape_ctl us428control hda-verb hdajackretask hdajacksensetest }
+%{?!_without_tools:     %global builddirstools "as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sb16_csp sscape_ctl us428control hda-verb hdajackretask hdajacksensetest" }
 %endif
 
 %{?!_without_firmware:  %global builddirsfirmw hdsploader mixartloader usx2yloader vxloader }
