@@ -286,7 +286,7 @@
       "sha512": "397f8a6cf6757d18e6a1d1744abf88617636566a302c189e13d3079ccbed470899d1963378eb50483c585b3aabbe67691cfe5580b030337781c7e3dbf3f69695",
       "stage": 2,
       "vendored": true,
-      "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in (confirmed 2026-09-17). Bytes are Fedora's lookaside tarball, hash-verified against the dist-git sources file. Bumps are manual.",
+      "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in. Source must be fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
       "filename": "iio-sensor-proxy-3.9.tar.bz2"
     },
     "ddcutil": {
@@ -303,15 +303,15 @@
     },
     "ModemManager": {
       "version": "1.24.2",
-      "url_template": "https://gitlab.freedesktop.org/ModemManager/ModemManager/-/archive/{version}/ModemManager-{version}.tar.gz",
-      "sha512": "341a795e6aa4f76f606a57921511233eb68510bea0bc6967449e2d2bb5949106c7d17ae964683797734c1cd688ac15ad076e08cc1d54aee22a16d23a9ca61510",
+      "url_template": "https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/archive/{version}/ModemManager-{version}.tar.bz2",
+      "sha512": "692d0699037845f7e189cc854f6fbaab90615c9eaaada83a00a02745d13bd87afac16349a4211425929a84cf373fda18475479bff64c9fe89cb35b361fb45663",
       "stage": 2,
       "note": "Fedora dist-git import. Mobile broadband modem manager.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "Freedesktop/ModemManager"
       },
-      "filename": "ModemManager-1.24.2.tar.gz"
+      "filename": "ModemManager-1.24.2.tar.bz2"
     },
     "tailscale": {
       "version": "1.98.8",
