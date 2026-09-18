@@ -279,16 +279,13 @@
       "filename": "v0.18.tar.gz"
     },
     "iio-sensor-proxy": {
-      "version": "3.8",
-      "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.gz",
-      "sha512": "fee65b4cb53610274321fdababda693281afe4fd7b993a24e1a319a58b8aa4e014026078db235879ab2c21d2a9d73eca4ae3fb856f101d5c0ad51ae5b962356e",
+      "version": "3.9",
+      "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.bz2",
+      "sha512": "397f8a6cf6757d18e6a1d1744abf88617636566a302c189e13d3079ccbed470899d1963378eb50483c585b3aabbe67691cfe5580b030337781c7e3dbf3f69695",
       "stage": 2,
-      "note": "Fedora dist-git import. IIO sensor proxy. Upstream moved to GNOME GitLab (GitHub mirror is stale at 2.8); watch manually.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "hadess/iio-sensor-proxy"
-      },
-      "filename": "iio-sensor-proxy-3.8.tar.gz"
+      "vendored": true,
+      "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in (confirmed 2026-09-17). Bytes are Fedora's lookaside tarball, hash-verified against the dist-git sources file. Bumps are manual.",
+      "filename": "iio-sensor-proxy-3.9.tar.bz2"
     },
     "ddcutil": {
       "version": "2.2.1",
