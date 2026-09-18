@@ -79,9 +79,11 @@ jobs:
               SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
               cp "$SPEC" /tmp/pkg.spec
               dnf builddep -y /tmp/pkg.spec
-              export RPMBUILD="$HOME/rpmbuild"
+              export RPMBUILD=/root/rpmbuild
               mkdir -p "$RPMBUILD"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-              cp /tmp/pkg.spec "$RPMBUILD/SPECS/"
+              # Keep the real spec filename: later steps address it by
+              # $(basename $SPEC), and a bare cp would leave pkg.spec.
+              cp /tmp/pkg.spec "$RPMBUILD/SPECS/$(basename $SPEC)"
               # Verified archive plus every committed recipe input
               # (patches, .sig/keys, sysusers units, vendor trees).
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
