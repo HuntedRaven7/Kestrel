@@ -31,39 +31,9 @@ jobs:
           python3 pigeon/tools/packit_workflow.py packages | tee /tmp/packages.json
           echo "packages=$(cat /tmp/packages.json)" >> $GITHUB_OUTPUT
 
-  vendored:
-    name: Identify vendored packages
-    runs-on: ubuntu-24.04
-    needs: discover
-    outputs:
-      vendored: ${{ steps.vendored.outputs.vendored }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Identify vendored packages
-        id: vendored
-        run: |
-          python3 << 'EOF'
-          import json
-          import sys
-          try:
-              with open('pigeon/config/upstream-sources.json') as f:
-                  data = json.load(f)
-              vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
-              result = json.dumps(vendored)
-          except Exception as e:
-              # Always output valid JSON, even on error
-              result = "[]"
-              print(f"Error identifying vendored packages: {e}", file=sys.stderr)
-          print(f"vendored={result}")
-          EOF
-
   srpm:
     name: Build SRPM (${{ matrix.package }})
-    needs: [discover, vendored]
+    needs: discover
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -84,13 +54,32 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Identify vendored packages
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        id: vendored
+        run: |
+          python3 << 'EOF'
+          import json
+          import sys
+          try:
+              with open('pigeon/config/upstream-sources.json') as f:
+                  data = json.load(f)
+              vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
+              result = json.dumps(vendored)
+          except Exception as e:
+              # Always output valid JSON, even on error
+              result = "[]"
+              print(f"Error identifying vendored packages: {e}", file=sys.stderr)
+          print(f"vendored={result}")
+          EOF
+
       - name: Fetch vendored sources from Fedora
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(needs.vendored.outputs.vendored), matrix.package) }}
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
         run: |
           python3 pigeon/tools/fetch_vendored.py --package "${{ matrix.package }}"
 
       - name: Fetch and stage verified sources
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && !contains(fromJson(needs.vendored.outputs.vendored), matrix.package) }}
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && !contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
         env:
           PACKAGE: ${{ matrix.package }}
         run: |
