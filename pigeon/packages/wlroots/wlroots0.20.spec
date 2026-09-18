@@ -16,6 +16,7 @@ Source0:        https://gitlab.freedesktop.org/wlroots/wlroots/-/archive/%{versi
 BuildRequires:  gcc
 BuildRequires:  meson >= 1.3
 BuildRequires:  ninja-build
+BuildRequires:  glslang
 BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(gbm) >= 17.1.0
 BuildRequires:  pkgconfig(glesv2)
