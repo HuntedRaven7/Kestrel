@@ -1,5 +1,5 @@
 Name:		grim
-Version:	1.5.0
+Version:	1.4.0
 Release:	%autorelease
 Summary:	Screenshot tool for Sway
 
@@ -8,7 +8,9 @@ URL:		https://gitlab.freedesktop.org/emersion/grim
 # Kestrel: upstream moved to GitHub (the fd.o release URL 404s; our
 # verified Source0 in upstream-sources.json). Do not revert on re-import.
 Source0:	https://github.com/emersion/grim/releases/download/v%{version}/%{name}-%{version}.tar.gz
-Source1:	%{url}/-/releases/v%{version}/downloads/%{name}-%{version}.tar.gz.sig
+# Kestrel: .sig from the same GitHub release as our verified Source0
+# (the fd.o release URL is dead). Do not revert on re-import.
+Source1:	https://github.com/emersion/grim/releases/download/v%{version}/%{name}-%{version}.tar.gz.sig
 Source2:	dj3498u4hyyarh35rkjfnghbjxug6b19
 
 BuildRequires:	pkgconfig(bash-completion)
