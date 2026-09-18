@@ -61,6 +61,7 @@ jobs:
           python3 << 'EOF'
           import json
           import sys
+          import os
           try:
               with open('pigeon/config/upstream-sources.json') as f:
                   data = json.load(f)
@@ -70,8 +71,12 @@ jobs:
               # Always output valid JSON, even on error
               result = "[]"
               print(f"Error identifying vendored packages: {e}", file=sys.stderr)
-          print(f"vendored={result}")
+          # Write to GITHUB_OUTPUT for step output
+          with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
+              f.write(f"vendored={result}\n")
           EOF
+        env:
+          PYTHONIOENCODING: utf-8
 
       - name: Fetch vendored sources from Fedora
         if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
