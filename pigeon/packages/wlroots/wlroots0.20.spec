@@ -49,6 +49,7 @@ BuildRequires:  pkgconfig(xcb-xfixes)
 BuildRequires:  pkgconfig(xcb-xinput)
 BuildRequires:  wayland-protocols-devel
 BuildRequires:  hwdata
+BuildRequires:  hwdata-devel
 
 %description
 wlroots 0.20.x, packaged versioned so Mango (which pins wlroots-0.20)
