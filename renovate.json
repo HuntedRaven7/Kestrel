@@ -35,70 +35,52 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "upstream-sources.json github-tags packages",
+      "description": "upstream-sources.json github-tags packages. Field order is load-bearing (version, url_template, sha512, stage?, note?, renovate{datasource, depName}); test_renovate_managers.py enforces full coverage.",
       "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
       "matchStrings": [
-        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"github-tags\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
+        "\"version\":\\s*\"(?<currentValue>[^\"]+)\",\\s*\"url_template\":\\s*\"[^\"]*\",\\s*\"sha512\":\\s*\"[^\"]*\"(?:,\\s*\"stage\":\\s*\\d+)?(?:,\\s*\"note\":\\s*\"[^\"]*\")?,\\s*\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"github-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
       "datasourceTemplate": "github-tags"
     },
     {
       "customType": "regex",
-      "description": "upstream-sources.json gitlab-tags packages (wlroots)",
+      "description": "upstream-sources.json gitlab-tags packages (freedesktop instance). Same field-order contract as above.",
       "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
       "matchStrings": [
-        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"gitlab-tags\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
+        "\"version\":\\s*\"(?<currentValue>[^\"]+)\",\\s*\"url_template\":\\s*\"[^\"]*\",\\s*\"sha512\":\\s*\"[^\"]*\"(?:,\\s*\"stage\":\\s*\\d+)?(?:,\\s*\"note\":\\s*\"[^\"]*\")?,\\s*\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
-      "datasourceTemplate": "gitlab-tags"
-    },
-    {
-      "customType": "regex",
-      "description": "upstream-sources.json custom regex for Codeberg (awww)",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
-      "matchStrings": [
-        "\"depName\":\\s*\"(?<depName>[^\"]+?)\"[^}]*?\"datasource\":\\s*\"regex\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+?)\""
-      ],
-      "datasourceTemplate": "regex"
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.freedesktop.org"
     },
     {
       "customType": "regex",
       "description": "Containerfile BASE_IMAGE digest pin",
       "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
       "matchStrings": [
-        "ARG BASE_IMAGE=quay\\.io/hummingbird-community/bootc-os@sha256:(?<currentValue>[a-f0-9]+)"
+        "ARG BASE_IMAGE=quay\\.io/hummingbird-community/bootc-os@(?<currentDigest>sha256:[a-f0-9]+)"
       ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "quay.io/hummingbird-community/bootc-os"
     },
     {
       "customType": "regex",
-      "description": "Containerfile PIGEON_IMAGE_SHA digest pin",
+      "description": "Containerfile PIGEON_IMAGE_SHA digest pin (active once pigeon publishes)",
       "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
       "matchStrings": [
-        "ARG PIGEON_IMAGE_SHA=sha256:(?<currentValue>[a-f0-9]+)"
+        "ARG PIGEON_IMAGE_SHA=(?<currentDigest>sha256:[a-f0-9]+)"
       ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "ghcr.io/huntedraven7/pigeon"
     },
     {
       "customType": "regex",
-      "description": "config/flavors.json uupd version+SHA",
+      "description": "config/flavors.json uupd version",
       "fileMatch": ["config/flavors\\.json$"],
       "matchStrings": [
         "\"uupd_version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "github-tags",
-      "depNameTemplate": "uupd/uupd"
-    }
-  ],
-  "regexManagers": [
-    {
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
-      "matchStrings": [
-        "\"url_template\":\\s*\"(?<depName>https://codeberg\\.org/[^\"]+)\"[^}]*?\"version\":\\s*\"(?<currentValue>[^\"]+)\""
-      ],
-      "versioningTemplate": "semver",
-      "datasourceTemplate": "regex"
+      "depNameTemplate": "ublue-os/uupd"
     }
   ]
 }
