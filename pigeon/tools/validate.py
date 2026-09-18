@@ -26,6 +26,18 @@ def main() -> int:
     for r in sorted(recipes):
         if r not in configured:
             errors.append(f"recipe without source entry: {r}")
+    # Every non-local entry needs a filename matching the rendered URL
+    # basename (what fetch --stage-into stages; what packit_source0.py reads).
+    for name in sorted(configured):
+        entry = sources["packages"][name]
+        if entry.get("local"):
+            continue
+        url = entry.get("url_template", "").replace("{version}", str(entry.get("version", "")))
+        expected = url.rsplit("/", 1)[-1] if "/" in url else ""
+        if entry.get("filename") != expected:
+            errors.append(
+                f"stale filename for {name}: {entry.get('filename')!r} != {expected!r}"
+            )
     # .packit.yaml coverage (only if recipes exist and yaml parses).
     packit = ROOT / ".packit.yaml"
     if yaml is not None and packit.exists():
