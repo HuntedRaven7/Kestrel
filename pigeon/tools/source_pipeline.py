@@ -263,17 +263,28 @@ def cmd_record(pkg: str, output: str | None) -> int:
 
 
 def cmd_fetch_vendored(pkg: str, entry: dict, recorded: str, output: str | None) -> int:
-    """Verify the committed bytes for bot-walled upstreams (no download)."""
+    """Verify the staged bytes for bot-walled upstreams (no download).
+    
+    Checks both the git repo (for committed vendored sources) and the
+    package directory (for sources staged by fetch_vendored.py from Koji SRPMs).
+    """
     filename = entry.get("filename", "")
+    # First check the git repo (for committed vendored sources)
     staged = ROOT / "pigeon" / "packages" / pkg / filename if filename else None
-    if staged is None or not staged.is_file():
+    # Also check the package directory (for sources staged by fetch_vendored.py from Koji SRPMs)
+    staged_pkg_dir = ROOT / "pigeon" / "packages" / pkg / filename if filename else None
+    
+    # Use whichever exists
+    if staged_pkg_dir and staged_pkg_dir.is_file():
+        staged = staged_pkg_dir
+    elif staged is None or not staged.is_file():
         write_report(pkg, {"package": pkg, "ok": False,
-                            "reason": f"vendored file not committed: {filename}"})
-        print(f"FAIL: vendored source not committed for {pkg} ({filename})")
+                            "reason": f"vendored file not staged: {filename}"})
+        print(f"FAIL: vendored source not staged for {pkg} ({filename})")
         return 1
     if reason := check_archive(staged):
         write_report(pkg, {"package": pkg, "ok": False, "reason": reason})
-        print(f"FAIL: committed source for {pkg} — {reason}")
+        print(f"FAIL: staged source for {pkg} — {reason}")
         return 1
     digest = sha512_of(staged)
     ok = digest == recorded
@@ -287,7 +298,7 @@ def cmd_fetch_vendored(pkg: str, entry: dict, recorded: str, output: str | None)
     if not ok:
         print(f"FAIL: verification failed for {pkg} (digest match: False)")
         return 1
-    print(f"OK: {pkg}@{entry.get('version')} verified (vendored {staged.name})")
+    print(f"OK: verified vendored source for {pkg} ({staged.name})")
     return 0
 
 
