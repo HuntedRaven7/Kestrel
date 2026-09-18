@@ -90,7 +90,7 @@ jobs:
               METHOD=$(python3 pigeon/tools/srpm_method.py "$PACKAGE")
               if [ "$METHOD" = rpmbuild ]; then
                 # Local file packages (no upstream archive) and specs
-                # packit's parser cannot handle (grub2): plain rpmbuild
+                # the packit parser cannot handle (grub2): plain rpmbuild
                 # packs the spec + committed Sources directly. _sourcedir
                 # must point at the recipe dir (rpmbuild defaults to ~/rpmbuild).
                 SPEC=$(ls pigeon/packages/$PACKAGE/*.spec | head -1)
