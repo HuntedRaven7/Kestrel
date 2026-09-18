@@ -59,7 +59,8 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig(wayland-server)
 
 %description devel
-Headers, pkgconfig file, and the unversioned .so link for wlroots 0.20.
+Headers and pkgconfig file for wlroots 0.20. (Upstream sets no soversion,
+so the library itself ships unversioned in the main package.)
 
 %prep
 %autosetup -n wlroots-%{version} -p1
@@ -75,11 +76,10 @@ Headers, pkgconfig file, and the unversioned .so link for wlroots 0.20.
 
 %files
 %license LICENSE
-%{_libdir}/libwlroots-0.20.so.*
+%{_libdir}/libwlroots-0.20.so
 
 %files devel
 %{_includedir}/wlroots-0.20/
-%{_libdir}/libwlroots-0.20.so
 %{_libdir}/pkgconfig/wlroots-0.20.pc
 
 %changelog
