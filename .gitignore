@@ -1,8 +1,10 @@
 .packit_cache/
 work/
 *.rpm
+*.rpm
 *.srpm
 *.log
 __pycache__/
 .pytest_cache/
 pigeon/reports/
+pigeon/packages/*/*.tar.*
