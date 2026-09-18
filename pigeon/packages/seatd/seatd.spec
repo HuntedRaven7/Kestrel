@@ -10,7 +10,9 @@ Summary:        Minimal seat management daemon
 
 License:        MIT
 URL:            https://sr.ht/~kennylevinsen/seatd/
-Source0:        https://git.sr.ht/~kennylevinsen/seatd/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+# Kestrel: GitHub mirror (sr.ht is unreachable from automation; our
+# verified Source0 in upstream-sources.json). Do not revert on re-import.
+Source0:        https://github.com/kennylevinsen/seatd/archive/refs/tags/%{version}.tar.gz
 Source1:        seatd.sysusers
 
 BuildRequires:  gcc

@@ -60,5 +60,5 @@ Rofi launcher for the Warbler desktop (drun + window modes).
 %{_mandir}/man5/rofi*
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 1.7.9.1-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 1.7.9.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

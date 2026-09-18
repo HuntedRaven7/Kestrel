@@ -58,5 +58,5 @@ shell config is shipped — the user owns ~/.config/quickshell.
 %{_libdir}/qt6/qml/Quickshell/
 
 %changelog
-* Wed Sep 17 2026 Kestrel <kestrel@localhost> - 0.3.1-1.hum1.pigeon
+* Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.3.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe, full feature set)

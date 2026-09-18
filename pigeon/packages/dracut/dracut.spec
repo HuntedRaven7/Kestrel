@@ -21,7 +21,9 @@ URL: https://github.com/dracut-ng/dracut/wiki/
 
 Source0: https://github.com/dracut-ng/dracut/archive/refs/tags/%{version}.tar.gz
 
-Source1: https://www.gnu.org/licenses/lgpl-2.1.txt
+# Kestrel: committed copy (remote license URLs break hermetic/offline
+# builds; text is immutable). Do not revert on re-import.
+Source1: lgpl-2.1.txt
 # revert: "fix(install.d): correctly install pre-genned image and die if no args"
 # Author: Pavel Valena <pvalena@redhat.com>
 Patch1:  0001-revert-fix-install.d-correctly-install-pre-genned-im.patch
