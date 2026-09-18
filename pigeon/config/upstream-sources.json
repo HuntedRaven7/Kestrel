@@ -361,7 +361,11 @@
         "depName": "containerd/containerd"
       },
       "filename": "v2.3.5.tar.gz",
-      "srpm": "rpmbuild"
+      "srpm": "rpmbuild",
+      "vendored": true,
+      "vendor_url": "https://kojipkgs.fedoraproject.org//packages/containerd/2.3.5/1.fc44/src/containerd-2.3.5-1.fc44.src.rpm",
+      "vendor_filename": "containerd-2.3.5-vendor.tar.bz2",
+      "source_filename": "containerd-2.3.5.tar.gz"
     },
     "runc": {
       "version": "1.5.1",
