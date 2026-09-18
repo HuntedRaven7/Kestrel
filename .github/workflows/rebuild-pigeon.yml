@@ -109,7 +109,7 @@ jobs:
                       "quay.io/fedora/fedora:44",
                       "bash", "-c",
                       "dnf install -y fedora-workstation-repositories && "
-                      "dnf config-manager --add-repo https://copr.fedorainfracloud.org/coprs/hummingbird-community/bootc-os/repo/fedora-44/hummingbird-community-bootc-os-fedora-44.repo && "
+                      "printf '[hummingbird]\\nname=Hummingbird public\\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\\nenabled=1\\ngpgcheck=0\\n' > /etc/yum.repos.d/hummingbird.repo && "
                       "dnf builddep -y /spec/*.spec 2>&1 | tail -20 || true"
                   ], check=False)
               except Exception as e:
