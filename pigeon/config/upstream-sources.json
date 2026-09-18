@@ -174,7 +174,9 @@
         "datasource": "github-tags",
         "depName": "swaywm/swayidle"
       },
-      "filename": "swayidle-1.9.0.tar.gz"
+      "filename": "swayidle-1.9.0.tar.gz",
+      "sig_filename": "swayidle-1.9.0.tar.gz.sig",
+      "sig_url_template": "https://github.com/swaywm/swayidle/releases/download/v{version}/swayidle-{version}.tar.gz.sig"
     },
     "swaylock": {
       "version": "1.8.6",
@@ -324,7 +326,11 @@
         "depName": "tailscale/tailscale"
       },
       "filename": "v1.98.8.tar.gz",
-      "srpm": "rpmbuild"
+      "srpm": "rpmbuild",
+      "vendored": true,
+      "vendor_url": "https://kojipkgs.fedoraproject.org//packages/tailscale/1.98.8/1.fc44/src/tailscale-1.98.8-1.fc44.src.rpm",
+      "vendor_filename": "tailscale-1.98.8-vendor.tar.xz",
+      "source_filename": "v1.98.8.tar.gz"
     },
     "wireguard-tools": {
       "version": "1.0.20260223",

@@ -39,6 +39,10 @@ symbol names and inline assembly.
 %{_libdir}/libcpptrace.so.*
 %{_includedir}/cpptrace/
 
+%package devel
+Summary:        Development files for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
 %files devel
 %license LICENSE
 %{_libdir}/libcpptrace.so
