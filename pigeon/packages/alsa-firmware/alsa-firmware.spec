@@ -9,7 +9,9 @@ Release:        18%{?dist}
 # See later in the spec for a breakdown of licensing
 License:        GPL-1.0-or-later and BSD-3-Clause and GPL-2.0-or-later and GPL-2.0-only and LGPL-2.1-or-later
 URL:            http://www.alsa-project.org/
-Source:         ftp://ftp.alsa-project.org/pub/firmware/%{name}-%{version}.tar.bz2
+# Kestrel: https mirror of the ftp-only upstream URL (packit's downloader
+# has no FTP adapter). Content is our verified Source0 either way.
+Source:         https://github.com/alsa-project/alsa-firmware/archive/refs/tags/v%{version}.tar.gz
 
 Requires:       alsa-tools-firmware >= 1.1.7
 Requires:       systemd
