@@ -100,7 +100,7 @@
         "datasource": "github-tags",
         "depName": "wayland-project/xdg-desktop-portal-wlr"
       },
-      "filename": "xdg-desktop-portal-wlr-TODO.tar.gz"
+      "filename": "v0.8.4.tar.gz"
     },
     "xdg-desktop-portal-gtk": {
       "version": "1.15.3",
@@ -112,7 +112,7 @@
         "datasource": "github-tags",
         "depName": "wayland-project/xdg-desktop-portal-gtk"
       },
-      "filename": "xdg-desktop-portal-gtk-TODO.tar.gz"
+      "filename": "1.15.3.tar.gz"
     },
     "seatd": {
       "version": "0.9.3",
@@ -184,7 +184,7 @@
         "datasource": "github-tags",
         "depName": "swaywm/swaylock"
       },
-      "filename": "swaylock-TODO.tar.gz"
+      "filename": "v1.8.6.tar.gz"
     },
     "brightnessctl": {
       "version": "0.5.1",
@@ -196,7 +196,7 @@
         "datasource": "github-tags",
         "depName": "Haikarainen/brightnessctl"
       },
-      "filename": "brightnessctl-TODO.tar.gz"
+      "filename": "0.5.1.tar.gz"
     },
     "pamixer": {
       "version": "1.6",
@@ -208,7 +208,7 @@
         "datasource": "github-tags",
         "depName": "cdemoulins/pamixer"
       },
-      "filename": "pamixer-TODO.tar.gz"
+      "filename": "1.6.tar.gz"
     },
     "polkit": {
       "version": "124",
@@ -220,7 +220,7 @@
         "datasource": "github-tags",
         "depName": "polkit-project/polkit"
       },
-      "filename": "polkit-TODO.tar.gz"
+      "filename": "polkit-124.tar.gz"
     },
     "foot": {
       "version": "1.28.0",
@@ -228,7 +228,7 @@
       "sha512": "4286464e84b298a08b0ce1a7fc703670b4acec9af401cedc06b9e6c2e2aefde88829ad99aae4ee0cd4c7696b0ba46e1345f8a7090c46791e847daadf6da34867",
       "stage": 2,
       "note": "Fedora dist-git import. Wayland terminal emulator (fallback). Upstream lives on Codeberg (no Renovate datasource); bumps are manual.",
-      "filename": "foot-TODO.tar.gz"
+      "filename": "1.28.0.tar.gz"
     },
     "fwupd": {
       "version": "2.1.7",
@@ -240,7 +240,7 @@
         "datasource": "github-tags",
         "depName": "fwupd/fwupd"
       },
-      "filename": "fwupd-TODO.tar.gz"
+      "filename": "2.1.7.tar.gz"
     },
     "libinput": {
       "version": "1.32.0",
@@ -252,7 +252,7 @@
         "datasource": "github-tags",
         "depName": "wayland-project/libinput"
       },
-      "filename": "libinput-TODO.tar.gz"
+      "filename": "libinput-1.32.0.tar.gz"
     },
     "libwacom": {
       "version": "2.20.0",
@@ -264,7 +264,7 @@
         "datasource": "github-tags",
         "depName": "linuxwacom/libwacom"
       },
-      "filename": "libwacom-TODO.tar.gz"
+      "filename": "libwacom-2.20.0.tar.gz"
     },
     "libratbag": {
       "version": "0.18",
@@ -276,19 +276,19 @@
         "datasource": "github-tags",
         "depName": "libratbag/libratbag"
       },
-      "filename": "libratbag-TODO.tar.gz"
+      "filename": "v0.18.tar.gz"
     },
     "iio-sensor-proxy": {
       "version": "3.8",
       "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.gz",
-      "sha512": "f9c60c78441f1ed6f631b6460a0c6cc7b0993056165d74447309e25df76b79ef392722dc428b3bb4d0d409144b4cbaecefb0c38a1e7d5eb84f2edcc120d9a8d4",
+      "sha512": "fee65b4cb53610274321fdababda693281afe4fd7b993a24e1a319a58b8aa4e014026078db235879ab2c21d2a9d73eca4ae3fb856f101d5c0ad51ae5b962356e",
       "stage": 2,
       "note": "Fedora dist-git import. IIO sensor proxy. Upstream moved to GNOME GitLab (GitHub mirror is stale at 2.8); watch manually.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "hadess/iio-sensor-proxy"
       },
-      "filename": "iio-sensor-proxy-TODO.tar.gz"
+      "filename": "iio-sensor-proxy-3.8.tar.gz"
     },
     "ddcutil": {
       "version": "2.2.1",
@@ -300,7 +300,7 @@
         "datasource": "github-tags",
         "depName": "rockowitz/ddcutil"
       },
-      "filename": "ddcutil-TODO.tar.gz"
+      "filename": "v2.2.1.tar.gz"
     },
     "ModemManager": {
       "version": "1.24.2",
@@ -312,7 +312,7 @@
         "datasource": "github-tags",
         "depName": "Freedesktop/ModemManager"
       },
-      "filename": "ModemManager-TODO.tar.gz"
+      "filename": "ModemManager-1.24.2.tar.gz"
     },
     "tailscale": {
       "version": "1.98.8",
@@ -324,7 +324,7 @@
         "datasource": "github-tags",
         "depName": "tailscale/tailscale"
       },
-      "filename": "tailscale-TODO.tar.gz"
+      "filename": "v1.98.8.tar.gz"
     },
     "wireguard-tools": {
       "version": "1.0.20260223",
@@ -336,7 +336,7 @@
         "datasource": "github-tags",
         "depName": "WireGuard/wireguard-tools"
       },
-      "filename": "wireguard-tools-TODO.tar.gz"
+      "filename": "v1.0.20260223.tar.gz"
     },
     "firewalld": {
       "version": "2.5.2",
@@ -348,7 +348,7 @@
         "datasource": "github-tags",
         "depName": "firewalld/firewalld"
       },
-      "filename": "firewalld-TODO.tar.gz"
+      "filename": "v2.5.2.tar.gz"
     },
     "containerd": {
       "version": "2.3.5",
@@ -360,7 +360,7 @@
         "datasource": "github-tags",
         "depName": "containerd/containerd"
       },
-      "filename": "containerd-TODO.tar.gz"
+      "filename": "v2.3.5.tar.gz"
     },
     "runc": {
       "version": "1.5.1",
@@ -372,7 +372,7 @@
         "datasource": "github-tags",
         "depName": "opencontainers/runc"
       },
-      "filename": "runc-TODO.tar.gz"
+      "filename": "v1.5.1.tar.gz"
     },
     "crun": {
       "version": "1.29.1",
@@ -384,7 +384,7 @@
         "datasource": "github-tags",
         "depName": "containers/crun"
       },
-      "filename": "crun-TODO.tar.gz"
+      "filename": "1.29.1.tar.gz"
     },
     "podman": {
       "version": "6.1.2",
@@ -396,7 +396,7 @@
         "datasource": "github-tags",
         "depName": "containers/podman"
       },
-      "filename": "podman-TODO.tar.gz"
+      "filename": "v6.1.2.tar.gz"
     },
     "skopeo": {
       "version": "1.24.1",
@@ -408,7 +408,7 @@
         "datasource": "github-tags",
         "depName": "containers/skopeo"
       },
-      "filename": "skopeo-TODO.tar.gz"
+      "filename": "v1.24.1.tar.gz"
     },
     "buildah": {
       "version": "1.45.1",
@@ -420,7 +420,7 @@
         "datasource": "github-tags",
         "depName": "containers/buildah"
       },
-      "filename": "buildah-TODO.tar.gz"
+      "filename": "v1.45.1.tar.gz"
     },
     "dracut": {
       "version": "111",
@@ -432,7 +432,7 @@
         "datasource": "github-tags",
         "depName": "dracut-ng/dracut"
       },
-      "filename": "dracut-TODO.tar.gz"
+      "filename": "111.tar.gz"
     },
     "grub2": {
       "version": "2.12",
@@ -440,7 +440,7 @@
       "sha512": "761c060a4c3da9c0e810b0ea967e3ebc66baa4ddd682a503ae3d30a83707626bccaf49359304a16b3a26fc4435fe6bea1ee90be910c84de3c2b5485a31a15be3",
       "stage": 2,
       "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive).",
-      "filename": "grub2-TODO.tar.gz"
+      "filename": "grub-2.12.tar.xz"
     },
     "smartmontools": {
       "version": "7.5",
@@ -452,7 +452,7 @@
         "datasource": "github-tags",
         "depName": "smartmontools/smartmontools"
       },
-      "filename": "smartmontools-TODO.tar.gz"
+      "filename": "smartmontools-7.5.tar.gz"
     },
     "nvme-cli": {
       "version": "2.16",
@@ -464,7 +464,7 @@
         "datasource": "github-tags",
         "depName": "linux-nvme/nvme-cli"
       },
-      "filename": "nvme-cli-TODO.tar.gz"
+      "filename": "v2.16.tar.gz"
     },
     "pciutils": {
       "version": "3.15.0",
@@ -476,7 +476,7 @@
         "datasource": "github-tags",
         "depName": "pciutils/pciutils"
       },
-      "filename": "pciutils-TODO.tar.gz"
+      "filename": "v3.15.0.tar.gz"
     },
     "hwdata": {
       "version": "0.411",
@@ -488,7 +488,7 @@
         "datasource": "github-tags",
         "depName": "VincentHW/hwdata"
       },
-      "filename": "hwdata-TODO.tar.gz"
+      "filename": "v0.411.tar.gz"
     },
     "libblockdev": {
       "version": "3.5.0",
@@ -500,7 +500,7 @@
         "datasource": "github-tags",
         "depName": "storaged-project/libblockdev"
       },
-      "filename": "libblockdev-TODO.tar.gz"
+      "filename": "3.5.0.tar.gz"
     },
     "libbytesize": {
       "version": "2.12",
@@ -512,7 +512,7 @@
         "datasource": "github-tags",
         "depName": "storaged-project/libbytesize"
       },
-      "filename": "libbytesize-TODO.tar.gz"
+      "filename": "2.12.tar.gz"
     },
     "udisks2": {
       "version": "2.11.2",
@@ -524,7 +524,7 @@
         "datasource": "github-tags",
         "depName": "storaged-project/udisks"
       },
-      "filename": "udisks2-TODO.tar.gz"
+      "filename": "udisks-2.11.2.tar.gz"
     },
     "upower": {
       "version": "1.91.4",
@@ -536,7 +536,7 @@
         "datasource": "github-tags",
         "depName": "upower/upower"
       },
-      "filename": "upower-TODO.tar.gz"
+      "filename": "upower-v1.91.4.tar.gz"
     },
     "bluez": {
       "version": "5.87",
@@ -548,7 +548,7 @@
         "datasource": "github-tags",
         "depName": "bluez/bluez"
       },
-      "filename": "bluez-TODO.tar.gz"
+      "filename": "5.87.tar.gz"
     },
     "colord": {
       "version": "1.4.8",
@@ -560,7 +560,7 @@
         "datasource": "github-tags",
         "depName": "hughsie/colord"
       },
-      "filename": "colord-TODO.tar.gz"
+      "filename": "1.4.8.tar.gz"
     },
     "colord-gtk": {
       "version": "0.3.1",
@@ -572,7 +572,7 @@
         "datasource": "github-tags",
         "depName": "hughsie/colord-gtk"
       },
-      "filename": "colord-gtk-TODO.tar.gz"
+      "filename": "0.3.1.tar.gz"
     },
     "lcms2": {
       "version": "2.16",
@@ -584,7 +584,7 @@
         "datasource": "github-tags",
         "depName": "mm2/Little-CMS"
       },
-      "filename": "lcms2-TODO.tar.gz"
+      "filename": "lcms2.16.tar.gz"
     },
     "alsa-firmware": {
       "version": "1.2.4",
@@ -596,7 +596,7 @@
         "datasource": "github-tags",
         "depName": "alsa-project/alsa-firmware"
       },
-      "filename": "alsa-firmware-TODO.tar.gz"
+      "filename": "v1.2.4.tar.gz"
     },
     "k0s": {
       "version": "1.36.4",
@@ -620,7 +620,7 @@
         "datasource": "github-tags",
         "depName": "kubestellar/kubeflex"
       },
-      "filename": "0.5.0.tar.gz"
+      "filename": "v0.5.0.tar.gz"
     },
     "kubestellar": {
       "version": "0.25.0",
@@ -632,7 +632,7 @@
         "datasource": "github-tags",
         "depName": "kubestellar/kubestellar"
       },
-      "filename": "0.25.0.tar.gz"
+      "filename": "v0.25.0.tar.gz"
     },
     "kubestellar-console": {
       "version": "0.3.34",
@@ -651,7 +651,8 @@
       "url_template": "https://download.gnome.org/sources/polkit-gnome/0.105/polkit-gnome-{version}.tar.xz",
       "sha512": "eae2504959bca6f2b53dbad1b743fc0414b82897e62623af80ee74c4080a10d6b07a4c90151ee1264891f27373321b8697ac8a747cba5254c765b4cd9161bd42",
       "stage": 2,
-      "note": "GNOME polkit authentication agent. Replaces xfce-polkit. No GitHub repo (GNOME FTP only); bumps are manual."
+      "note": "GNOME polkit authentication agent. Replaces xfce-polkit. No GitHub repo (GNOME FTP only); bumps are manual.",
+      "filename": "polkit-gnome-0.105.tar.xz"
     }
   }
 }
