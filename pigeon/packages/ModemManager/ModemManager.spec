@@ -1,9 +1,13 @@
 %bcond check 1
 
-%global glib2_version %(pkg-config --modversion glib-2.0 2>/dev/null || echo bad)
-%global qmi_version %(pkg-config --modversion qmi-glib 2>/dev/null || echo bad)
-%global mbim_version %(pkg-config --modversion mbim-glib 2>/dev/null || echo bad)
-%global qrtr_version %(pkg-config --modversion qrtr-glib 2>/dev/null || echo bad)
+# Kestrel: static floors (packit's spec parser cannot run the pkg-config
+# probes Fedora evaluates at build time; values pinned from Fedora 44).
+# Refresh when rebasing (F44: glib2 2.88.0, libqmi 1.36.0, libmbim 1.32.0,
+# libqrtr-glib 1.2.2).
+%global glib2_version 2.88.0
+%global qmi_version 1.36.0
+%global mbim_version 1.32.0
+%global qrtr_version 1.2.2
 
 %global forgeurl https://gitlab.freedesktop.org/mobile-broadband/ModemManager
 

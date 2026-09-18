@@ -134,6 +134,11 @@ packages:
     downstream_package_name: kestrel-gdm-config
     paths:
     - pigeon/packages/kestrel-gdm-config
+    # Local file package: no upstream archive to create. Skip the global
+    # create-archive action; rpmbuild -bs uses the committed Source files.
+    actions:
+      create-archive:
+      - bash -c 'true'
   kubeflex:
     specfile_path: kubeflex.spec
     upstream_package_name: kubeflex
