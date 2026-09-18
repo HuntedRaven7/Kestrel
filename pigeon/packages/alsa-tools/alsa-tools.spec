@@ -41,13 +41,13 @@ Patch1:         hwmixvolume-python.patch
 
 BuildRequires:  gcc gcc-c++
 BuildRequires:  alsa-lib-devel >= %{version}
-%if 0%{!?_without_tools:1}
+%if 0%{?_without_tools} == 0
 BuildRequires:  gtk2-devel
 BuildRequires:  gtk3-devel
 BuildRequires:  gtk4-devel
 BuildRequires:  fltk-devel
 BuildRequires: make
-Buildrequires:  desktop-file-utils
+BuildRequires:  desktop-file-utils
 Requires:       xorg-x11-fonts-misc
 # Needed for hwmixvolume
 Requires:       python3-alsa

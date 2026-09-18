@@ -14,8 +14,6 @@ License:    MIT
 URL:        https://pipewire.org/
 
 Source0:    https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz
-# Update to LC3plus 1.8.0 APIs
-Patch0:     pipewire-lc3plus-api.patch
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  meson >= 0.49.0

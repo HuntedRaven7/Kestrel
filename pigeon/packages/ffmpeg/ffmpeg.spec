@@ -237,9 +237,6 @@ Complete and free FFmpeg build
 %install
 %make_install
 
-%post libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
-
 %files
 %license LICENSE
 %doc README.md
@@ -252,6 +249,9 @@ Complete and free FFmpeg build
 %{_libdir}/libav*.so.*
 %{_libdir}/libpostproc.so.*
 %{_libdir}/libsw*.so.*
+
+%post libs -p /sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %changelog
 * Thu Sep 18 2026 Kestrel <kestrel@localhost> - 7.1-1.hum1.pigeon

@@ -50,15 +50,15 @@ a Lua scripting API for policy configuration.
 
 %post
 %systemd_post wireplumber.service
-%systemd_post --user wireplumber.service
+%systemd_user_post wireplumber.service
 
 %preun
 %systemd_preun wireplumber.service
-%systemd_preun --user wireplumber.service
+%systemd_user_preun wireplumber.service
 
 %postun
 %systemd_postun wireplumber.service
-%systemd_postun --user wireplumber.service
+%systemd_user_postun wireplumber.service
 
 %files
 %license COPYING

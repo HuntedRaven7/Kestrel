@@ -23,22 +23,6 @@ BuildRequires:	git-core
 BuildRequires:	python3
 
 Requires:	linux-firmware-whence = %{version}-%{release}
-Requires:	((linux-firmware = %{version}-%{release}) if linux-firmware)
-Recommends:	qcom-wwan-firmware
-Recommends:	amd-gpu-firmware
-Recommends:	amd-ucode-firmware
-Recommends:	atheros-firmware
-Recommends:	brcmfmac-firmware
-Recommends:	cirrus-audio-firmware
-Recommends:	intel-audio-firmware
-Recommends:	intel-gpu-firmware
-Recommends:	mt7xxx-firmware
-Recommends:	nvidia-gpu-firmware
-Recommends:	nxpwireless-firmware
-Recommends:	realtek-firmware
-Recommends:	tiwilink-firmware
-
-Patch: 0001-copy-firmware-Do-not-fail-without-GNU-parallel.patch
 
 %description
 This package includes firmware files required for some devices to
