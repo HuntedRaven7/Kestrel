@@ -63,6 +63,13 @@ jobs:
             --output work/sources \
             --stage-into pigeon/packages
 
+      - name: Stage extra dist-git sources
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        env:
+          PACKAGE: ${{ matrix.package }}
+        run: |
+          python3 pigeon/tools/audit_sources.py --fix --package "$PACKAGE"
+
       - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         env:
