@@ -19,7 +19,6 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       packages: ${{ steps.discover.outputs.packages }}
-      vendored: ${{ steps.discover.outputs.vendored }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,6 +30,18 @@ jobs:
         run: |
           python3 pigeon/tools/packit_workflow.py packages | tee /tmp/packages.json
           echo "packages=$(cat /tmp/packages.json)" >> $GITHUB_OUTPUT
+
+  vendored:
+    name: Identify vendored packages
+    runs-on: ubuntu-24.04
+    needs: discover
+    outputs:
+      vendored: ${{ steps.vendored.outputs.vendored }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Identify vendored packages
         id: vendored
