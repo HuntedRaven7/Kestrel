@@ -133,12 +133,20 @@ def extract_srpm(srpm_path: Path, dest_dir: Path) -> bool:
 
 
 def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
-    """Rename vendor tarball to match spec expectations."""
-    # Known vendor tarball renames needed
+    """Rename vendor/source tarballs to match spec expectations."""
+    # Known tarball renames needed
     renames = {
         "tailscale": {
-            "from_pattern": "tailscale-*-vendored.tar.xz",
-            "to_template": "tailscale-{version}-vendor.tar.xz",
+            "vendor_from_pattern": "tailscale-*-vendored.tar.xz",
+            "vendor_to_template": "tailscale-{version}-vendor.tar.xz",
+        },
+        "runc": {
+            "source_from_pattern": "runc-*.tar.gz",
+            "source_to_template": "v{version}.tar.gz",
+        },
+        "containerd": {
+            "source_from_pattern": "containerd-*.tar.gz",
+            "source_to_template": "v{version}.tar.gz",
         },
     }
     
@@ -146,29 +154,42 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         return
     
     rename_info = renames[pkg_name]
-    from_pattern = rename_info["from_pattern"]
-    to_template = rename_info["to_template"]
     
-    # Find the file matching the from_pattern
-    matches = list(pkg_dir.glob(from_pattern))
-    if not matches:
-        return
+    # Handle vendor tarball rename
+    if "vendor_from_pattern" in rename_info:
+        vendor_from_pattern = rename_info["vendor_from_pattern"]
+        vendor_to_template = rename_info["vendor_to_template"]
+        
+        matches = list(pkg_dir.glob(vendor_from_pattern))
+        if matches:
+            src = matches[0]
+            with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+                data = json.load(f)
+            version = data["packages"][pkg_name].get("version", "")
+            if version:
+                dst_name = vendor_to_template.format(version=version)
+                dst = pkg_dir / dst_name
+                if src != dst:
+                    print(f"  Renaming {src.name} -> {dst.name}")
+                    src.rename(dst)
     
-    src = matches[0]
-    # Get version from upstream-sources.json
-    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
-        data = json.load(f)
-    version = data["packages"][pkg_name].get("version", "")
-    
-    if not version:
-        return
-    
-    dst_name = to_template.format(version=version)
-    dst = pkg_dir / dst_name
-    
-    if src != dst:
-        print(f"  Renaming {src.name} -> {dst.name}")
-        src.rename(dst)
+    # Handle source tarball rename
+    if "source_from_pattern" in rename_info:
+        source_from_pattern = rename_info["source_from_pattern"]
+        source_to_template = rename_info["source_to_template"]
+        
+        matches = list(pkg_dir.glob(source_from_pattern))
+        if matches:
+            src = matches[0]
+            with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+                data = json.load(f)
+            version = data["packages"][pkg_name].get("version", "")
+            if version:
+                dst_name = source_to_template.format(version=version)
+                dst = pkg_dir / dst_name
+                if src != dst:
+                    print(f"  Renaming {src.name} -> {dst.name}")
+                    src.rename(dst)
 
 
 def fetch_vendored_source(pkg_name: str) -> bool:
