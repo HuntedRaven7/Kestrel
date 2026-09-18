@@ -9,10 +9,10 @@
 # export SHA=`git rev-parse --short HEAD` ; export VERSION=5.87 ; git archive --format=tar.xz -o bluez-$VERSION+1.git$SHA.tar.xz --prefix=bluez-$VERSION+1.git$SHA/ HEAD
 # as a post-release snapshot, see:
 # https://fedoraproject.org/wiki/PackagingDrafts/TildeVersioning
-%global gitsha 789f6e154
-
 Name:    bluez
-Version: 5.87+1.git%{gitsha}
+# Kestrel: plain upstream release (Fedora's +1.git snapshot has no matching
+# tag tarball; our verified Source0 is the 5.87 release).
+Version: 5.87
 Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPL-2.0-or-later
