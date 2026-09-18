@@ -33,7 +33,8 @@ Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
-Headers, pkgconfig file, and the unversioned .so link for scenefx 0.5.
+Headers and pkgconfig file for scenefx 0.5. (Upstream sets no soversion,
+so the library itself ships unversioned in the main package.)
 
 %prep
 %autosetup -n scenefx-%{version} -p1
@@ -49,11 +50,10 @@ Headers, pkgconfig file, and the unversioned .so link for scenefx 0.5.
 
 %files
 %license LICENSE
-%{_libdir}/libscenefx-0.5.so.*
+%{_libdir}/libscenefx-0.5.so
 
 %files devel
 %{_includedir}/scenefx-0.5/
-%{_libdir}/libscenefx-0.5.so
 %{_libdir}/pkgconfig/scenefx-0.5.pc
 
 %changelog
