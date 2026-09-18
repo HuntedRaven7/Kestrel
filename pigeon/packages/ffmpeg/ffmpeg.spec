@@ -249,9 +249,6 @@ FFmpeg runtime libraries.
 %{_bindir}/ffprobe
 %{_bindir}/ffplay
 
-%package libs
-Summary:        FFmpeg runtime libraries
-
 %files libs
 %license LICENSE
 %{_libdir}/libav*.so.*
