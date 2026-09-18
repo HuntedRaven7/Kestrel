@@ -8,8 +8,11 @@ Usage:
 Rules (PLAN.md §3.2):
   - No upstream-sources.json entry -> refuse.
   - Local packages ("local": true, e.g. kestrel-gdm-config) -> nothing to fetch.
+  - Vendored packages ("vendored": true, e.g. bot-walled upstreams) -> the
+    bytes live in git; fetch/record hash the committed file, never download.
   - fetch refuses when no digest is recorded yet; use `record` for first vendor.
   - record fills the sha512 field (used for first fetch + Renovate/Packit bumps).
+  - Downloads that are not archives (HTML bot-walls) are refused, never locked.
   - Every run writes pigeon/reports/<pkg>.json; failed verification leaves the
     previous source unchanged (we never write a digest on failure).
 """
@@ -51,6 +54,27 @@ def sha512_of(path: Path) -> str:
         while chunk := f.read(CHUNK):
             h.update(chunk)
     return h.hexdigest()
+
+
+ARCHIVE_MAGIC = (
+    b"\x1f\x8b",  # gzip
+    b"BZh",  # bzip2
+    b"\xfd7zXZ\x00",  # xz
+    b"\x28\xb5\x2f\xfd",  # zstd
+    b"PK\x03\x04",  # zip
+)
+
+
+def check_archive(path: Path) -> str | None:
+    """Refuse non-archives (HTML bot-walls, error pages). Returns a refusal
+    reason, or None when the file looks like a compressed archive."""
+    with path.open("rb") as f:
+        head = f.read(8)
+    if head.startswith(ARCHIVE_MAGIC):
+        return None
+    if head.lstrip()[:1] == b"<":
+        return "upstream served HTML, not an archive (bot-wall / sign-in page?)"
+    return f"unknown file magic {head.hex()}; refusing (not a known archive)"
 
 
 def verify_signature(entry: dict, archive: Path, workdir: Path) -> dict:
@@ -115,6 +139,8 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
     if not recorded or recorded.startswith("TODO"):
         print(f"REFUSE: no recorded digest for {pkg} — run `record {pkg}` first")
         return 1
+    if entry.get("vendored"):
+        return cmd_fetch_vendored(pkg, entry, recorded, output)
     url = render_url(entry)
     with tempfile.TemporaryDirectory(prefix=f"kestrel-{pkg}-") as tmp:
         workdir = Path(tmp)
@@ -124,6 +150,10 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         except Exception as exc:  # noqa: BLE001 — report, don't traceback
             write_report(pkg, {"package": pkg, "ok": False, "reason": f"download failed: {exc}"})
             print(f"FAIL: download failed for {pkg}: {exc}")
+            return 1
+        if reason := check_archive(archive):
+            write_report(pkg, {"package": pkg, "ok": False, "reason": reason})
+            print(f"REFUSE: {pkg} — {reason}")
             return 1
         digest = sha512_of(archive)
         sig = verify_signature(entry, archive, workdir)
@@ -178,6 +208,24 @@ def cmd_record(pkg: str, output: str | None) -> int:
     if reason := entry_ready(entry):
         print(f"REFUSE: {pkg} not recordable — {reason}")
         return 1
+    if entry.get("vendored"):
+        # Lock the committed bytes (bot-walled upstream; see entry note).
+        filename = entry.get("filename", "")
+        staged = ROOT / "pigeon" / "packages" / pkg / filename if filename else None
+        if staged is None or not staged.is_file():
+            print(f"REFUSE: nothing staged for {pkg} ({filename})")
+            return 1
+        if reason := check_archive(staged):
+            print(f"REFUSE: {pkg} — {reason}")
+            return 1
+        entry["sha512"] = sha512_of(staged)
+        SOURCES.write_text(json.dumps(data, indent=2) + "\n")
+        write_report(pkg, {
+            "package": pkg, "version": entry.get("version"), "vendored": True,
+            "sha512": entry["sha512"], "ok": True, "recorded": True,
+        })
+        print(f"OK: recorded {pkg}@{entry.get('version')} sha512={entry['sha512'][:16]}…")
+        return 0
     url = render_url(entry)
     with tempfile.TemporaryDirectory(prefix=f"kestrel-{pkg}-") as tmp:
         workdir = Path(tmp)
@@ -186,6 +234,9 @@ def cmd_record(pkg: str, output: str | None) -> int:
             download(url, archive)
         except Exception as exc:  # noqa: BLE001
             print(f"FAIL: download failed for {pkg}: {exc}")
+            return 1
+        if reason := check_archive(archive):
+            print(f"REFUSE: {pkg} — {reason}")
             return 1
         digest = sha512_of(archive)
         sig = verify_signature(entry, archive, workdir)
@@ -209,6 +260,35 @@ def cmd_record(pkg: str, output: str | None) -> int:
         })
         print(f"OK: recorded {pkg}@{entry.get('version')} sha512={digest[:16]}…")
         return 0
+
+
+def cmd_fetch_vendored(pkg: str, entry: dict, recorded: str, output: str | None) -> int:
+    """Verify the committed bytes for bot-walled upstreams (no download)."""
+    filename = entry.get("filename", "")
+    staged = ROOT / "pigeon" / "packages" / pkg / filename if filename else None
+    if staged is None or not staged.is_file():
+        write_report(pkg, {"package": pkg, "ok": False,
+                            "reason": f"vendored file not committed: {filename}"})
+        print(f"FAIL: vendored source not committed for {pkg} ({filename})")
+        return 1
+    if reason := check_archive(staged):
+        write_report(pkg, {"package": pkg, "ok": False, "reason": reason})
+        print(f"FAIL: committed source for {pkg} — {reason}")
+        return 1
+    digest = sha512_of(staged)
+    ok = digest == recorded
+    if output:
+        Path(output).mkdir(parents=True, exist_ok=True)
+        shutil.copy(staged, Path(output) / staged.name)
+    write_report(pkg, {
+        "package": pkg, "version": entry.get("version"), "vendored": True,
+        "sha512": digest, "expected": recorded, "ok": ok,
+    })
+    if not ok:
+        print(f"FAIL: verification failed for {pkg} (digest match: False)")
+        return 1
+    print(f"OK: {pkg}@{entry.get('version')} verified (vendored {staged.name})")
+    return 0
 
 
 def cmd_report(pkg: str) -> int:
