@@ -172,7 +172,7 @@
         "datasource": "github-tags",
         "depName": "swaywm/swayidle"
       },
-      "filename": "swayidle-TODO.tar.gz"
+      "filename": "v1.9.0.tar.gz"
     },
     "swaylock": {
       "version": "1.8.6",
@@ -211,11 +211,11 @@
       "filename": "pamixer-TODO.tar.gz"
     },
     "polkit": {
-      "version": "127",
+      "version": "124",
       "url_template": "https://gitlab.freedesktop.org/polkit/polkit/-/archive/{version}/polkit-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "sha512": "3c4fe60618cf6e74467dc0efac084a38c93b0a8e4e8c02d36de5ca35634ecff624b6977b54493e9b1ad41aa87693ac3246e14fe6f6b828f57b2012b869af9105",
       "stage": 2,
-      "note": "Fedora dist-git import. PolicyKit framework.",
+      "note": "Fedora dist-git import. PolicyKit framework. Upstream latest is 124 (Fedora's 127 is downstream versioning); watch manually, github-tags depName is best-effort.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "polkit-project/polkit"
@@ -224,14 +224,10 @@
     },
     "foot": {
       "version": "1.28.0",
-      "url_template": "https://github.com/dnkl/foot/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://codeberg.org/dnkl/foot/archive/{version}.tar.gz",
+      "sha512": "4286464e84b298a08b0ce1a7fc703670b4acec9af401cedc06b9e6c2e2aefde88829ad99aae4ee0cd4c7696b0ba46e1345f8a7090c46791e847daadf6da34867",
       "stage": 2,
-      "note": "Fedora dist-git import. Wayland terminal emulator (fallback).",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "dnkl/foot"
-      },
+      "note": "Fedora dist-git import. Wayland terminal emulator (fallback). Upstream lives on Codeberg (no Renovate datasource); bumps are manual.",
       "filename": "foot-TODO.tar.gz"
     },
     "fwupd": {
@@ -260,8 +256,8 @@
     },
     "libwacom": {
       "version": "2.20.0",
-      "url_template": "https://github.com/linuxwacom/libwacom/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/linuxwacom/libwacom/archive/refs/tags/libwacom-{version}.tar.gz",
+      "sha512": "6fc47a8dab3a0209ccf1bfe5598717de190f9ac6ca74a2374b833494d093652e7a0ae7d4c880147506a1d522a62b5735391b7702cd22896e95fc7e24724c953c",
       "stage": 2,
       "note": "Fedora dist-git import. Wacom tablet library.",
       "renovate": {
@@ -272,8 +268,8 @@
     },
     "libratbag": {
       "version": "0.18",
-      "url_template": "https://github.com/libratbag/libratbag/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/libratbag/libratbag/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "ae1796d738f7e448c6022c56cb876af5fb43e29b89fef31bbf42b9c838a07fd1d6cf94815dfde87dcd94a72bae159ca14624826b75cf83c988ba4c20340031cb",
       "stage": 2,
       "note": "Fedora dist-git import. Gaming mouse configuration library.",
       "renovate": {
@@ -283,11 +279,11 @@
       "filename": "libratbag-TODO.tar.gz"
     },
     "iio-sensor-proxy": {
-      "version": "3.9",
-      "url_template": "https://github.com/hadess/iio-sensor-proxy/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "3.8",
+      "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.gz",
+      "sha512": "f9c60c78441f1ed6f631b6460a0c6cc7b0993056165d74447309e25df76b79ef392722dc428b3bb4d0d409144b4cbaecefb0c38a1e7d5eb84f2edcc120d9a8d4",
       "stage": 2,
-      "note": "Fedora dist-git import. IIO sensor proxy.",
+      "note": "Fedora dist-git import. IIO sensor proxy. Upstream moved to GNOME GitLab (GitHub mirror is stale at 2.8); watch manually.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "hadess/iio-sensor-proxy"
@@ -320,8 +316,8 @@
     },
     "tailscale": {
       "version": "1.98.8",
-      "url_template": "https://github.com/tailscale/tailscale/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/tailscale/tailscale/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "8ae3a8885336f2a0886f6b9461196c6c5eb8ec115aadfe6f2f378cb6ba46323cc7d6db7d910a0abcf646d012718e85c0cbd7bb24858338a69516a8bfc86041f8",
       "stage": 2,
       "note": "Fedora dist-git import. WireGuard-based VPN.",
       "renovate": {
@@ -332,8 +328,8 @@
     },
     "wireguard-tools": {
       "version": "1.0.20260223",
-      "url_template": "https://github.com/WireGuard/wireguard-tools/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/WireGuard/wireguard-tools/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "7445b43c9077253a508b6bea82e3cece3f796edca9b8777c5fdd15ee325ce9235cbea01c5299263d3d70f6167c7b2e7f18494c638fe5abd93bf0cb821e89a5f4",
       "stage": 2,
       "note": "Fedora dist-git import. WireGuard tools.",
       "renovate": {
@@ -428,32 +424,28 @@
     },
     "dracut": {
       "version": "111",
-      "url_template": "https://github.com/dracutdevs/dracut/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/dracut-ng/dracut/archive/refs/tags/{version}.tar.gz",
+      "sha512": "4c8a3e1e82bfc1dbe155241564bc93bedc2b321566002ccc643697b50173b8e564d03b1bbff4f49602e0cb7abbee21dfb14aadc453ac9703a846c160d070b4bc",
       "stage": 2,
-      "note": "Fedora dist-git import. Initramfs generator.",
+      "note": "Fedora dist-git import. Initramfs generator. Upstream moved to dracut-ng org.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "dracutdevs/dracut"
+        "depName": "dracut-ng/dracut"
       },
       "filename": "dracut-TODO.tar.gz"
     },
     "grub2": {
       "version": "2.12",
-      "url_template": "https://github.com/grub2/grub2/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://ftp.gnu.org/gnu/grub/grub-{version}.tar.xz",
+      "sha512": "761c060a4c3da9c0e810b0ea967e3ebc66baa4ddd682a503ae3d30a83707626bccaf49359304a16b3a26fc4435fe6bea1ee90be910c84de3c2b5485a31a15be3",
       "stage": 2,
-      "note": "Fedora dist-git import. Bootloader.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "grub2/grub2"
-      },
+      "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive).",
       "filename": "grub2-TODO.tar.gz"
     },
     "smartmontools": {
       "version": "7.5",
-      "url_template": "https://github.com/smartmontools/smartmontools/archive/refs/tags/RELEASE_{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://downloads.sourceforge.net/project/smartmontools/smartmontools/{version}/smartmontools-{version}.tar.gz",
+      "sha512": "2e4a6d712f33f3efff34184686b893f0205728d4a267fb88a833de7159170a6072b94744c1ae8c6694c99940d9ecaec164e3bd713e49476930dc2144c04b3f8c",
       "stage": 2,
       "note": "Fedora dist-git import. SMART monitoring.",
       "renovate": {
@@ -524,8 +516,8 @@
     },
     "udisks2": {
       "version": "2.11.2",
-      "url_template": "https://github.com/storaged-project/udisks/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/storaged-project/udisks/archive/refs/tags/udisks-{version}.tar.gz",
+      "sha512": "0b62d57cb258fcde54cbd01c7ec44bae446ca1f49f411e1c0187fa8d348422480bc52d640f1773d497faacd79a688adfdde0450fc3137e5f8a92713534bd1683",
       "stage": 2,
       "note": "Fedora dist-git import. Disk management.",
       "renovate": {
@@ -536,10 +528,10 @@
     },
     "upower": {
       "version": "1.91.4",
-      "url_template": "https://gitlab.freedesktop.org/upower/upower/-/archive/{version}/upower-{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://gitlab.freedesktop.org/upower/upower/-/archive/v{version}/upower-v{version}.tar.gz",
+      "sha512": "804e75d08bc1fef499748bcbd96b2d0d3aae9566be67b7da70ac993e73ad7de59f29ec436f5472b8ace350c81ad65ade6cf59ca5efd8591e8ca16de62ff64bde",
       "stage": 2,
-      "note": "Fedora dist-git import. Power management.",
+      "note": "Fedora dist-git import. Power management. Tags are v-prefixed.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "upower/upower"
@@ -607,21 +599,21 @@
       "filename": "alsa-firmware-TODO.tar.gz"
     },
     "k0s": {
-      "version": "1.32.0",
-      "url_template": "https://github.com/k0sproject/k0s/releases/download/{version}/k0s-{version}-amd64",
-      "sha512": "TODO-record-on-first-fetch",
+      "version": "1.36.4",
+      "url_template": "https://github.com/k0sproject/k0s/archive/refs/tags/v{version}+k0s.0.tar.gz",
+      "sha512": "4037a83de12735ffbf382ba047767d6da2d8163efb9b3f0c3888d3ad9a90bed8234d2492ef5ccb051b4e642ee8f2bd8cacb13f85e48d8534bfc23ff844e83af4",
       "stage": 2,
-      "note": "Zero-friction Kubernetes distribution. Binary download from GitHub releases.",
+      "note": "Zero-friction Kubernetes distribution. Source tarball (tags are v<k8s>+k0s.0); no recipe dir yet, spec TBD. Renovate tag suffix needs custom handling.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "k0sproject/k0s"
       },
-      "filename": "k0s-1.32.0-amd64"
+      "filename": "v1.36.4+k0s.0.tar.gz"
     },
     "kubeflex": {
       "version": "0.5.0",
-      "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "5b6199f2d3fc868d4303b793422ec6488abc1ced0e75038c99c3364673eb7ffebdc1d19dddc43568234ead69eb4f03a5b5517952746c18bee699d43f23902f0c",
       "stage": 2,
       "note": "Kubeflex operator for KubeStellar. Manages control planes as CRDs.",
       "renovate": {
@@ -632,8 +624,8 @@
     },
     "kubestellar": {
       "version": "0.25.0",
-      "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "ae29c911be8a5f7b4f8f070fc1301bfb9444842eb9889abd89ebd1386d8f8c6e3bb85c815639f88ec4f61757af5140e67d4c914d8a46a1e0252dbbb7d76bf2b6",
       "stage": 2,
       "note": "KubeStellar core controller-manager. Multi-cluster management.",
       "renovate": {
@@ -645,7 +637,7 @@
     "kubestellar-console": {
       "version": "0.3.34",
       "url_template": "https://github.com/kubestellar/console/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "sha512": "1866fa9dffa12199191a5dfbd7e846471ac51abe43f4b30ff4a02af9e96af33384a60544e0a2b5627dda562320eaa5fa1154956304d211dec833476bd785484d",
       "stage": 2,
       "note": "KubeStellar console UI. GitHub OAuth integration.",
       "renovate": {
@@ -656,14 +648,10 @@
     },
     "polkit-gnome": {
       "version": "0.105",
-      "url_template": "https://github.com/GNOME/polkit-gnome/archive/refs/tags/{version}.tar.gz",
-      "sha512": "TODO-record-on-first-fetch",
+      "url_template": "https://download.gnome.org/sources/polkit-gnome/0.105/polkit-gnome-{version}.tar.xz",
+      "sha512": "eae2504959bca6f2b53dbad1b743fc0414b82897e62623af80ee74c4080a10d6b07a4c90151ee1264891f27373321b8697ac8a747cba5254c765b4cd9161bd42",
       "stage": 2,
-      "note": "GNOME polkit authentication agent. Replaces xfce-polkit.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "GNOME/polkit-gnome"
-      }
+      "note": "GNOME polkit authentication agent. Replaces xfce-polkit. No GitHub repo (GNOME FTP only); bumps are manual."
     }
   }
 }
