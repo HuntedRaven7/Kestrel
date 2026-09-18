@@ -50,7 +50,8 @@ jobs:
 
       - name: Copy spec file
         run: |
-          cp "pigeon/packages/${{ matrix.package }}/${{ matrix.package }}.spec" ~/rpmbuild/SPECS/
+          SPEC=$(ls pigeon/packages/${{ matrix.package }}/*.spec | head -1)
+          cp "$SPEC" ~/rpmbuild/SPECS/${{ matrix.package }}.spec
         env:
           package: ${{ matrix.package }}
 
