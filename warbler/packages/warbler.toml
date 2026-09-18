@@ -37,11 +37,19 @@ pamixer = "*"
 polkit-gnome = "*"
 foot = "*"
 
-# System utilities
-polkit = "*"
-udev = "*"
-dbus = "*"
-systemd = "*"
+# Adwaita theme and fonts
+adw-gtk3-theme = "6.4"
+adwaita-fonts = "51.0"
+adwaita-icon-theme = "51"
+
+# PipeWire stack
+pipewire = "1.6.8"
+pipewire-libs-extra = "1.6.8"
+wireplumber = "0.5.8"
+rtkit = "0.14"
+alsa-firmware = "*"
+alsa-sof-firmware = "2025.12.2"
+alsa-tools = "*"
 
 # Graphics stack (from base)
 mesa-dri-drivers = "*"
@@ -49,6 +57,31 @@ mesa-vulkan-drivers = "*"
 libdrm = "*"
 libva = "*"
 libva-utils = "*"
+
+# System utilities
+polkit = "*"
+udev = "*"
+dbus = "*"
+systemd = "*"
+pipewire = "*"
+pipewire-libs-extra = "*"
+wireplumber = "*"
+rtkit = "*"
+
+# Flatpak
+flatpak = "*"
+flatpak-xdg-utils = "*"
+fuse = "*"
+flatpak-xdg-utils = "*"
+
+# System utilities
+bootc = "1.16.10"
+distrobox = "1.8.2.5"
+fastfetch = "2.66.0"
+git = "2.47.0"
+linux-firmware = "20260810"
+rtkit = "0.14"
+wireplumber = "0.5.8"
 
 [unavailable]
 # Each entry carries a tracking issue. Missing packages fail the build otherwise.
