@@ -170,6 +170,8 @@ def audit(fix: bool = False, only: str | None = None) -> int:
             if val.rsplit("/", 1)[-1] == staged.get(pkgdir.name):
                 continue
             if "vendor.tar" in val:
+                if (pkgdir / val.rsplit("/", 1)[-1]).is_file():
+                    continue
                 warnings.append(
                     f"{pkgdir.name}: {tag} needs go-vendor-tools generation ({raw})"
                 )
