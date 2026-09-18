@@ -665,6 +665,234 @@
         "depName": "jeremy-rifkin/cpptrace"
       },
       "filename": "v1.0.4.tar.gz"
+    },
+    "adw-gtk3-theme": {
+      "version": "6.4",
+      "url_template": "https://github.com/lassekongo83/adw-gtk3/releases/download/v{version}/adw-gtk3v{version}.tar.xz",
+      "sha512": "304877e7d7b46ec444f8a0e2e86275c599496db15b687207106de91eab5b4a6d39c118959ce0f4f8aa1a0731cfea0c67c87281a0680ff86b44142f8da66eeae2",
+      "stage": 2,
+      "note": "GTK-3 theme from libadwaita.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "lassekongo83/adw-gtk3"
+      },
+      "filename": "adw-gtk3v6.4.tar.xz"
+    },
+    "adwaita-fonts": {
+      "version": "51.0",
+      "url_template": "https://download.gnome.org/sources/adwaita-fonts/51/adwaita-fonts-51.0.tar.xz",
+      "sha512": "43c48869594e14390e72d10f4b3a98510b369307cc5e546d5b2f89e48ceae340a5fa2cc1f6e0364307f3da8d735f101e879b9b44f55ff62a8927aa3f02dba4a0",
+      "stage": 2,
+      "note": "Adwaita fonts from GNOME.",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "GNOME/adwaita-fonts"
+      },
+      "filename": "adwaita-fonts-51.0.tar.xz"
+    },
+    "adwaita-icon-theme": {
+      "version": "51",
+      "url_template": "https://download.gnome.org/sources/adwaita-icon-theme/51/adwaita-icon-theme-51.0.tar.xz",
+      "sha512": "a72a1c875df6d684575f5561bd56c2c09aad7bd19b5fae5fadb6425280d05b9f4d0b2a26c661afcb8df7162925945cd43554237bd88ab41c89afaf2586d76e87",
+      "stage": 2,
+      "note": "Adwaita icon theme from GNOME.",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "GNOME/adwaita-icon-theme"
+      },
+      "filename": "adwaita-icon-theme-51.0.tar.xz"
+    },
+    "alsa-sof-firmware": {
+      "version": "2025.12.2",
+      "url_template": "https://github.com/thesofproject/sof-bin/releases/download/v2025.12.2/sof-bin-2025.12.2.tar.gz",
+      "sha512": "5eb64665c2cb87967ff2aa81f7d39397dc6e813abea531e89c12bb5c0a15821e7cbfd8c485af196e37984c1cdf9ac72c93f9feea1205d9d71736d163f5af0084",
+      "stage": 2,
+      "note": "Sound Open Firmware firmware.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "thesofproject/sof-bin"
+      },
+      "filename": "sof-bin-2025.12.2.tar.gz"
+    },
+    "alsa-tools": {
+      "version": "1.2.15",
+      "url_template": "ftp://ftp.alsa-project.org/pub/tools/alsa-tools-1.2.15.tar.bz2",
+      "sha512": "b2354fcaccfa316df7847438ad6b4ca3702be4ca88c46878c198a52ca6c659263b61759d4898e7a73acf64dd0e3004c103fa67a1cbdb2e53212f13368173be23",
+      "stage": 2,
+      "note": "ALSA specialist tools.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://www.alsa-project.org/"
+      },
+      "filename": "alsa-tools-1.2.15.tar.bz2"
+    },
+    "appstream": {
+      "version": "1.1.3",
+      "url_template": "https://www.freedesktop.org/software/appstream/releases/AppStream-1.1.3.tar.xz",
+      "sha512": "f0fdce1e4c43818a41c31fcb2531725fe5e1c1e9b47b028c0f2810860866d8058c5dada0500f2cee0ae5a36e1498abb7304e570179e95fdc834127e1746c5225",
+      "stage": 2,
+      "note": "AppStream utilities.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "ximion/appstream"
+      },
+      "filename": "AppStream-1.1.3.tar.xz"
+    },
+    "bootc": {
+      "version": "1.16.10",
+      "url_template": "https://github.com/bootc-dev/bootc/releases/download/v{version}/bootc-{version}.tar.zstd",
+      "sha512": "9ede03ec8d24d359a69a2522cf0658eefb4273a2b611558c5d672a235bce49cdadf9c0908fda79c756ccf6e6ef37dff9a758a03e75fdc8a9528120e437cbb522",
+      "stage": 2,
+      "note": "Bootable container system.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "bootc-dev/bootc"
+      },
+      "filename": "bootc-1.16.10.tar.zstd"
+    },
+    "distrobox": {
+      "version": "1.8.2.5",
+      "url_template": "https://github.com/89luca89/distrobox/archive/refs/tags/1.8.2.5/distrobox-1.8.2.5.tar.gz",
+      "sha512": "f4dcd9a2edd2db8de6af50e3b6df4e43e793d9baff28529879dcbe3a05cbebf8ad02bef1c8a6b8951c9855e82e6991bd17a8cf2025e1ca285b7dbe80396b1da6",
+      "stage": 2,
+      "note": "Containerized command line environments.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "89luca89/distrobox"
+      },
+      "filename": "distrobox-1.8.2.5.tar.gz"
+    },
+    "fastfetch": {
+      "version": "2.66.0",
+      "url_template": "https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/2.66.0/fastfetch-2.66.0.tar.gz",
+      "sha512": "dc067be6742b1193a6f7719333ecd418289c23b2c8ffc7f603eb9dd39b3b279536edcb87bc0e00f1a3a1a6f581e290b89e8cc5acd40a806bef1ba141b45d34c5",
+      "stage": 2,
+      "note": "Fast system info tool.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "fastfetch-cli/fastfetch"
+      },
+      "filename": "fastfetch-2.66.0.tar.gz"
+    },
+    "flatpak": {
+      "version": "1.19.0",
+      "url_template": "https://github.com/flatpak/flatpak/releases/download/1.19.0/flatpak-1.19.0.tar.xz",
+      "sha512": "686b6152705e6168d74093d44370d308093fa98d6c4e693f00804e540ee8f135b5994efa72f783a081b98d9c1b41ecdb4664f4fe05c78418cb5c6fbc5691f501",
+      "stage": 2,
+      "note": "Application deployment framework.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "flatpak/flatpak"
+      },
+      "filename": "flatpak-1.19.0.tar.xz"
+    },
+    "flatpak-xdg-utils": {
+      "version": "1.0.6",
+      "url_template": "https://github.com/flatpak/flatpak-xdg-utils/releases/download/1.0.6/flatpak-xdg-utils-1.0.6.tar.xz",
+      "sha512": "6407d76021e08fe181a3e5c2e0f2868aa2185c3e83115d0d87550a6c294a4c131a98e80e0d9e73d874ac0afe8375338935e213686ca7124e42a80b64ada2496f",
+      "stage": 2,
+      "note": "Flatpak XDG utilities.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "flatpak/flatpak-xdg-utils"
+      },
+      "filename": "flatpak-xdg-utils-1.0.6.tar.xz"
+    },
+    "fuse": {
+      "version": "2.9.9",
+      "url_template": "https://github.com/libfuse/libfuse/releases/download/fuse-2.9.9/fuse-2.9.9.tar.gz",
+      "sha512": "3d82fafd04f2924299bb09d2bb144935fa004a43fb9a6568e2e1cc5a60fded2efa1711029a0d7f12b3e6e4501f7217f2ee3545646d89da8dece083cb390f23e2",
+      "stage": 2,
+      "note": "FUSE v2 utilities.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "libfuse/libfuse"
+      },
+      "filename": "fuse-2.9.9.tar.gz"
+    },
+    "ffmpeg": {
+      "version": "7.1",
+      "url_template": "https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz",
+      "sha512": "7282fff068452bf154b2bf814e7f20d44ed4d961687dffd841bd77b88f26d9eee2cf4cf02e9a60b48b50e77a0c34731580d9e7c0945e3bc14c8ace840d920cde",
+      "stage": 2,
+      "note": "Digital VCR and streaming server.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://ffmpeg.org/releases/"
+      },
+      "filename": "ffmpeg-7.1.tar.xz"
+    },
+    "git": {
+      "version": "2.47.0",
+      "url_template": "https://www.kernel.org/pub/software/scm/git/git-2.47.0.tar.xz",
+      "sha512": "58683aa59dba25ffec9fe2c185267c77b34d573e9738c133a15d25071e37095e99486c231c35b8f71aabe3c1e305238b56d2c10039318bfc08f137919bad66ec",
+      "stage": 2,
+      "note": "Fast version control system.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://www.kernel.org/pub/software/scm/git/"
+      },
+      "filename": "git-2.47.0.tar.xz"
+    },
+    "linux-firmware": {
+      "version": "20260810",
+      "url_template": "https://www.kernel.org/pub/linux/kernel/firmware/linux-firmware-20260810.tar.xz",
+      "sha512": "2ef755194eb022e539aa677474ca5c6c8c3616b3302ebc14e1698c62ccb6ba6f8149e507b46c2a0563297c53502defb892ce4d37eb02646d99d955ae899eebe7",
+      "stage": 2,
+      "note": "Linux kernel firmware.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://www.kernel.org/pub/linux/kernel/firmware/"
+      },
+      "filename": "linux-firmware-20260810.tar.xz"
+    },
+    "pipewire": {
+      "version": "1.6.8",
+      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz",
+      "sha512": "afa52e58eebe92ad2137afd9663076c8ecf62a5b1ec70aceeb368d58e6ff9eed1fd8fcf8e92f1b73951f7fbd6461a823c9d911b0d064cb523b8871c0dcc79187",
+      "stage": 2,
+      "note": "PipeWire media server.",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "pipewire/pipewire"
+      },
+      "filename": "pipewire-1.6.8.tar.gz"
+    },
+    "pipewire-libs-extra": {
+      "version": "1.6.8",
+      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz",
+      "sha512": "afa52e58eebe92ad2137afd9663076c8ecf62a5b1ec70aceeb368d58e6ff9eed1fd8fcf8e92f1b73951f7fbd6461a823c9d911b0d064cb523b8871c0dcc79187",
+      "stage": 2,
+      "note": "PipeWire extra plugins (aptX, LC3plus, FFmpeg).",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "pipewire/pipewire"
+      },
+      "filename": "pipewire-1.6.8.tar.gz"
+    },
+    "rtkit": {
+      "version": "0.14",
+      "url_template": "https://gitlab.freedesktop.org/pipewire/rtkit/-/archive/v0.14/rtkit-0.14.tar.gz",
+      "sha512": "afe51a8cea9d07db9db82d60c4e80d473c9133e06e34a780db202a56b1659891cdfb75ad6dbc350dbbda0524dd4d5566d3323cbb3bdfbbbd47c6f255c92bc1f4",
+      "stage": 2,
+      "note": "Realtime policy daemon.",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "pipewire/rtkit"
+      },
+      "filename": "rtkit-0.14.tar.gz"
+    },
+    "wireplumber": {
+      "version": "0.5.8",
+      "url_template": "https://github.com/pipewire/wireplumber/archive/refs/tags/0.5.8/wireplumber-0.5.8.tar.gz",
+      "sha512": "8fa1b3acd6abf6e18c473f7abcb148946e53632feb7d1c1f3b5c32a84b85019092d38c8b500266ab8f5aef82331256d45561dbc72fa963577a2791ed99a344c4",
+      "stage": 2,
+      "note": "PipeWire session manager.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "pipewire/wireplumber"
+      },
+      "filename": "wireplumber-0.5.8.tar.gz"
     }
   }
 }

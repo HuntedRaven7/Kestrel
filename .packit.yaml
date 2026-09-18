@@ -10,12 +10,48 @@ packages:
     downstream_package_name: ModemManager
     paths:
       - pigeon/packages/ModemManager
+  adw-gtk3-theme:
+    specfile_path: adw-gtk3-theme.spec
+    upstream_package_name: adw-gtk3-theme
+    downstream_package_name: adw-gtk3-theme
+    paths:
+      - pigeon/packages/adw-gtk3-theme
+  adwaita-fonts:
+    specfile_path: adwaita-fonts.spec
+    upstream_package_name: adwaita-fonts
+    downstream_package_name: adwaita-fonts
+    paths:
+      - pigeon/packages/adwaita-fonts
+  adwaita-icon-theme:
+    specfile_path: adwaita-icon-theme.spec
+    upstream_package_name: adwaita-icon-theme
+    downstream_package_name: adwaita-icon-theme
+    paths:
+      - pigeon/packages/adwaita-icon-theme
   alsa-firmware:
     specfile_path: alsa-firmware.spec
     upstream_package_name: alsa-firmware
     downstream_package_name: alsa-firmware
     paths:
       - pigeon/packages/alsa-firmware
+  alsa-sof-firmware:
+    specfile_path: alsa-sof-firmware.spec
+    upstream_package_name: alsa-sof-firmware
+    downstream_package_name: alsa-sof-firmware
+    paths:
+      - pigeon/packages/alsa-sof-firmware
+  alsa-tools:
+    specfile_path: alsa-tools.spec
+    upstream_package_name: alsa-tools
+    downstream_package_name: alsa-tools
+    paths:
+      - pigeon/packages/alsa-tools
+  appstream:
+    specfile_path: appstream.spec
+    upstream_package_name: appstream
+    downstream_package_name: appstream
+    paths:
+      - pigeon/packages/appstream
   awww:
     specfile_path: awww.spec
     upstream_package_name: awww
@@ -28,6 +64,12 @@ packages:
     downstream_package_name: bluez
     paths:
       - pigeon/packages/bluez
+  bootc:
+    specfile_path: bootc.spec
+    upstream_package_name: bootc
+    downstream_package_name: bootc
+    paths:
+      - pigeon/packages/bootc
   brightnessctl:
     specfile_path: brightnessctl.spec
     upstream_package_name: brightnessctl
@@ -76,24 +118,60 @@ packages:
     downstream_package_name: ddcutil
     paths:
       - pigeon/packages/ddcutil
+  distrobox:
+    specfile_path: distrobox.spec
+    upstream_package_name: distrobox
+    downstream_package_name: distrobox
+    paths:
+      - pigeon/packages/distrobox
   dracut:
     specfile_path: dracut.spec
     upstream_package_name: dracut
     downstream_package_name: dracut
     paths:
       - pigeon/packages/dracut
+  fastfetch:
+    specfile_path: fastfetch.spec
+    upstream_package_name: fastfetch
+    downstream_package_name: fastfetch
+    paths:
+      - pigeon/packages/fastfetch
+  ffmpeg:
+    specfile_path: ffmpeg.spec
+    upstream_package_name: ffmpeg
+    downstream_package_name: ffmpeg
+    paths:
+      - pigeon/packages/ffmpeg
   firewalld:
     specfile_path: firewalld.spec
     upstream_package_name: firewalld
     downstream_package_name: firewalld
     paths:
       - pigeon/packages/firewalld
+  flatpak:
+    specfile_path: flatpak.spec
+    upstream_package_name: flatpak
+    downstream_package_name: flatpak
+    paths:
+      - pigeon/packages/flatpak
+  flatpak-xdg-utils:
+    specfile_path: flatpak-xdg-utils.spec
+    upstream_package_name: flatpak-xdg-utils
+    downstream_package_name: flatpak-xdg-utils
+    paths:
+      - pigeon/packages/flatpak-xdg-utils
   foot:
     specfile_path: foot.spec
     upstream_package_name: foot
     downstream_package_name: foot
     paths:
       - pigeon/packages/foot
+  fuse:
+    specfile_path: fuse.spec
+    upstream_package_name: fuse
+    downstream_package_name: fuse
+    paths:
+      - pigeon/packages/fuse
   fwupd:
     specfile_path: fwupd.spec
     upstream_package_name: fwupd
@@ -106,6 +184,12 @@ packages:
     downstream_package_name: ghostty
     paths:
       - pigeon/packages/ghostty
+  git:
+    specfile_path: git.spec
+    upstream_package_name: git
+    downstream_package_name: git
+    paths:
+      - pigeon/packages/git
   grim:
     specfile_path: grim.spec
     upstream_package_name: grim
@@ -190,6 +274,12 @@ packages:
     downstream_package_name: libwacom
     paths:
       - pigeon/packages/libwacom
+  linux-firmware:
+    specfile_path: linux-firmware.spec
+    upstream_package_name: linux-firmware
+    downstream_package_name: linux-firmware
+    paths:
+      - pigeon/packages/linux-firmware
   mango:
     specfile_path: mango.spec
     upstream_package_name: mango
@@ -214,6 +304,18 @@ packages:
     downstream_package_name: pciutils
     paths:
       - pigeon/packages/pciutils
+  pipewire:
+    specfile_path: pipewire.spec
+    upstream_package_name: pipewire
+    downstream_package_name: pipewire
+    paths:
+      - pigeon/packages/pipewire
+  pipewire-libs-extra:
+    specfile_path: pipewire-libs-extra.spec
+    upstream_package_name: pipewire-libs-extra
+    downstream_package_name: pipewire-libs-extra
+    paths:
+      - pigeon/packages/pipewire-libs-extra
   podman:
     specfile_path: podman.spec
     upstream_package_name: podman
@@ -244,6 +346,12 @@ packages:
     downstream_package_name: rofi
     paths:
       - pigeon/packages/rofi
+  rtkit:
+    specfile_path: rtkit.spec
+    upstream_package_name: rtkit
+    downstream_package_name: rtkit
+    paths:
+      - pigeon/packages/rtkit
   runc:
     specfile_path: runc.spec
     upstream_package_name: runc
@@ -322,6 +430,12 @@ packages:
     downstream_package_name: wireguard-tools
     paths:
       - pigeon/packages/wireguard-tools
+  wireplumber:
+    specfile_path: wireplumber.spec
+    upstream_package_name: wireplumber
+    downstream_package_name: wireplumber
+    paths:
+      - pigeon/packages/wireplumber
   wl-clipboard:
     specfile_path: wl-clipboard.spec
     upstream_package_name: wl-clipboard

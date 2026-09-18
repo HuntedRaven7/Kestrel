@@ -133,6 +133,8 @@ efibootmgr = "*"
 linux-firmware = "*"
 linux-firmware-whence = "*"
 alsa-firmware = "*"
+alsa-sof-firmware = "2025.12.2"
+alsa-tools = "1.2.15"
 
 # Virtualization
 qemu-img = "*"
@@ -154,21 +156,24 @@ e2fsprogs = "*"
 ntfs-3g = "*"
 
 # Audio (for server multimedia if needed)
-pipewire = "*"
-pipewire-pulseaudio = "*"
-pipewire-alsa = "*"
-pipewire-jack = "*"
-wireplumber = "*"
+pipewire = "1.6.8"
+pipewire-pulseaudio = "1.6.8"
+pipewire-alsa = "1.6.8"
+pipewire-jack = "1.6.8"
+wireplumber = "0.5.8"
 alsa-lib = "*"
 alsa-utils = "*"
+alsa-sof-firmware = "2025.12.2"
+alsa-tools = "1.2.15"
 pulseaudio-utils = "*"
 
 # Utilities
-distrobox = "*"
-fuse = "*"
+distrobox = "1.8.2.5"
+fuse = "2.9.9"
 fzf = "*"
 fish = "*"
 zsh = "*"
+fastfetch = "2.66.0"
 
 # Security
 selinux-policy = "*"
@@ -180,9 +185,10 @@ policycoreutils = "*"
 setroubleshoot = "*"
 
 # Flatpak
-flatpak = "*"
+flatpak = "1.19.0"
 flatpak-builder = "*"
-flatpak-session-helper = "*"
+flatpak-session-helper = "1.0.6"
+flatpak-xdg-utils = "1.0.6"
 
 # Internationalization
 glibc-langpack-en = "*"
@@ -201,6 +207,7 @@ liberation-fonts = "*"
 liberation-sans-fonts = "*"
 liberation-serif-fonts = "*"
 liberation-mono-fonts = "*"
+adwaita-fonts = "51.0"
 
 # Printing
 cups = "*"
@@ -213,15 +220,16 @@ bluez = "*"
 gnome-bluetooth = "*"
 
 # Mobile broadband
-ModemManager = "*"
+ModemManager = "1.24.2"
 
 # Power management
-upower = "*"
+upower = "1.91.4"
+rtkit = "0.14"
 
 # Color management
-colord = "*"
-colord-gtk = "*"
-lcms2 = "*"
+colord = "1.4.8"
+colord-gtk = "0.3.1"
+lcms2 = "2.16"
 
 # Graphics libraries
 mesa-dri-drivers = "*"
@@ -241,7 +249,7 @@ xorg-x11-xauth = "*"
 
 # Desktop portal (base)
 xdg-desktop-portal = "*"
-xdg-desktop-portal-gtk = "*"
+xdg-desktop-portal-gtk = "1.15.3"
 
 # Wayland
 wayland = "*"
@@ -287,7 +295,7 @@ squashfs-tools = "*"
 startup-notification = "*"
 switcheroo-control = "*"
 tecla = "*"
-fastfetch = "*"
+fastfetch = "2.66.0"
 gum = "*"
 isomd5sum = "*"
 zenity = "*"
@@ -298,6 +306,22 @@ k0s = "1.32.0"
 kubeflex = "0.5.0"
 kubestellar = "0.25.0"
 kubestellar-console = "0.3.34"
+
+# PipeWire stack
+pipewire = "1.6.8"
+pipewire-libs-extra = "1.6.8"
+wireplumber = "0.5.8"
+rtkit = "0.14"
+alsa-firmware = "1.2.4"
+alsa-sof-firmware = "2025.12.2"
+alsa-tools = "1.2.15"
+
+# System utilities
+bootc = "1.16.10"
+distrobox = "1.8.2.5"
+fastfetch = "2.66.0"
+git = "2.47.0"
+linux-firmware = "20260810"
 
 [unavailable]
 # Each entry carries a tracking issue. Missing packages fail the build otherwise.
