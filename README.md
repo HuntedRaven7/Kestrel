@@ -7,7 +7,7 @@
 ```
 Kestrel/
 ├── pigeon/              # Package factory — builds RPMs, publishes OCI repo image
-├── warbler/             # Desktop image — Mango + Quickshell + GDM autologin
+├── warbler/             # Desktop image — Mango + Quickshell + SDDM autologin
 ├── woodpecker/          # Server image — podman, cockpit, uupd, full hardware enablement
 ├── config/              # Shared config (flavors.json)
 ├── docs/                # Architecture, building, targeting-hummingbird
@@ -48,7 +48,7 @@ just sync-bluefin-toml
 | Image | Base | Description |
 |-------|------|-------------|
 | `ghcr.io/huntedraven7/pigeon` | — | RPM repository (consumed by Warbler/Woodpecker) |
-| `ghcr.io/huntedraven7/warbler` | Hummingbird | Mango desktop (GDM + Quickshell) |
+| `ghcr.io/huntedraven7/warbler` | Hummingbird | Mango desktop (SDDM + Quickshell) |
 | `ghcr.io/huntedraven7/woodpecker` | Hummingbird | Server (podman, cockpit, uupd) |
 | `ghcr.io/huntedraven7/warbler-kernel-cache` | Hummingbird | Prebuilt OGC kernel + NVIDIA modules |
 
@@ -68,7 +68,7 @@ just sync-bluefin-toml
 
 ## Packages (Pigeon)
 
-52 packages in `pigeon/config/upstream-sources.json`, managed by Packit + Renovate.
+56 packages in `pigeon/config/upstream-sources.json`, managed by Packit + Renovate.
 
 **Priority packages (built in stages):**
 
@@ -76,13 +76,23 @@ just sync-bluefin-toml
 |-------|----------|
 | 0 | `wlroots 0.20.2`, `scenefx 0.5` |
 | 1 | `mango 0.17.2`, `quickshell 0.3.1` |
-| 2 | `awww 0.12.1`, `rofi 1.7.9.1`, `ghostty 1.3.1`, `kestrel-gdm-config` + portal stack |
+| 2 | `awww 0.12.1`, `rofi 1.7.9.1`, `ghostty 1.3.1`, `sddm 0.21.0` + portal stack |
 
 All packages:
 - Verified via `source_pipeline.py` (SHA-512 + optional signature verification)
-- Built in `fedora:44` + Hummingbird COPR
+- Built in a `fedora:44` container against the Hummingbird overlay repo
 - Signed with cosign keyless + SLSA attestation
 - Scanned with Trivy (CRITICAL/HIGH blocks promotion)
+
+## Planned: Pigeon builds every Atom
+
+Long term, **every package installed in Warbler and Woodpecker will be built by Pigeon** — no Fedora or Hummingbird binaries at install time. Their repositories stay available as *buildroots only* (compilers, macros, bootstrap BuildRequires), never as install sources.
+
+Today the images still consume some base packages directly; each one is tracked until it earns a Pigeon recipe:
+
+- `upstream-sources.json` is the allow-list: a package with no entry cannot build or publish.
+- `recalculate-gaps.yml` (every 6h) diffs the Hummingbird base + repo against the image contracts and reports what Pigeon still needs to absorb.
+- Rule of thumb: leaf apps and the desktop stack first, toolchain and base libraries last — never rebuild what Hummingbird's hardened pipeline already owns unless the desktop needs a newer or different build.
 
 ## CI/CD
 
