@@ -49,7 +49,9 @@ shell config is shipped — the user owns ~/.config/quickshell.
 %autosetup -n quickshell-%{version} -p1
 
 %build
-%cmake -GNinja -DCMAKE_BUILD_TYPE=Release
+# INSTALL_QMLDIR: without it upstream skips QML module install entirely
+# (and %files expects them under %%{_libdir}/qt6/qml).
+%cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINSTALL_QMLDIR=%{_libdir}/qt6/qml
 %cmake_build
 
 %install
@@ -57,7 +59,7 @@ shell config is shipped — the user owns ~/.config/quickshell.
 
 %files
 %license LICENSE
-%{_bindir}/qs
+%{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell/
 
 %changelog
