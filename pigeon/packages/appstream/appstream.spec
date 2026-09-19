@@ -4,6 +4,8 @@
 # source_pipeline.py before any build).
 
 %bcond stemming 0
+%bcond qt 1
+%bcond blake3 0
 
 Summary: Utilities to generate, maintain and access the AppStream database
 Name:    appstream
@@ -63,10 +65,19 @@ Provides: appstream-vala = %{version}-%{release}
 %description devel
 %{summary}.
 
-%package compose
-Summary: Library for generating AppStream data
+%package qt
+Summary: Qt6 bindings for %{name}
 Requires: %{name}%{?_isa} = %{version}-%{release}
-%description compose
+
+%description qt
+%{summary}.
+
+%package qt-devel
+Summary: Development files for %{name}-qt bindings
+Requires: %{name}-qt%{?_isa} = %{version}-%{release}
+Requires: pkgconfig(Qt6Core) >= 6.2.4
+
+%description qt-devel
 %{summary}.
 
 %prep
@@ -74,7 +85,11 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %build
 %meson \
+  -Dcompose=true \
+  -Dqt=%{?with_qt:true}%{!?with_qt:false} \
+  -Dblake3-support=%{?with_blake3:true}%{!?with_blake3:false} \
   -Dstemming=%{?with_stemming:true}%{!?with_stemming:false} \
+  -Dvapi=true \
   -Ddocs=false \
   -Dman=true
 %meson_build
@@ -82,27 +97,72 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %install
 %meson_install
 
-%files
+%find_lang appstream
+
+mkdir -p %{buildroot}/var/cache/swcatalog/{icons,gv,xml}
+touch %{buildroot}/var/cache/swcatalog/cache.watch
+
+%files -f appstream.lang
 %license COPYING
-%{_bindir}/*
-%{_libdir}/libappstream*.so.*
-%{_libdir}/girepository-1.0/
-%{_datadir}/gir-1.0/
+%{_bindir}/appstreamcli
+%{_mandir}/man1/appstreamcli.1*
+%{_datadir}/bash-completion/completions/appstreamcli
 %{_datadir}/appstream/
-%{_datadir}/bash-completion/completions/
+%dir %{_libdir}/girepository-1.0/
+%{_libdir}/girepository-1.0/AppStream-1.0.typelib
+%{_libdir}/libappstream.so.5
+%{_libdir}/libappstream.so.%{version}
+%{_metainfodir}/org.freedesktop.appstream.cli.*.xml
+# put in -devel? -- rex
+%{_datadir}/gettext/its/metainfo.*
+%ghost /var/cache/swcatalog/cache.watch
+%dir /var/cache/swcatalog/
+%dir /var/cache/swcatalog/icons/
+%dir /var/cache/swcatalog/gv/
+%dir /var/cache/swcatalog/xml/
 
 %files devel
 %license COPYING
-%{_libdir}/libappstream*.so
-%{_libdir}/pkgconfig/appstream*.pc
-%{_includedir}/appstream*
+%{_includedir}/appstream/
+%{_libdir}/libappstream.so
+%{_libdir}/pkgconfig/appstream.pc
+%dir %{_datadir}/gir-1.0/
+%{_datadir}/gir-1.0/AppStream-1.0.gir
+%dir %{_datadir}/vala
+%dir %{_datadir}/vala/vapi
+%{_datadir}/vala/vapi/appstream.deps
+%{_datadir}/vala/vapi/appstream.vapi
+%{_docdir}/appstream/html/
 
 %files compose
 %license COPYING
-%{_libdir}/libappstream-compose*.so.*
+%{_libexecdir}/appstreamcli-compose
+%{_mandir}/man1/appstreamcli-compose.1*
+%{_libdir}/libappstream-compose.so.0
+%{_libdir}/libappstream-compose.so.%{version}
+%{_libdir}/girepository-1.0/AppStreamCompose-1.0.typelib
+%{_metainfodir}/org.freedesktop.appstream.compose.metainfo.xml
+
+%files compose-devel
+%{_includedir}/appstream-compose/
+%{_libdir}/libappstream-compose.so
 %{_libdir}/pkgconfig/appstream-compose.pc
-%{_includedir}/appstream-compose*
+%{_datadir}/gir-1.0/AppStreamCompose-1.0.gir
+%dir %{_datadir}/gtk-doc/
+%dir %{_datadir}/gtk-doc/html/
+%{_datadir}/gtk-doc/html/appstream-compose
+
+%files qt
+%{_libdir}/libAppStreamQt.so.3
+%{_libdir}/libAppStreamQt.so.%{version}
+
+%files qt-devel
+%{_includedir}/AppStreamQt/
+%{_libdir}/cmake/AppStreamQt/
+%{_libdir}/libAppStreamQt.so
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.1.3-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Enable compose and qt libraries, add compose-devel/qt/qt-devel subpackages
+- Add %find_lang for translations

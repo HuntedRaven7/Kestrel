@@ -56,7 +56,6 @@ mv %{buildroot}%{_bindir}/xdg-open %{buildroot}%{_bindir}/flatpak-xdg-open
 %license COPYING
 %{_bindir}/flatpak-xdg-email
 %{_bindir}/flatpak-xdg-open
-%{_bindir}/flatpak-xdg-list
 
 %files -n flatpak-spawn
 %license COPYING
@@ -65,3 +64,4 @@ mv %{buildroot}%{_bindir}/xdg-open %{buildroot}%{_bindir}/flatpak-xdg-open
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.6-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Remove flatpak-xdg-list from %files (not built in 1.0.6)

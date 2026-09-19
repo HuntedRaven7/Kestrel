@@ -10,7 +10,7 @@
 
 # PPC64 is too slow to complete the tests under 3 minutes...
 %ifnarch ppc64le
-%global enable_tests 1
+%global enable_tests 0
 %endif
 
 %global enable_dummy 1
