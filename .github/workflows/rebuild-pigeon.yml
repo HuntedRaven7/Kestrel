@@ -28,6 +28,8 @@ jobs:
       matrix0: ${{ steps.plan.outputs.matrix0 }}
       matrix1: ${{ steps.plan.outputs.matrix1 }}
       matrix2: ${{ steps.plan.outputs.matrix2 }}
+      matrix3: ${{ steps.plan.outputs.matrix3 }}
+      matrix4: ${{ steps.plan.outputs.matrix4 }}
       changed: ${{ steps.plan.outputs.changed }}
     steps:
       - name: Checkout
@@ -65,7 +67,7 @@ jobs:
               stages.setdefault(stage, []).append({"package": name})
 
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              for n in ("0", "1", "2"):
+              for n in ("0", "1", "2", "3", "4"):
                   f.write(f"matrix{n}={json.dumps(stages.get(n, []))}\n")
               f.write(f"changed={json.dumps(buildable)}\n")
           EOF
@@ -152,10 +154,32 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  rebuild3:
+    name: Build Stage 3
+    needs: [prepare, preflight, rebuild2]
+    if: ${{ needs.prepare.outputs.matrix3 != '' && needs.prepare.outputs.matrix3 != '[]' }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: "3"
+      packages: ${{ needs.prepare.outputs.matrix3 }}
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  rebuild4:
+    name: Build Stage 4
+    needs: [prepare, preflight, rebuild3]
+    if: ${{ needs.prepare.outputs.matrix4 != '' && needs.prepare.outputs.matrix4 != '[]' }}
+    uses: ./.github/workflows/build-stage.yml
+    with:
+      stage: "4"
+      packages: ${{ needs.prepare.outputs.matrix4 }}
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   precedence:
     name: Precedence check
     runs-on: ubuntu-24.04
-    needs: [prepare, rebuild0, rebuild1, rebuild2]
+    needs: [prepare, rebuild0, rebuild1, rebuild2, rebuild3, rebuild4]
     if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
     steps:
       - name: Checkout
