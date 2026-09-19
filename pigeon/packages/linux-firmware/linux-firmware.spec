@@ -69,13 +69,13 @@ Firmware for NVIDIA GPUs.
 mkdir -p %{buildroot}%{_firmwarepath}
 cp -a * %{buildroot}%{_firmwarepath}/
 
-# Remove files that should not be installed in firmware path
-rm -f %{buildroot}%{_firmwarepath}/*.txt
-rm -f %{buildroot}%{_firmwarepath}/*.md
-rm -f %{buildroot}%{_firmwarepath}/README
-rm -f %{buildroot}%{_firmwarepath}/WHENCE
-rm -f %{buildroot}%{_firmwarepath}/Makefile
-rm -f %{buildroot}%{_firmwarepath}/*.patch
+  # Remove files that should not be installed in firmware path
+  # (keep WHENCE for the whence subpackage)
+  rm -f %{buildroot}%{_firmwarepath}/*.txt
+  rm -f %{buildroot}%{_firmwarepath}/*.md
+  rm -f %{buildroot}%{_firmwarepath}/README
+  rm -f %{buildroot}%{_firmwarepath}/Makefile
+  rm -f %{buildroot}%{_firmwarepath}/*.patch
 
 %files
 %license LICENSE LICENSE-CRITERIA.md

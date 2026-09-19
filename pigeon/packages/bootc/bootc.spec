@@ -75,6 +75,8 @@ This package provides a utility to simplify reinstalling the current system to a
 %autosetup -n bootc-1.16.10
 # Unpack vendor tree for hermetic offline build
 tar --zstd -xf %{SOURCE1}
+# Set up .cargo/config.toml for offline/vendored build
+%cargo_prep -N
 
 %build
 %cargo_build
