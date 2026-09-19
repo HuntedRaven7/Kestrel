@@ -14,9 +14,9 @@
 
 %ifarch ppc ppc64
 # sb16_csp doesn't build on PPC; see bug #219010
-%{?!_without_tools:     %global builddirstools "as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sscape_ctl us428control hda-verb hdajackretask hdajacksensetest" }
+%{?!_without_tools:     %global builddirstools as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sscape_ctl us428control hda-verb hdajackretask hdajacksensetest }
 %else
-%{?!_without_tools:     %global builddirstools "as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sb16_csp sscape_ctl us428control hda-verb hdajackretask hdajacksensetest" }
+%{?!_without_tools:     %global builddirstools as10k1 echomixer envy24control hdspconf hdspmixer hwmixvolume rmedigicontrol sbiload sb16_csp sscape_ctl us428control hda-verb hdajackretask hdajacksensetest }
 %endif
 
 %{?!_without_firmware:  %global builddirsfirmw hdsploader mixartloader usx2yloader vxloader }
@@ -88,26 +88,26 @@ This package contains tools for uploading firmware to sound cards.
 %autosetup -p1
 
 %build
-%if 0%{?builddirstools}
+%if "%{builddirstools}" != ""
 for d in %{builddirstools}; do
   make -C $d
 done
 %endif
 
-%if 0%{?builddirsfirmw}
+%if "%{builddirsfirmw}" != ""
 for d in %{builddirsfirmw}; do
   make -C $d
 done
 %endif
 
 %install
-%if 0%{?builddirstools}
+%if "%{builddirstools}" != ""
 for d in %{builddirstools}; do
   make -C $d DESTDIR=%{buildroot} install
 done
 %endif
 
-%if 0%{?builddirsfirmw}
+%if "%{builddirsfirmw}" != ""
 for d in %{builddirsfirmw}; do
   make -C $d DESTDIR=%{buildroot} install
 done
