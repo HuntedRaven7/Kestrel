@@ -40,7 +40,7 @@
       "version": "0.3.1",
       "url_template": "https://github.com/quickshell-mirror/quickshell/archive/refs/tags/v{version}.tar.gz",
       "sha512": "7da5b37a20369e52f14cba2cf03b948522c8d79598f4a54e456034f2d0f868cf525539f15d86ebacde547e862eac8d029a597d5e360cd443ed2404dbd4781ad9",
-      "stage": 1,
+      "stage": 3,
       "note": "Rebuild on every Qt bump (private-API ABI). Keep coupled to qt6-qtbase via Renovate group qt-quickshell.",
       "renovate": {
         "datasource": "github-tags",
@@ -901,6 +901,18 @@
         "depName": "pipewire/rtkit"
       },
       "filename": "rtkit-0.14.tar.gz"
+    },
+    "voxtype": {
+      "version": "1.0.1",
+      "url_template": "https://github.com/peteonrails/voxtype/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "80b2cd51a65b14bed796d3788210a5144e6bba460336b22c181a6b0a0a7a713ac95f62077b3664c75fc811706e87f4b0edcf7bfa12b94173caf51abc13ccae73",
+      "stage": 2,
+      "note": "Push-to-talk voice-to-text daemon. Offline transcription via whisper.cpp. Tiered CPU binaries (AVX2 baseline, AVX-512 optimized) with Vulkan GPU variant. Requires Rust/cargo build; vendor tree pending.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "peteonrails/voxtype"
+      },
+      "filename": "v1.0.1.tar.gz"
     },
     "wireplumber": {
       "version": "0.5.8",
