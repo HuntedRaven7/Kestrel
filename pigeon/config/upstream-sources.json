@@ -40,7 +40,7 @@
       "version": "0.3.1",
       "url_template": "https://github.com/quickshell-mirror/quickshell/archive/refs/tags/v{version}.tar.gz",
       "sha512": "7da5b37a20369e52f14cba2cf03b948522c8d79598f4a54e456034f2d0f868cf525539f15d86ebacde547e862eac8d029a597d5e360cd443ed2404dbd4781ad9",
-      "stage": 2,
+      "stage": 4,
       "note": "Rebuild on every Qt bump (private-API ABI). Keep coupled to qt6-qtbase via Renovate group qt-quickshell.",
       "renovate": {
         "datasource": "github-tags",
@@ -53,7 +53,7 @@
       "url_template": "https://codeberg.org/LGFae/awww/archive/v{version}.tar.gz",
       "sha512": "50b8f4c88c15fdaf053efccae578cecf261851df8c5b0731d87bd424a413f8b0fb7a7fad145b7757b459e1709377e32b430d1f5d3889f9641b04bfcc41a6b478",
       "license": "GPL-3.0",
-      "stage": 2,
+      "stage": 4,
       "note": "Direct archive download works (Codeberg blocks repo-page scraping only). Digest recorded 2026-09-17; re-verify on bump. No Renovate datasource covers Codeberg; bumps are manual.",
       "filename": "v0.12.1.tar.gz"
     },
@@ -61,7 +61,7 @@
       "version": "1.7.9.1",
       "url_template": "https://github.com/davatorium/rofi/archive/refs/tags/{version}.tar.gz",
       "sha512": "054903721f78baae19fa52e568d4eb29918275e28b54a5a2515a4c6b51a29353fac8511a59314b9a1a839e028a7ecb5c232ef8cd72f8056d625fc6e22cd2acf0",
-      "stage": 2,
+      "stage": 4,
       "note": "Stock rofi (X11 via XWayland under Mango). Evaluate rofi-wayland fork later as separate package.",
       "renovate": {
         "datasource": "github-tags",
@@ -73,7 +73,7 @@
       "version": "1.3.1",
       "url_template": "https://github.com/ghostty-org/ghostty/archive/refs/tags/v{version}.tar.gz",
       "sha512": "b9d2a35ba71111cab27a67279279a22bdb9ab6b371374cb6da5c0f543610a848f37d6114fb8f0555afd8817203df16a203257df8fa5bfe43482c2f2a115f2662",
-      "stage": 2,
+      "stage": 4,
       "renovate": {
         "datasource": "github-tags",
         "depName": "ghostty-org/ghostty"
@@ -84,7 +84,7 @@
       "version": "0.21.0",
       "url_template": "https://github.com/sddm/sddm/archive/refs/tags/v{version}.tar.gz",
       "sha512": "2e8e460e7f318f20a406dcbb1a9fa1dc78b6a5b8d888bfbbaae22b9c642dbc49cf2ac682b4ea9ed847bbafa9bdc361ba08795e59cad970088b370caaaa70f458",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Display manager for the Mango autologin (maldives theme, no breeze dep).",
       "renovate": {
         "datasource": "github-tags",
@@ -120,7 +120,7 @@
       "version": "0.9.3",
       "url_template": "https://github.com/kennylevinsen/seatd/archive/refs/tags/{version}.tar.gz",
       "sha512": "8cb21cfbd9aa25966fe3f586de75d24a8625142ffb49e6ec357875c347d3e92d535467b817d79fdc704f80858a145f1107c488adbf22a1c337dbc6ccccc8b00a",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Seat management daemon.",
       "renovate": {
         "datasource": "github-tags",
@@ -132,7 +132,7 @@
       "version": "2.3.0",
       "url_template": "https://github.com/bugaevc/wl-clipboard/archive/refs/tags/v{version}.tar.gz",
       "sha512": "101dd7a18fbaee0754318cf9ec8403068df4091ccc5d3dd0bd1e46627d56a183c718c206816c08e5dbadf6fd5c747fa0c95eca1925fa27c7eeda133909696f9b",
-      "stage": 2,
+      "stage": 4,
       "note": "Fedora dist-git import. Wayland clipboard utilities.",
       "renovate": {
         "datasource": "github-tags",
@@ -144,7 +144,7 @@
       "version": "1.4.0",
       "url_template": "https://github.com/emersion/grim/releases/download/v{version}/grim-{version}.tar.gz",
       "sha512": "d0b33528a00528b3ef7488a0984cde5034de4f5a211eb5c8d3299aea356d9348c5d02d08171802bc0315afb19d2446f5f132ea9dca0579ace803b7d5d90a89cc",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Screenshot utility for Wayland.",
       "renovate": {
         "datasource": "github-tags",
@@ -156,7 +156,7 @@
       "version": "1.5.0",
       "url_template": "https://github.com/emersion/slurp/releases/download/v{version}/slurp-{version}.tar.gz",
       "sha512": "743c0c4c4b9fd1778734486691d979c0414db041ca052bec477e89a4f1309d1d50d6f4d7c80a98b991b42583e5e44516e4a0ab4944910b7b9076122b54b735a7",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Region selector for Wayland.",
       "renovate": {
         "datasource": "github-tags",
@@ -168,7 +168,7 @@
       "version": "1.9.0",
       "url_template": "https://github.com/swaywm/swayidle/releases/download/v{version}/swayidle-{version}.tar.gz",
       "sha512": "158bce330b4d4f17e0d12358361e52abb881e3da61b3da0013ddbd1f99339b490e1c8078e539740707582b62fde80b8e1325c65800096e292d96c7e1abfd1462",
-      "stage": 2,
+      "stage": 4,
       "note": "Fedora dist-git import. Idle management for Wayland.",
       "renovate": {
         "datasource": "github-tags",
@@ -182,7 +182,7 @@
       "version": "1.8.6",
       "url_template": "https://github.com/swaywm/swaylock/releases/download/v{version}/swaylock-{version}.tar.gz",
       "sha512": "547fc23f11afd143887b16c743be501753e01d42d978af556c1adee615818eea8837eba573dfd9a14ad2588b52ea735c636d95f5208f578e137490d65aab1239",
-      "stage": 2,
+      "stage": 4,
       "note": "Fedora dist-git import. Screen locker for Wayland.",
       "renovate": {
         "datasource": "github-tags",
@@ -194,7 +194,7 @@
       "version": "0.5.1",
       "url_template": "https://github.com/Hummer12007/brightnessctl/archive/refs/tags/{version}.tar.gz",
       "sha512": "41ac86357b3b5a3d54a043140a6bdb1fb68d5080a16e86692059ad58f4b9134a8532432a3f664c70c665a4ad73ea8a94cc9b88fa84abc28f0356b8b397aaebc7",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Brightness control utility.",
       "renovate": {
         "datasource": "github-tags",
@@ -206,7 +206,7 @@
       "version": "1.6",
       "url_template": "https://github.com/cdemoulins/pamixer/archive/refs/tags/{version}.tar.gz",
       "sha512": "c01b7c4184901955bff82aaeef0cde7f0b613e6ebff1158b3603f2835e13590a9353920a430598a3cde5c305a7316a78e302186bf4d3bf458133262578b42eb3",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. PulseAudio mixer CLI.",
       "renovate": {
         "datasource": "github-tags",
@@ -230,7 +230,7 @@
       "version": "1.28.0",
       "url_template": "https://codeberg.org/dnkl/foot/releases/download/{version}/foot-{version}.tar.gz",
       "sha512": "7ca9cf5a980d728f3fe4a37a56ba12bdbc0373598ba30ffad1b93041514621c4d4e3fb44837ea120fde9685b33130bbcba8d151b44389d776f08cc4c12fafbe7",
-      "stage": 2,
+      "stage": 4,
       "note": "Fedora dist-git import. Wayland terminal emulator (fallback). Upstream lives on Codeberg (no Renovate datasource); bumps are manual.",
       "filename": "foot-1.28.0.tar.gz"
     },
@@ -286,7 +286,7 @@
       "version": "3.9",
       "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.bz2",
       "sha512": "397f8a6cf6757d18e6a1d1744abf88617636566a302c189e13d3079ccbed470899d1963378eb50483c585b3aabbe67691cfe5580b030337781c7e3dbf3f69695",
-      "stage": 2,
+      "stage": 3,
       "vendored": true,
       "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in. Source must be fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
       "filename": "iio-sensor-proxy-3.9.tar.bz2",
@@ -296,7 +296,7 @@
       "version": "2.2.1",
       "url_template": "https://github.com/rockowitz/ddcutil/archive/refs/tags/v{version}.tar.gz",
       "sha512": "119db19d4ca95ffcd50a0d40aebde15f346fbd745b5c84e9d58d8895a51acba52040540b1a325bd61f2c791a525c556526536df1e24c684cfd3b7c7ebfa2e589",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. DDC/CI monitor control.",
       "renovate": {
         "datasource": "github-tags",
@@ -308,7 +308,7 @@
       "version": "1.24.2",
       "url_template": "https://gitlab.freedesktop.org/mobile-broadband/ModemManager/-/archive/{version}/ModemManager-{version}.tar.bz2",
       "sha512": "692d0699037845f7e189cc854f6fbaab90615c9eaaada83a00a02745d13bd87afac16349a4211425929a84cf373fda18475479bff64c9fe89cb35b361fb45663",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Mobile broadband modem manager.",
       "renovate": {
         "datasource": "github-tags",
@@ -337,7 +337,7 @@
       "version": "1.0.20260223",
       "url_template": "https://github.com/WireGuard/wireguard-tools/archive/refs/tags/v{version}.tar.gz",
       "sha512": "7445b43c9077253a508b6bea82e3cece3f796edca9b8777c5fdd15ee325ce9235cbea01c5299263d3d70f6167c7b2e7f18494c638fe5abd93bf0cb821e89a5f4",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. WireGuard tools.",
       "renovate": {
         "datasource": "github-tags",
@@ -349,7 +349,7 @@
       "version": "2.5.2",
       "url_template": "https://github.com/firewalld/firewalld/releases/download/v{version}/firewalld-{version}.tar.bz2",
       "sha512": "70f9dea048f36ed0b7d99b5c36933d1d6b40306f8348c860fb7de5313977cb40ed291b066fd839eb6aba79f366b8047f9734553636ff4a0c23bfdf05ac16b594",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Firewall daemon. Release attachment (contains generated configure; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
@@ -361,7 +361,7 @@
       "version": "2.3.5",
       "url_template": "https://github.com/containerd/containerd/archive/refs/tags/v{version}.tar.gz",
       "sha512": "87255f36b2b2fb5fc2cb7abaadae33c2ea85b5f7a1259c8c52cc3cf3efffa64525886a220eadf804b7c6414babe7310d39fddc6a24e79b707770fb621323f5c8",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Container runtime.",
       "renovate": {
         "datasource": "github-tags",
@@ -378,7 +378,7 @@
       "version": "1.5.1",
       "url_template": "https://github.com/opencontainers/runc/archive/refs/tags/v{version}.tar.gz",
       "sha512": "4a96870af3146203a001e08d9a0330f6234f8f0b2efe62e123a4f9b131b73967482954f658d53258e19444630c18981b5d7ef805ab736ca16a69f783f39db182",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. OCI container runtime.",
       "renovate": {
         "datasource": "github-tags",
@@ -395,7 +395,7 @@
       "version": "1.29.1",
       "url_template": "https://github.com/containers/crun/releases/download/{version}/crun-{version}.tar.zst",
       "sha512": "d12ff1252b20fe8ac1015c7581fde3eabbefca396b8cd9c7fac94eb12606e7ace0c8f561651fa9983a7ae98ba1489c72da6d6aa563061faf1b274d5075ac22bd",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. OCI container runtime (C). Release attachment (bundles populated libocispec submodule + generated files; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
@@ -407,7 +407,7 @@
       "version": "6.1.2",
       "url_template": "https://github.com/containers/podman/archive/refs/tags/v{version}.tar.gz",
       "sha512": "c17d05d4b5683a266290f91afa78945666f39f2dea3de8074bd3457083120f787532b6c88f4c00996ad309ce05b2c3cd50d91742aa315a10ace868d49adafb48",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Podman container engine.",
       "renovate": {
         "datasource": "github-tags",
@@ -419,7 +419,7 @@
       "version": "1.24.1",
       "url_template": "https://github.com/containers/skopeo/archive/refs/tags/v{version}.tar.gz",
       "sha512": "707091114258c3a7a01494ba6f78097a21d9c92d51bf664ace839995f5a6b245a4c98df9bf18347f670362ebc777de48f472c33ed3a013622e88d900864a536e",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Container image tool.",
       "renovate": {
         "datasource": "github-tags",
@@ -431,7 +431,7 @@
       "version": "1.45.1",
       "url_template": "https://github.com/containers/buildah/archive/refs/tags/v{version}.tar.gz",
       "sha512": "e3fe336421e20938fb486a06f0321729c22e3b457ae9c9ec81c6ffeb0bdc85470bfe42caba152e383c1fe9cd2625eea90e9c593726f384c2fbe4bf64de3a8ddd",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Build container images.",
       "renovate": {
         "datasource": "github-tags",
@@ -443,7 +443,7 @@
       "version": "111",
       "url_template": "https://github.com/dracut-ng/dracut/archive/refs/tags/{version}.tar.gz",
       "sha512": "4c8a3e1e82bfc1dbe155241564bc93bedc2b321566002ccc643697b50173b8e564d03b1bbff4f49602e0cb7abbee21dfb14aadc453ac9703a846c160d070b4bc",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Initramfs generator. Upstream moved to dracut-ng org.",
       "renovate": {
         "datasource": "github-tags",
@@ -455,7 +455,7 @@
       "version": "2.12",
       "url_template": "https://ftp.gnu.org/gnu/grub/grub-{version}.tar.xz",
       "sha512": "761c060a4c3da9c0e810b0ea967e3ebc66baa4ddd682a503ae3d30a83707626bccaf49359304a16b3a26fc4435fe6bea1ee90be910c84de3c2b5485a31a15be3",
-      "stage": 2,
+      "stage": 3,
       "srpm": "rpmbuild",
       "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive). SRPM via plain rpmbuild: packit's parser cannot evaluate the system-macros.d %ifs (with_legacy_arch et al.); real rpmbuild gets them from efi-srpm-macros (a BuildRequires).",
       "filename": "grub-2.12.tar.xz"
@@ -464,7 +464,7 @@
       "version": "7.5",
       "url_template": "https://downloads.sourceforge.net/project/smartmontools/smartmontools/{version}/smartmontools-{version}.tar.gz",
       "sha512": "2e4a6d712f33f3efff34184686b893f0205728d4a267fb88a833de7159170a6072b94744c1ae8c6694c99940d9ecaec164e3bd713e49476930dc2144c04b3f8c",
-      "stage": 2,
+      "stage": 4,
       "note": "Fedora dist-git import. SMART monitoring.",
       "renovate": {
         "datasource": "github-tags",
@@ -476,7 +476,7 @@
       "version": "2.16",
       "url_template": "https://github.com/linux-nvme/nvme-cli/archive/refs/tags/v{version}.tar.gz",
       "sha512": "507018ff41832574bef5b88ea6a17336b9792c54f8e5c619d041bce23124e1d6d5e5e824407f46d4f1b4d6899125885eb14289f3399e61c7e7a59a603f1635e2",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. NVMe CLI tools.",
       "renovate": {
         "datasource": "github-tags",
@@ -488,7 +488,7 @@
       "version": "3.15.0",
       "url_template": "https://github.com/pciutils/pciutils/archive/refs/tags/v{version}.tar.gz",
       "sha512": "8164652b4283edd5bbb9db6604aee4135f4ca4398de337bf111fec09b8a8825d00a4ad363cd4a0848bd750c846c0037bfaa4f88c36fe709b4fd67462c6501abf",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. PCI utilities.",
       "renovate": {
         "datasource": "github-tags",
@@ -500,7 +500,7 @@
       "version": "0.411",
       "url_template": "https://github.com/vcrhonek/hwdata/archive/refs/tags/v{version}.tar.gz",
       "sha512": "63ecfe9dd2e8e37e1854cabbcbfdb56b8b510abbe4ea3d66c6ff824bb61219a061e35a8f2bcd092d7ff4d9416a7dce49d84eecd66d5f13b4191f68d7c863de69",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Hardware data.",
       "renovate": {
         "datasource": "github-tags",
@@ -536,7 +536,7 @@
       "version": "2.11.2",
       "url_template": "https://github.com/storaged-project/udisks/releases/download/udisks-{version}/udisks-{version}.tar.bz2",
       "sha512": "3996ac935cb330eb7f286f25a716da52ca374b14cc7b4f2e60a7e4b0b0745559607fa8c6d1e96e777b44eb8e07eb16e1ad6bc00b3051adea14e865df3efa2662",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Disk management.",
       "renovate": {
         "datasource": "github-tags",
@@ -548,7 +548,7 @@
       "version": "1.91.4",
       "url_template": "https://gitlab.freedesktop.org/upower/upower/-/archive/v{version}/upower-v{version}.tar.gz",
       "sha512": "804e75d08bc1fef499748bcbd96b2d0d3aae9566be67b7da70ac993e73ad7de59f29ec436f5472b8ace350c81ad65ade6cf59ca5efd8591e8ca16de62ff64bde",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Power management. Tags are v-prefixed.",
       "renovate": {
         "datasource": "github-tags",
@@ -560,7 +560,7 @@
       "version": "5.87",
       "url_template": "https://github.com/bluez/bluez/archive/refs/tags/{version}.tar.gz",
       "sha512": "fa4009c84758b6abb619274375bf92bfd64ebd6dea32d88f64a2915e77b6d0620dc98a9b91be57772e2b647bad93065295e684b676b253f12ac8e19d5380ffb7",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. Bluetooth stack.",
       "renovate": {
         "datasource": "github-tags",
@@ -608,7 +608,7 @@
       "version": "1.2.4",
       "url_template": "https://github.com/alsa-project/alsa-firmware/archive/refs/tags/v{version}.tar.gz",
       "sha512": "988855e97a457b02e5fafd9deafa926dcca04ec3f0f47a25041476bf346b68b189d352f5b4986ab465d474bf7035e54029bdfcfff36893635e8c020a5fe8a87c",
-      "stage": 2,
+      "stage": 3,
       "note": "Fedora dist-git import. ALSA firmware.",
       "renovate": {
         "datasource": "github-tags",
@@ -620,7 +620,7 @@
       "version": "1.36.4",
       "url_template": "https://github.com/k0sproject/k0s/archive/refs/tags/v{version}+k0s.0.tar.gz",
       "sha512": "4037a83de12735ffbf382ba047767d6da2d8163efb9b3f0c3888d3ad9a90bed8234d2492ef5ccb051b4e642ee8f2bd8cacb13f85e48d8534bfc23ff844e83af4",
-      "stage": 2,
+      "stage": 4,
       "note": "Zero-friction Kubernetes distribution. Source tarball (tags are v<k8s>+k0s.0); no recipe dir yet, spec TBD. Renovate tag suffix needs custom handling.",
       "renovate": {
         "datasource": "github-tags",
@@ -632,7 +632,7 @@
       "version": "0.5.0",
       "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/v{version}.tar.gz",
       "sha512": "5b6199f2d3fc868d4303b793422ec6488abc1ced0e75038c99c3364673eb7ffebdc1d19dddc43568234ead69eb4f03a5b5517952746c18bee699d43f23902f0c",
-      "stage": 2,
+      "stage": 4,
       "note": "Kubeflex operator for KubeStellar. Manages control planes as CRDs.",
       "renovate": {
         "datasource": "github-tags",
@@ -644,7 +644,7 @@
       "version": "0.25.0",
       "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/v{version}.tar.gz",
       "sha512": "ae29c911be8a5f7b4f8f070fc1301bfb9444842eb9889abd89ebd1386d8f8c6e3bb85c815639f88ec4f61757af5140e67d4c914d8a46a1e0252dbbb7d76bf2b6",
-      "stage": 2,
+      "stage": 4,
       "note": "KubeStellar core controller-manager. Multi-cluster management.",
       "renovate": {
         "datasource": "github-tags",
@@ -656,7 +656,7 @@
       "version": "0.3.34",
       "url_template": "https://github.com/kubestellar/console/archive/refs/tags/v{version}.tar.gz",
       "sha512": "1866fa9dffa12199191a5dfbd7e846471ac51abe43f4b30ff4a02af9e96af33384a60544e0a2b5627dda562320eaa5fa1154956304d211dec833476bd785484d",
-      "stage": 2,
+      "stage": 4,
       "note": "KubeStellar console UI. GitHub OAuth integration.",
       "renovate": {
         "datasource": "github-tags",
@@ -688,7 +688,7 @@
       "version": "6.4",
       "url_template": "https://github.com/lassekongo83/adw-gtk3/releases/download/v{version}/adw-gtk3v{version}.tar.xz",
       "sha512": "304877e7d7b46ec444f8a0e2e86275c599496db15b687207106de91eab5b4a6d39c118959ce0f4f8aa1a0731cfea0c67c87281a0680ff86b44142f8da66eeae2",
-      "stage": 2,
+      "stage": 4,
       "note": "GTK-3 theme from libadwaita.",
       "renovate": {
         "datasource": "github-tags",
@@ -700,7 +700,7 @@
       "version": "51.0",
       "url_template": "https://download.gnome.org/sources/adwaita-fonts/51/adwaita-fonts-51.0.tar.xz",
       "sha512": "43c48869594e14390e72d10f4b3a98510b369307cc5e546d5b2f89e48ceae340a5fa2cc1f6e0364307f3da8d735f101e879b9b44f55ff62a8927aa3f02dba4a0",
-      "stage": 2,
+      "stage": 4,
       "note": "Adwaita fonts from GNOME.",
       "renovate": {
         "datasource": "gitlab-tags",
@@ -712,7 +712,7 @@
       "version": "51",
       "url_template": "https://download.gnome.org/sources/adwaita-icon-theme/51/adwaita-icon-theme-51.0.tar.xz",
       "sha512": "a72a1c875df6d684575f5561bd56c2c09aad7bd19b5fae5fadb6425280d05b9f4d0b2a26c661afcb8df7162925945cd43554237bd88ab41c89afaf2586d76e87",
-      "stage": 2,
+      "stage": 4,
       "note": "Adwaita icon theme from GNOME.",
       "renovate": {
         "datasource": "gitlab-tags",
@@ -724,7 +724,7 @@
       "version": "2025.12.2",
       "url_template": "https://github.com/thesofproject/sof-bin/releases/download/v2025.12.2/sof-bin-2025.12.2.tar.gz",
       "sha512": "5eb64665c2cb87967ff2aa81f7d39397dc6e813abea531e89c12bb5c0a15821e7cbfd8c485af196e37984c1cdf9ac72c93f9feea1205d9d71736d163f5af0084",
-      "stage": 2,
+      "stage": 3,
       "note": "Sound Open Firmware firmware.",
       "renovate": {
         "datasource": "github-tags",
@@ -736,7 +736,7 @@
       "version": "1.2.15",
       "url_template": "ftp://ftp.alsa-project.org/pub/tools/alsa-tools-1.2.15.tar.bz2",
       "sha512": "b2354fcaccfa316df7847438ad6b4ca3702be4ca88c46878c198a52ca6c659263b61759d4898e7a73acf64dd0e3004c103fa67a1cbdb2e53212f13368173be23",
-      "stage": 2,
+      "stage": 3,
       "note": "ALSA specialist tools.",
       "renovate": {
         "datasource": "regex",
@@ -761,7 +761,7 @@
       "version": "1.16.10",
       "url_template": "https://github.com/bootc-dev/bootc/releases/download/v{version}/bootc-{version}.tar.zstd",
       "sha512": "9ede03ec8d24d359a69a2522cf0658eefb4273a2b611558c5d672a235bce49cdadf9c0908fda79c756ccf6e6ef37dff9a758a03e75fdc8a9528120e437cbb522",
-      "stage": 2,
+      "stage": 3,
       "note": "Bootable container system.",
       "renovate": {
         "datasource": "github-tags",
@@ -773,7 +773,7 @@
       "version": "1.8.2.5",
       "url_template": "https://github.com/89luca89/distrobox/archive/refs/tags/1.8.2.5/distrobox-1.8.2.5.tar.gz",
       "sha512": "f4dcd9a2edd2db8de6af50e3b6df4e43e793d9baff28529879dcbe3a05cbebf8ad02bef1c8a6b8951c9855e82e6991bd17a8cf2025e1ca285b7dbe80396b1da6",
-      "stage": 2,
+      "stage": 4,
       "note": "Containerized command line environments.",
       "renovate": {
         "datasource": "github-tags",
@@ -785,7 +785,7 @@
       "version": "2.66.0",
       "url_template": "https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/2.66.0/fastfetch-2.66.0.tar.gz",
       "sha512": "dc067be6742b1193a6f7719333ecd418289c23b2c8ffc7f603eb9dd39b3b279536edcb87bc0e00f1a3a1a6f581e290b89e8cc5acd40a806bef1ba141b45d34c5",
-      "stage": 2,
+      "stage": 4,
       "note": "Fast system info tool.",
       "renovate": {
         "datasource": "github-tags",
@@ -846,7 +846,7 @@
       "version": "2.47.0",
       "url_template": "https://www.kernel.org/pub/software/scm/git/git-2.47.0.tar.xz",
       "sha512": "58683aa59dba25ffec9fe2c185267c77b34d573e9738c133a15d25071e37095e99486c231c35b8f71aabe3c1e305238b56d2c10039318bfc08f137919bad66ec",
-      "stage": 2,
+      "stage": 3,
       "note": "Fast version control system.",
       "renovate": {
         "datasource": "regex",
@@ -858,7 +858,7 @@
       "version": "20260810",
       "url_template": "https://www.kernel.org/pub/linux/kernel/firmware/linux-firmware-20260810.tar.xz",
       "sha512": "2ef755194eb022e539aa677474ca5c6c8c3616b3302ebc14e1698c62ccb6ba6f8149e507b46c2a0563297c53502defb892ce4d37eb02646d99d955ae899eebe7",
-      "stage": 2,
+      "stage": 3,
       "note": "Linux kernel firmware.",
       "renovate": {
         "datasource": "regex",
@@ -894,7 +894,7 @@
       "version": "0.14",
       "url_template": "https://gitlab.freedesktop.org/pipewire/rtkit/-/archive/v0.14/rtkit-0.14.tar.gz",
       "sha512": "afe51a8cea9d07db9db82d60c4e80d473c9133e06e34a780db202a56b1659891cdfb75ad6dbc350dbbda0524dd4d5566d3323cbb3bdfbbbd47c6f255c92bc1f4",
-      "stage": 2,
+      "stage": 3,
       "note": "Realtime policy daemon.",
       "renovate": {
         "datasource": "gitlab-tags",
@@ -906,7 +906,7 @@
       "version": "1.0.1",
       "url_template": "https://github.com/peteonrails/voxtype/archive/refs/tags/v{version}.tar.gz",
       "sha512": "80b2cd51a65b14bed796d3788210a5144e6bba460336b22c181a6b0a0a7a713ac95f62077b3664c75fc811706e87f4b0edcf7bfa12b94173caf51abc13ccae73",
-      "stage": 2,
+      "stage": 4,
       "note": "Push-to-talk voice-to-text daemon. Offline transcription via whisper.cpp. Tiered CPU binaries (AVX2 baseline, AVX-512 optimized) with Vulkan GPU variant. Requires Rust/cargo build; vendor tree pending.",
       "renovate": {
         "datasource": "github-tags",
