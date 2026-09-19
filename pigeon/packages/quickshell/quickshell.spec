@@ -60,7 +60,10 @@ shell config is shipped — the user owns ~/.config/quickshell.
 %files
 %license LICENSE
 %{_bindir}/quickshell
+%{_bindir}/qs
 %{_libdir}/qt6/qml/Quickshell/
+%{_datadir}/applications/org.quickshell.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.quickshell.svg
 
 %changelog
 * Thu Sep 17 2026 Kestrel <kestrel@localhost> - 0.3.1-1.hum1.pigeon
