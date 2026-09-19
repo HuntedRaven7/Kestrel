@@ -50,7 +50,7 @@ for i in create enter export init list rm stop host-exec; do
 done
 
 %files
-%license LICENSE
+%license COPYING.md
 %{_bindir}/distrobox
 %{_bindir}/distrobox-*
 
