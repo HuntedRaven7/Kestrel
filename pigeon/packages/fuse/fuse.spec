@@ -69,6 +69,23 @@ install -m 0755 lib/.libs/libfuse.so.%{version} %{buildroot}/%{_libdir}
 install -m 0755 lib/.libs/libulockmgr.so.1.0.1 %{buildroot}/%{_libdir}
 install -p fuse.pc %{buildroot}/%{_libdir}/pkgconfig/
 
+# Install example binaries
+install -m 0755 util/.libs/fusexmp %{buildroot}/%{_bindir}
+install -m 0755 util/.libs/fusexmp_fh %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/hello %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/hello_ll %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/fioc %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/fioclient %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/fsel %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/fselclient %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/cusexmp %{buildroot}/%{_bindir}
+install -m 0755 example/.libs/null %{buildroot}/%{_bindir}
+
+# Install sbin binaries
+mkdir -p %{buildroot}/%{_sbindir}
+install -m 0755 util/.libs/fusermount %{buildroot}/%{_sbindir}
+install -m 0755 util/.libs/ulockmgr_server %{buildroot}/%{_sbindir}
+
 %files
 %license COPYING
 %{_bindir}/fusexmp
