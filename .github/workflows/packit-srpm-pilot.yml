@@ -81,6 +81,9 @@ jobs:
                   data = json.load(f)
               vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
               result = json.dumps(vendored)
+              print(f"Vendored packages detected: {vendored}")
+              print(f"Current package: ${{{{ matrix.package }}}}")
+              print(f"Is current package vendored: ${{{{ matrix.package }}}} in {vendored} = {matrix.package in json.loads(result)}")
           except Exception as e:
               # Always output valid JSON, even on error
               result = "[]"
@@ -92,32 +95,36 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
 
-      - name: Fetch vendored sources from Fedora
+      - name: Debug vendored output
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        run: |
+          echo "vendored output: '${{ steps.vendored.outputs.vendored }}'"
+          echo "matrix package: '${{ matrix.package }}'"
+          echo "contains check: ${{ contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}"
+
+      - name: Fetch vendored sources from Fedora (vendor + source tarballs)
         if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
         run: |
+          echo "Fetching vendored sources for ${{ matrix.package }}"
           python3 pigeon/tools/fetch_vendored.py --package "${{ matrix.package }}"
+        continue-on-error: false
 
-      - name: Fetch and stage verified sources
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && !contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
+      - name: Fetch and stage verified sources (all packages for source tarball)
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         env:
           PACKAGE: ${{ matrix.package }}
         run: |
           python3 pigeon/tools/source_pipeline.py fetch "$PACKAGE" \
             --output work/sources \
             --stage-into pigeon/packages
+        continue-on-error: true
 
-      - name: Stage extra dist-git sources
+      - name: Stage extra dist-git sources (signatures, keys, etc.)
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         env:
           PACKAGE: ${{ matrix.package }}
         run: |
           python3 pigeon/tools/audit_sources.py --fix --package "$PACKAGE"
-
-      - name: Stage additional sources (signatures, etc.)
-        if: ${{ steps.skip_check.outputs.skipped != 'true' && matrix.package == 'swayidle' }}
-        run: |
-          # Use local .sig file for swayidle instead of downloading from GitHub
-          sed -i 's|Source1: %{url}/releases/download/%{version}/%{name}-%{version}.tar.gz.sig|Source1: swayidle-1.9.0.tar.gz.sig|' pigeon/packages/swayidle/swayidle.spec
 
       - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}

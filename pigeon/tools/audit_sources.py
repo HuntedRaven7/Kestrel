@@ -224,6 +224,18 @@ def audit(fix: bool = False, only: str | None = None) -> int:
                             continue
                         print(f"    STILL MISSING: {pkgdir.name}/{base}")
                     continue
+                # Always fetch signature/key files (.sig, .asc, .gpg) for all packages
+                # since specs use %{gpgverify} which needs them present.
+                base = val.rsplit("/", 1)[-1].split("#", 1)[0]
+                if base.endswith((".sig", ".asc", ".gpg")):
+                    missing.setdefault(pkgdir.name, []).append(f"{tag} -> {base}")
+                    if fix:
+                        print(f"  fetching {pkgdir.name}/{base} ...")
+                        if fetch(val.split("#", 1)[0], pkgdir / base):
+                            missing[pkgdir.name].remove(f"{tag} -> {base}")
+                            continue
+                        print(f"    STILL MISSING: {pkgdir.name}/{base}")
+                    continue
                 # rpm URL#file fragments (openpgpkey keys): stage the file
                 # so rpmbuild finds it without network.
                 if "#/" in val:

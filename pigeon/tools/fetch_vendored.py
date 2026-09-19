@@ -147,9 +147,10 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         return
     
     # Known tarball renames needed
-    # Fedora SRPM provides source_filename (e.g., runc-1.5.1.tar.gz)
-    # Spec expects upstream filename (e.g., v1.5.1.tar.gz for go packages)
-    # source_pipeline.py verify-staged looks for upstream_filename (filename field)
+    # Fedora SRPM provides source_filename (e.g., runc-1.5.1.tar.gz, containerd-2.3.5.tar.gz)
+    # Spec expects the Fedora naming for Source0 (from %{gosource})
+    # source_pipeline.py verify-staged looks for upstream_filename (filename field = upstream name)
+    # So we need BOTH: keep source_filename for rpmbuild, create copy as upstream_filename for verification
     renames = {
         "tailscale": {
             "vendor_from_pattern": "tailscale-*-vendored.tar.xz",
@@ -158,14 +159,16 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
             "source_to_template": "v{version}.tar.gz",
         },
         "runc": {
-            # Fedora SRPM has runc-1.5.1.tar.gz, spec expects v1.5.1.tar.gz
+            # Fedora SRPM has runc-1.5.1.tar.gz, spec expects runc-1.5.1.tar.gz (from %{gosource})
+            # But filename field is v1.5.1.tar.gz for upstream verification
             "source_from_pattern": "runc-{version}.tar.gz",
-            "source_to_template": "v{version}.tar.gz",
+            "source_to_template": "runc-{version}.tar.gz",  # Keep Fedora name
         },
         "containerd": {
-            # Fedora SRPM has containerd-2.3.5.tar.gz, spec expects v2.3.5.tar.gz
+            # Fedora SRPM has containerd-2.3.5.tar.gz, spec expects containerd-2.3.5.tar.gz
+            # But filename field is v2.3.5.tar.gz for upstream verification
             "source_from_pattern": "containerd-{version}.tar.gz",
-            "source_to_template": "v{version}.tar.gz",
+            "source_to_template": "containerd-{version}.tar.gz",  # Keep Fedora name
         },
     }
     
@@ -196,7 +199,7 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
                 print(f"  Renaming {src.name} -> {dst.name}")
                 src.rename(dst)
     
-    # Handle source tarball rename (Fedora name -> upstream name for spec)
+    # Handle source tarball - ensure Fedora name exists for rpmbuild
     if "source_from_pattern" in rename_info:
         source_from_pattern = rename_info["source_from_pattern"].format(version=version)
         source_to_template = rename_info["source_to_template"]
@@ -209,30 +212,17 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
             if src != dst:
                 print(f"  Renaming {src.name} -> {dst.name}")
                 src.rename(dst)
-            # Also create a copy with upstream filename for source_pipeline verification
-            if upstream_filename and upstream_filename != dst_name:
-                upstream_copy = pkg_dir / upstream_filename
-                if not upstream_copy.exists():
-                    print(f"  Creating copy {dst.name} -> {upstream_filename} for verification")
-                    shutil.copy2(dst, upstream_copy)
-        # Fallback: if source_filename is specified and matches the target, use it
-        elif source_filename:
-            source_target = source_to_template.format(version=version)
-            src = pkg_dir / source_filename
-            dst = pkg_dir / source_target
-            if src.is_file() and not dst.is_file():
-                print(f"  Renaming {src.name} -> {dst.name}")
-                src.rename(dst)
-            # If source_filename already matches target, ensure it exists
-            elif source_filename == source_target and src.is_file():
-                print(f"  Source tarball already correctly named: {src.name}")
         
-        # Also ensure upstream filename exists for verification (filename field)
+        # Ensure the final name (Fedora name for spec) exists
         final_name = source_to_template.format(version=version)
         final_path = pkg_dir / final_name
-        if final_path.is_file() and upstream_filename and upstream_filename != final_name:
+        if final_path.is_file():
+            print(f"  Source tarball for rpmbuild: {final_name}")
+        
+        # Also create a copy with upstream filename for source_pipeline verification
+        if upstream_filename and upstream_filename != final_name:
             upstream_copy = pkg_dir / upstream_filename
-            if not upstream_copy.exists():
+            if not upstream_copy.exists() and final_path.is_file():
                 print(f"  Creating copy {final_name} -> {upstream_filename} for verification")
                 shutil.copy2(final_path, upstream_copy)
 
@@ -260,7 +250,7 @@ def fetch_vendored_source(pkg_name: str) -> bool:
 
     print(f"Fetching vendored sources for {pkg_name} {version}...")
 
-# Try Koji first
+    # Try Koji first
     srpm_url = fetch_srpm_from_koji(pkg_name, version)
     srpm_path = None
 
@@ -284,6 +274,8 @@ def fetch_vendored_source(pkg_name: str) -> bool:
             if srpm_path:
                 if extract_srpm(srpm_path, PKGS / pkg_name):
                     rename_vendor_tarball(pkg_name, PKGS / pkg_name)
+                    # Also ensure source tarball exists (download from upstream if not in SRPM)
+                    ensure_source_tarball(pkg_name, entry, PKGS / pkg_name)
                     return True
 
     # If Koji failed, try dnf download from dist-git
@@ -298,10 +290,48 @@ def fetch_vendored_source(pkg_name: str) -> bool:
                 if not extract_srpm(srpm_path, PKGS / pkg_name):
                     return False
                 rename_vendor_tarball(pkg_name, PKGS / pkg_name)
+                ensure_source_tarball(pkg_name, entry, PKGS / pkg_name)
                 return True
+
+    # Last resort: try to download source tarball directly from upstream
+    print(f"  Koji/dist-git unavailable, trying upstream download for {pkg_name}...")
+    if ensure_source_tarball(pkg_name, entry, PKGS / pkg_name):
+        # Also try to get vendor tarball from upstream if possible
+        return True
 
     print(f"  Failed to fetch sources for {pkg_name}")
     return False
+
+
+def ensure_source_tarball(pkg_name: str, entry: dict, pkg_dir: Path) -> bool:
+    """Ensure source tarball exists in package directory (download from upstream if needed)."""
+    upstream_filename = entry.get("filename", "")
+    source_filename = entry.get("source_filename", "")
+    url_template = entry.get("url_template", "")
+    version = entry.get("version", "")
+    
+    if not upstream_filename or not url_template or not version:
+        return False
+    
+    # Check if already exists
+    upstream_path = pkg_dir / upstream_filename
+    if upstream_path.is_file():
+        print(f"  Source tarball already present: {upstream_filename}")
+        return True
+    
+    # Try to download from upstream
+    url = url_template.replace("{version}", str(version))
+    print(f"  Downloading source tarball from upstream: {url}")
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "kestrel-vendored-sources/1"})
+        with urllib.request.urlopen(req, timeout=120) as resp, upstream_path.open("wb") as f:
+            while chunk := resp.read(1 << 20):
+                f.write(chunk)
+        print(f"  Downloaded source tarball: {upstream_filename}")
+        return True
+    except Exception as exc:
+        print(f"  Failed to download source tarball from upstream: {exc}")
+        return False
 
 
 def main() -> int:
