@@ -55,5 +55,5 @@ done
 %{_bindir}/distrobox-*
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.8.2.5-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.8.2.5-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

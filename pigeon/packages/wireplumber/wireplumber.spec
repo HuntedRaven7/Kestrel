@@ -76,5 +76,5 @@ a Lua scripting API for policy configuration.
 %{_mandir}/man1/wplua.1*
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 0.5.8-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 0.5.8-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

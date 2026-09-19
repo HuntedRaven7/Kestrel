@@ -67,5 +67,5 @@ and Adwaita Mono, Iosevka customized to match Inter.
 %fontfiles -a
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 51.0-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 51.0-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

@@ -76,5 +76,5 @@ dbus-send --system --type=method_call --dest=org.freedesktop.DBus / org.freedesk
 %{_sysusersdir}/rtkit.conf
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 0.14-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 0.14-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

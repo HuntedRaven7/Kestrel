@@ -86,5 +86,5 @@ install -p fuse.pc %{buildroot}/%{_libdir}/pkgconfig/
 %{_includedir}/fuse.h
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 2.9.9-26.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.9.9-26.hum1.pigeon
 - Initial Kestrel package (independent recipe)
