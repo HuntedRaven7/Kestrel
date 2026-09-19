@@ -43,8 +43,9 @@ Warbler image layer (warbler/system_files), not in this RPM.
 # EOF
 
 %build
-# TODO(phase-2): add --offline once Source1 vendor tree lands:
-cargo build --release --workspace --default-members
+# TODO(phase-2): add --offline once Source1 vendor tree lands
+# (--default-members is not a cargo flag)
+cargo build --release --workspace
 
 %install
 install -Dm0755 target/release/awww %{buildroot}%{_bindir}/awww

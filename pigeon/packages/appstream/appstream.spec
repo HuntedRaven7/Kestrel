@@ -109,5 +109,5 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %{_includedir}/appstream-compose*
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.1.3-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.1.3-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

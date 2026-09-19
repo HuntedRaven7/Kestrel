@@ -35,5 +35,5 @@ cp -ap adw-gtk3-dark %{buildroot}%{_datadir}/themes/adw-gtk3-dark/
 %{_datadir}/themes/adw-gtk3-dark/
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 6.4-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 6.4-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

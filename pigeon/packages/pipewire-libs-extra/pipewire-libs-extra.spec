@@ -69,5 +69,5 @@ install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
 %{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
