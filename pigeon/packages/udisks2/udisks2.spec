@@ -203,7 +203,7 @@ sed -i data/builtin_mount_options.conf -e 's/exfat_defaults=uid=\$UID,gid=\$GID,
 # autoreconf -ivf
 # modules need to be explicitly enabled
 %configure            \
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
     --enable-gtk-doc  \
 %else
     --disable-gtk-doc \
@@ -221,7 +221,7 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=%{buildroot}
-%if %{with_gtk_doc} == 0
+%if 0%{?with_gtk_doc} == 0
 rm -fr %{buildroot}/%{_datadir}/gtk-doc/html/udisks2
 %endif
 
@@ -311,7 +311,7 @@ fi
 %dir %{_includedir}/udisks2/udisks
 %{_includedir}/udisks2/udisks/*.h
 %{_datadir}/gir-1.0/UDisks-2.0.gir
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
 %dir %{_datadir}/gtk-doc/html/udisks2
 %{_datadir}/gtk-doc/html/udisks2/*
 %endif
