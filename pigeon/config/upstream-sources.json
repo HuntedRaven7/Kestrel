@@ -260,15 +260,15 @@
     },
     "libwacom": {
       "version": "2.20.0",
-      "url_template": "https://github.com/linuxwacom/libwacom/archive/refs/tags/libwacom-{version}.tar.gz",
-      "sha512": "6fc47a8dab3a0209ccf1bfe5598717de190f9ac6ca74a2374b833494d093652e7a0ae7d4c880147506a1d522a62b5735391b7702cd22896e95fc7e24724c953c",
+      "url_template": "https://github.com/linuxwacom/libwacom/releases/download/libwacom-{version}/libwacom-{version}.tar.xz",
+      "sha512": "b855bba9cac30da2eced51fe2e53201966a26207a5b2b2a798adcdaf92df0f94f5253c9a37012f9b78e0f92ad48b6b4287700b620f992d28c751578486a33c09",
       "stage": 2,
       "note": "Fedora dist-git import. Wacom tablet library.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "linuxwacom/libwacom"
       },
-      "filename": "libwacom-2.20.0.tar.gz"
+      "filename": "libwacom-2.20.0.tar.xz"
     },
     "libratbag": {
       "version": "0.18",

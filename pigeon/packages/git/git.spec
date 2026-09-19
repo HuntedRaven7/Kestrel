@@ -33,6 +33,10 @@
 %global use_glibc_langpacks 1
 %global use_perl_generators 1
 %global use_perl_interpreter 1
+# GCC 16+ defaults to C23 where 'thread_local' is a keyword;
+# git uses thread_local as a struct name in index-pack.c.
+# Force gnu99 to avoid this conflict.
+%global build_cflags        %{build_cflags} -std=gnu99
 %else
 %bcond_without              python2
 %bcond_with                 python3

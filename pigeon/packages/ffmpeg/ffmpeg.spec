@@ -114,6 +114,7 @@ BuildRequires: speex-devel
 %if %{with all_codecs}
 BuildRequires: theora-devel
 %endif
+BuildRequires: lame-devel
 BuildRequires: libvpx-devel
 BuildRequires: libwebp-devel
 BuildRequires: xz-devel
