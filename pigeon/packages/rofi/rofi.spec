@@ -12,8 +12,8 @@ License:        MIT
 URL:            https://github.com/davatorium/rofi
 Source0:        https://github.com/davatorium/rofi/archive/refs/tags/%{version}.tar.gz
 # Submodules (git archives don't include submodule contents)
-Source1:        https://github.com/sardemff7/libgwater/archive/refs/heads/main.tar.gz
-Source2:        https://github.com/sardemff7/libnkutils/archive/refs/heads/main.tar.gz
+Source1:        https://github.com/sardemff7/libgwater/archive/main.tar.gz
+Source2:        https://github.com/sardemff7/libnkutils/archive/main.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  meson
