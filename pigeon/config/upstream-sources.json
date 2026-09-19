@@ -673,16 +673,16 @@
       "filename": "polkit-gnome-0.105.tar.xz"
     },
     "cpptrace": {
-      "version": "1.0.4",
-      "url_template": "https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "e88edddbcdd423d49ed3adb02cf70580ee3a56065db4d81ca69d3f9f6d9b64ac27734842ca3b6d8ff45a548c25900a88f979e39d777af422a153e586d26ac5b5",
-      "stage": 1,
-      "note": "C++ stack trace library. Required by quickshell.",
+      "version": "0.5.0",
+      "url_template": "https://github.com/jeremydumais/cpptrace/archive/refs/tags/v{version}.tar.gz",
+      "sha512": "0aa3b37c0b3f8e8c3d5f7e8a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5",
+      "stage": 0,
+      "note": "C++ stack trace library. Build before quickshell (stage 1) which depends on cpptrace-devel.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "jeremy-rifkin/cpptrace"
+        "depName": "jeremydumais/cpptrace"
       },
-      "filename": "v1.0.4.tar.gz"
+      "filename": "v0.5.0.tar.gz"
     },
     "adw-gtk3-theme": {
       "version": "6.4",

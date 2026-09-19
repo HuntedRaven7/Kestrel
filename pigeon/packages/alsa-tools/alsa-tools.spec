@@ -129,5 +129,5 @@ done
 %config(noreplace) %{_sysconfdir}/udev/rules.d/90-alsa-tools-firmware.rules
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.2.15-5.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.2.15-5.hum1.pigeon
 - Initial Kestrel package (independent recipe)
