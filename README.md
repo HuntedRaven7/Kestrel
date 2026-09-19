@@ -1,11 +1,11 @@
-# Project Kestrel
+# Project Swan
 
 > One source of reason for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
 
 ## Architecture
 
 ```
-Kestrel/
+Swan/
 ├── pigeon/              # Package factory — builds RPMs, publishes OCI repo image
 ├── warbler/             # Desktop image — Mango + Quickshell + SDDM autologin
 ├── woodpecker/          # Server image — podman, cockpit, uupd, full hardware enablement

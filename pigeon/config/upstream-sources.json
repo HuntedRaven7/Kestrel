@@ -741,7 +741,8 @@
         "datasource": "regex",
         "depName": "https://www.alsa-project.org/"
       },
-      "filename": "alsa-tools-1.2.15.tar.bz2"
+      "filename": "alsa-tools-1.2.15.tar.bz2",
+      "srpm": "rpmbuild"
     },
     "appstream": {
       "version": "1.1.3",
