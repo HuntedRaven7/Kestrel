@@ -39,13 +39,27 @@ symbol names and inline assembly.
 # Remove Findzstd.cmake - system libzstd-devel provides zstdConfig.cmake
 # Also fix cpptrace-config.cmake to use CONFIG mode for zstd (avoid Findzstd.cmake)
 CONFIG_FILE=%{buildroot}%{_libdir}/cmake/cpptrace/cpptrace-config.cmake
-sed -i '/set(CMAKE_MODULE_PATH_OLD/d' "$CONFIG_FILE"
-sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH};/d' "$CONFIG_FILE"
-sed -i '/find_dependency(zstd)/d' "$CONFIG_FILE"
-sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH_OLD}")/d' "$CONFIG_FILE"
-sed -i '/unset(CMAKE_MODULE_PATH_OLD)/d' "$CONFIG_FILE"
-# Add CONFIG mode find_dependency for zstd
-sed -i '/# Dependencies/a find_dependency(zstd CONFIG REQUIRED)' "$CONFIG_FILE"
+# Read the file, remove all the old module-path/Findzstd logic, replace with CONFIG mode
+cat > "$CONFIG_FILE.new" << 'EOF'
+# Init @ variables before doing anything else
+@PACKAGE_INIT@
+
+# Dependencies
+find_dependency(zstd CONFIG REQUIRED)
+
+# We cannot modify an existing IMPORT target
+if(NOT TARGET cpptrace::cpptrace)
+
+  # import targets
+  include("${CMAKE_CURRENT_LIST_DIR}/@package_name@-targets.cmake")
+
+endif()
+
+if(@CPPTRACE_STATIC_DEFINE@)
+  target_compile_definitions(cpptrace::cpptrace INTERFACE CPPTRACE_STATIC_DEFINE)
+endif()
+EOF
+mv "$CONFIG_FILE.new" "$CONFIG_FILE"
 # Remove the installed Findzstd.cmake
 rm -f %{buildroot}%{_libdir}/cmake/cpptrace/Findzstd.cmake
 
