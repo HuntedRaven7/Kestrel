@@ -88,26 +88,26 @@ This package contains tools for uploading firmware to sound cards.
 %autosetup -p1
 
 %build
-%if 0%{?builddirstools}
+%if "%{?builddirstools}" != ""
 for d in %{builddirstools}; do
   make -C $d
 done
 %endif
 
-%if 0%{?builddirsfirmw}
+%if "%{?builddirsfirmw}" != ""
 for d in %{builddirsfirmw}; do
   make -C $d
 done
 %endif
 
 %install
-%if 0%{?builddirstools}
+%if "%{?builddirstools}" != ""
 for d in %{builddirstools}; do
   make -C $d DESTDIR=%{buildroot} install
 done
 %endif
 
-%if 0%{?builddirsfirmw}
+%if "%{?builddirsfirmw}" != ""
 for d in %{builddirsfirmw}; do
   make -C $d DESTDIR=%{buildroot} install
 done
