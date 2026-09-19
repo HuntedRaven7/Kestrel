@@ -118,7 +118,8 @@ cp -ra firmware/* %{buildroot}%{_firmwarepath}
 FILEDIR=$(pwd)
 pushd %{buildroot}/%{_firmwarepath}
 find -P . -name "*.ri.xz" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
-#find -P . -name "*.tplg" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
+find -P . -name "*.tplg" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
+find -P . -name "*.tplg.xz" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
 find -P . -name "*.llext.xz" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
 find -P intel/sof-ipc4-lib -name "*.bin.xz" | sed -e '/^.$/d' >> $FILEDIR/alsa-sof-firmware.files
 find -P . -name "*.ldc" | sed -e '/^.$/d' > $FILEDIR/alsa-sof-firmware.debug-files

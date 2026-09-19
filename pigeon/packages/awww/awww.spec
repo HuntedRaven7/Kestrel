@@ -24,6 +24,8 @@ Source0:        https://codeberg.org/LGFae/awww/archive/v%{version}.tar.gz
 BuildRequires:  cargo
 BuildRequires:  rustc
 BuildRequires:  gcc
+# common/build.rs probes liblz4 >= 1.8 via pkg-config
+BuildRequires:  pkgconfig(liblz4)
 
 %description
 awww: animated wallpaper daemon for Wayland (here: Mango). Binaries:
@@ -44,8 +46,7 @@ Warbler image layer (warbler/system_files), not in this RPM.
 
 %build
 # TODO(phase-2): add --offline once Source1 vendor tree lands
-# (--default-members is not a cargo flag)
-cargo build --release --workspace
+cargo build --release --workspace --all-features
 
 %install
 install -Dm0755 target/release/awww %{buildroot}%{_bindir}/awww
