@@ -74,7 +74,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %{summary}.
 
 %prep
-%autosetup -n AppStream-1.1.3
+%autosetup -n appstream-%{version}
 
 %build
 %meson \
