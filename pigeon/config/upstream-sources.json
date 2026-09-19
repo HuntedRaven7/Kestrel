@@ -289,7 +289,8 @@
       "stage": 2,
       "vendored": true,
       "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in. Source must be fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
-      "filename": "iio-sensor-proxy-3.9.tar.bz2"
+      "filename": "iio-sensor-proxy-3.9.tar.bz2",
+      "srpm": "rpmbuild"
     },
     "ddcutil": {
       "version": "2.2.1",
