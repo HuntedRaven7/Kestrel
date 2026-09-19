@@ -120,16 +120,26 @@ jobs:
               fi
               SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
               cp "$SPEC" /tmp/pkg.spec
-              dnf builddep -y /tmp/pkg.spec
               export RPMBUILD=/root/rpmbuild
               mkdir -p "$RPMBUILD"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-              # Keep the real spec filename: later steps address it by
-              # $(basename $SPEC), and a bare cp would leave pkg.spec.
-              cp /tmp/pkg.spec "$RPMBUILD/SPECS/$(basename $SPEC)"
-              # Verified archive plus every committed recipe input
-              # (patches, .sig/keys, sysusers units, vendor trees, macros).
+              # Copy committed recipe inputs (patches, .sig/keys, sysusers units,
+              # vendor trees, macros) into SOURCES before builddep so that
+              # dnf can resolve SourceN references that require local files.
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
+              cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
+              # Try builddep; if it fails due to missing pigeon-prior packages,
+              # retry with --skip-unavailable so missing inter-package deps
+              # (e.g. wireplumber needs pipewire-0.3.pc from our pipewire build)
+              # do not block the entire stage. Packages that fail to resolve
+              # will simply be skipped; the build may fail if they are critical.
+              dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>&1 || \
+                echo "WARNING: builddep failed for $PACKAGE, continuing with available deps"
+              # Ensure core build tools are present even if builddep skipped them
+              dnf install -qy rpm-build meson ninja-build gcc gcc-c++ make pkgconfig \
+                python3 2>&1 || true
+              # Keep the real spec filename: later steps address it by
+              # $(basename $SPEC), and a bare cp would leave pkg.spec.
               rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \
                 --define "_topdir $RPMBUILD"
               rpmbuild -ba "$RPMBUILD/SPECS/$(basename $SPEC)" \

@@ -103,7 +103,8 @@ Requires:       flatpak = %{version}-%{release}
   -Dsystemd=enabled \
   -Dsystemduserunitdir=/usr/lib/systemd/user \
   -Dsystemdsystemunitdir=%{_unitdir} \
-  -Dselinux_module=disabled
+  -Dselinux_module=disabled \
+  -Dsystem_bubblewrap=/usr/bin/bwrap
 %meson_build
 
 %install

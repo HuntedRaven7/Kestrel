@@ -75,7 +75,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %build
 %meson \
   -Dstemming=%{?with_stemming:true}%{!?with_stemming:false} \
-  -Ddocs=true \
+  -Ddocs=false \
   -Dman=true
 %meson_build
 
