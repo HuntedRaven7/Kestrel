@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -139,14 +140,16 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         "tailscale": {
             "vendor_from_pattern": "tailscale-*-vendored.tar.xz",
             "vendor_to_template": "tailscale-{version}-vendor.tar.xz",
+            "source_from_pattern": "tailscale-*.tar.gz",
+            "source_to_template": "v{version}.tar.gz",
         },
         "runc": {
-            "source_from_pattern": "runc-*.tar.gz",
-            "source_to_template": "v{version}.tar.gz",
+            "source_from_pattern": "v{version}.tar.gz",
+            "source_to_template": "runc-{version}.tar.gz",
         },
         "containerd": {
-            "source_from_pattern": "containerd-*.tar.gz",
-            "source_to_template": "v{version}.tar.gz",
+            "source_from_pattern": "v{version}.tar.gz",
+            "source_to_template": "containerd-{version}.tar.gz",
         },
     }
     
@@ -154,6 +157,14 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         return
     
     rename_info = renames[pkg_name]
+    
+    # Load version once
+    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+        data = json.load(f)
+    version = data["packages"][pkg_name].get("version", "")
+    upstream_filename = data["packages"][pkg_name].get("filename", "")
+    if not version:
+        return
     
     # Handle vendor tarball rename
     if "vendor_from_pattern" in rename_info:
@@ -163,33 +174,31 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         matches = list(pkg_dir.glob(vendor_from_pattern))
         if matches:
             src = matches[0]
-            with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
-                data = json.load(f)
-            version = data["packages"][pkg_name].get("version", "")
-            if version:
-                dst_name = vendor_to_template.format(version=version)
-                dst = pkg_dir / dst_name
-                if src != dst:
-                    print(f"  Renaming {src.name} -> {dst.name}")
-                    src.rename(dst)
+            dst_name = vendor_to_template.format(version=version)
+            dst = pkg_dir / dst_name
+            if src != dst:
+                print(f"  Renaming {src.name} -> {dst.name}")
+                src.rename(dst)
     
-    # Handle source tarball rename
+    # Handle source tarball rename (upstream name -> Fedora name for rpmbuild)
     if "source_from_pattern" in rename_info:
-        source_from_pattern = rename_info["source_from_pattern"]
+        source_from_pattern = rename_info["source_from_pattern"].format(version=version)
         source_to_template = rename_info["source_to_template"]
         
         matches = list(pkg_dir.glob(source_from_pattern))
         if matches:
             src = matches[0]
-            with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
-                data = json.load(f)
-            version = data["packages"][pkg_name].get("version", "")
-            if version:
-                dst_name = source_to_template.format(version=version)
-                dst = pkg_dir / dst_name
-                if src != dst:
-                    print(f"  Renaming {src.name} -> {dst.name}")
-                    src.rename(dst)
+            dst_name = source_to_template.format(version=version)
+            dst = pkg_dir / dst_name
+            if src != dst:
+                print(f"  Renaming {src.name} -> {dst.name}")
+                src.rename(dst)
+            # Also create a copy with upstream filename for source_pipeline verification
+            if upstream_filename and upstream_filename != dst_name:
+                upstream_copy = pkg_dir / upstream_filename
+                if not upstream_copy.exists():
+                    print(f"  Creating copy {dst.name} -> {upstream_filename} for verification")
+                    shutil.copy2(dst, upstream_copy)
 
 
 def fetch_vendored_source(pkg_name: str) -> bool:
