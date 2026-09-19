@@ -32,8 +32,8 @@ symbol names and inline assembly.
 %cmake -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCPPTRACE_BUILD_SHARED=ON \
-  -DCPPTRACE_USE_SYSTEM_LIBDWARF=ON \
-  -DCPPTRACE_USE_SYSTEM_ZSTD=ON
+  -DCPPTRACE_USE_EXTERNAL_LIBDWARF=ON \
+  -DCPPTRACE_USE_EXTERNAL_ZSTD=ON
 %cmake_build
 
 %install
