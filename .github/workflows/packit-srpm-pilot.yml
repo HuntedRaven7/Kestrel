@@ -82,8 +82,6 @@ jobs:
               vendored = [name for name, entry in data['packages'].items() if entry.get('vendored')]
               result = json.dumps(vendored)
               print(f"Vendored packages detected: {vendored}")
-              print(f"Current package: ${{{{ matrix.package }}}}")
-              print(f"Is current package vendored: ${{{{ matrix.package }}}} in {vendored} = {matrix.package in json.loads(result)}")
           except Exception as e:
               # Always output valid JSON, even on error
               result = "[]"
