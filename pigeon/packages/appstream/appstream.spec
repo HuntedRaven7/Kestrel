@@ -80,6 +80,19 @@ Requires: pkgconfig(Qt6Core) >= 6.2.4
 %description qt-devel
 %{summary}.
 
+%package compose
+Summary: Library for generating AppStream data
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%description compose
+%{summary}.
+
+%package compose-devel
+Summary:  Development files for %{name}-compose library
+Requires: %{name}-compose%{?_isa} = %{version}-%{release}
+Requires: %{name}-devel%{?_isa} = %{version}-%{release}
+%description compose-devel
+%{summary}.
+
 %prep
 %autosetup -n appstream-%{version}
 
