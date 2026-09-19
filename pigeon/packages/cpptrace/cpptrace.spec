@@ -31,7 +31,11 @@ symbol names and inline assembly.
 %cmake -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCPPTRACE_BUILD_SHARED=ON \
-  -DCPPTRACE_USE_EXTERNAL_ZSTD=ON
+  -DCPPTRACE_USE_EXTERNAL_ZSTD=ON \
+  -DCPPTRACE_UNWIND_WITH_LIBUNWIND=ON
+# NOTE: autoconfig would pick libgcc _Unwind on Linux, but quickshell's
+# crash handler requires CPPTRACE_UNWIND_WITH_LIBUNWIND (signal-safe
+# unwinding) and fails its configure check otherwise.
 %cmake_build
 
 %install
@@ -42,9 +46,9 @@ CONFIG_FILE=%{buildroot}%{_libdir}/cmake/cpptrace/cpptrace-config.cmake
 # NOTE: @PACKAGE_INIT@ is already expanded in the installed file, so anchor
 # on the literal find_dependency(zstd) line instead (in-place substitution).
 sed -i 's/^\(\s*\)find_dependency(zstd)$/\1find_dependency(zstd CONFIG REQUIRED)/' "$CONFIG_FILE"
-# Remove the module-path/Findzstd logic that surrounds it
-sed -i '/set(CMAKE_MODULE_PATH_OLD/,/unset(CMAKE_MODULE_PATH_OLD)/d' "$CONFIG_FILE"
-sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH};/d' "$CONFIG_FILE"
+# Remove the module-path/Findzstd scaffolding around it (line-wise only:
+# a range delete would also eat the find_dependency line above)
+sed -i '/set(CMAKE_MODULE_PATH_OLD "${CMAKE_MODULE_PATH}")/d' "$CONFIG_FILE"
 sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH_OLD}")/d' "$CONFIG_FILE"
 sed -i '/unset(CMAKE_MODULE_PATH_OLD)/d' "$CONFIG_FILE"
 # Remove libdwarf find_dependency
