@@ -293,7 +293,7 @@
       "srpm": "rpmbuild"
     },
     "ddcutil": {
-      "version": "2.2.1",
+      "version": "2.2.7",
       "url_template": "https://github.com/rockowitz/ddcutil/archive/refs/tags/v{version}.tar.gz",
       "sha512": "119db19d4ca95ffcd50a0d40aebde15f346fbd745b5c84e9d58d8895a51acba52040540b1a325bd61f2c791a525c556526536df1e24c684cfd3b7c7ebfa2e589",
       "stage": 2,
@@ -317,7 +317,7 @@
       "filename": "ModemManager-1.24.2.tar.bz2"
     },
     "tailscale": {
-      "version": "1.98.8",
+      "version": "1.102.4",
       "url_template": "https://github.com/tailscale/tailscale/archive/refs/tags/v{version}.tar.gz",
       "sha512": "8ae3a8885336f2a0886f6b9461196c6c5eb8ec115aadfe6f2f378cb6ba46323cc7d6db7d910a0abcf646d012718e85c0cbd7bb24858338a69516a8bfc86041f8",
       "stage": 2,
@@ -358,7 +358,7 @@
       "filename": "firewalld-2.5.2.tar.bz2"
     },
     "containerd": {
-      "version": "2.3.5",
+      "version": "2.4.0",
       "url_template": "https://github.com/containerd/containerd/archive/refs/tags/v{version}.tar.gz",
       "sha512": "87255f36b2b2fb5fc2cb7abaadae33c2ea85b5f7a1259c8c52cc3cf3efffa64525886a220eadf804b7c6414babe7310d39fddc6a24e79b707770fb621323f5c8",
       "stage": 2,
@@ -629,7 +629,7 @@
       "filename": "v1.36.4+k0s.0.tar.gz"
     },
     "kubeflex": {
-      "version": "0.5.0",
+      "version": "0.9.3",
       "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/v{version}.tar.gz",
       "sha512": "5b6199f2d3fc868d4303b793422ec6488abc1ced0e75038c99c3364673eb7ffebdc1d19dddc43568234ead69eb4f03a5b5517952746c18bee699d43f23902f0c",
       "stage": 2,
@@ -641,7 +641,7 @@
       "filename": "v0.5.0.tar.gz"
     },
     "kubestellar": {
-      "version": "0.25.0",
+      "version": "0.30.0",
       "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/v{version}.tar.gz",
       "sha512": "ae29c911be8a5f7b4f8f070fc1301bfb9444842eb9889abd89ebd1386d8f8c6e3bb85c815639f88ec4f61757af5140e67d4c914d8a46a1e0252dbbb7d76bf2b6",
       "stage": 2,
@@ -653,7 +653,7 @@
       "filename": "v0.25.0.tar.gz"
     },
     "kubestellar-console": {
-      "version": "0.3.34",
+      "version": "0.3.41",
       "url_template": "https://github.com/kubestellar/console/archive/refs/tags/v{version}.tar.gz",
       "sha512": "1866fa9dffa12199191a5dfbd7e846471ac51abe43f4b30ff4a02af9e96af33384a60544e0a2b5627dda562320eaa5fa1154956304d211dec833476bd785484d",
       "stage": 2,
@@ -685,7 +685,7 @@
       "filename": "v1.0.4.tar.gz"
     },
     "adw-gtk3-theme": {
-      "version": "6.4",
+      "version": "6.5",
       "url_template": "https://github.com/lassekongo83/adw-gtk3/releases/download/v{version}/adw-gtk3v{version}.tar.xz",
       "sha512": "304877e7d7b46ec444f8a0e2e86275c599496db15b687207106de91eab5b4a6d39c118959ce0f4f8aa1a0731cfea0c67c87281a0680ff86b44142f8da66eeae2",
       "stage": 2,
@@ -746,7 +746,7 @@
       "srpm": "rpmbuild"
     },
     "appstream": {
-      "version": "1.1.3",
+      "version": "1.2.0",
       "url_template": "https://github.com/ximion/appstream/archive/refs/tags/v{version}.tar.gz",
       "sha512": "a8176d9699cac18d6b5f372609394e07755fdc75e8ce70f003596479b461109811ace72d593e1eba35d5b808ba6ca6c37e3b61c5ab6f8968f4e7724c6afa9319",
       "stage": 2,
@@ -758,7 +758,7 @@
       "filename": "v1.1.3.tar.gz"
     },
     "bootc": {
-      "version": "1.16.10",
+      "version": "1.16.13",
       "url_template": "https://github.com/bootc-dev/bootc/releases/download/v{version}/bootc-{version}.tar.zstd",
       "sha512": "9ede03ec8d24d359a69a2522cf0658eefb4273a2b611558c5d672a235bce49cdadf9c0908fda79c756ccf6e6ef37dff9a758a03e75fdc8a9528120e437cbb522",
       "stage": 2,
@@ -782,8 +782,8 @@
       "filename": "distrobox-1.8.2.5.tar.gz"
     },
     "fastfetch": {
-      "version": "2.66.0",
-      "url_template": "https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/2.66.0/fastfetch-2.66.0.tar.gz",
+      "version": "2.68.1",
+      "url_template": "https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/2.68.1/fastfetch-2.68.1.tar.gz",
       "sha512": "dc067be6742b1193a6f7719333ecd418289c23b2c8ffc7f603eb9dd39b3b279536edcb87bc0e00f1a3a1a6f581e290b89e8cc5acd40a806bef1ba141b45d34c5",
       "stage": 2,
       "note": "Fast system info tool.",
@@ -867,8 +867,8 @@
       "filename": "linux-firmware-20260810.tar.xz"
     },
     "pipewire": {
-      "version": "1.6.8",
-      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz",
+      "version": "1.6.9",
+      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.9/pipewire-1.6.9.tar.gz",
       "sha512": "afa52e58eebe92ad2137afd9663076c8ecf62a5b1ec70aceeb368d58e6ff9eed1fd8fcf8e92f1b73951f7fbd6461a823c9d911b0d064cb523b8871c0dcc79187",
       "stage": 2,
       "note": "PipeWire media server.",
@@ -879,8 +879,8 @@
       "filename": "pipewire-1.6.8.tar.gz"
     },
     "pipewire-libs-extra": {
-      "version": "1.6.8",
-      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz",
+      "version": "1.6.9",
+      "url_template": "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.9/pipewire-1.6.9.tar.gz",
       "sha512": "afa52e58eebe92ad2137afd9663076c8ecf62a5b1ec70aceeb368d58e6ff9eed1fd8fcf8e92f1b73951f7fbd6461a823c9d911b0d064cb523b8871c0dcc79187",
       "stage": 2,
       "note": "PipeWire extra plugins (aptX, LC3plus, FFmpeg).",
@@ -915,8 +915,8 @@
       "filename": "v1.0.1.tar.gz"
     },
     "wireplumber": {
-      "version": "0.5.8",
-      "url_template": "https://github.com/pipewire/wireplumber/archive/refs/tags/0.5.8/wireplumber-0.5.8.tar.gz",
+      "version": "0.5.17",
+      "url_template": "https://github.com/pipewire/wireplumber/archive/refs/tags/0.5.17/wireplumber-0.5.17.tar.gz",
       "sha512": "8fa1b3acd6abf6e18c473f7abcb148946e53632feb7d1c1f3b5c32a84b85019092d38c8b500266ab8f5aef82331256d45561dbc72fa963577a2791ed99a344c4",
       "stage": 2,
       "note": "PipeWire session manager.",
