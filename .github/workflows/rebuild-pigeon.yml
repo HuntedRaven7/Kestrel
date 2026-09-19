@@ -31,7 +31,7 @@ jobs:
       changed: ${{ steps.plan.outputs.changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -77,7 +77,7 @@ jobs:
     if: ${{ needs.prepare.outputs.changed != '[]' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -87,7 +87,7 @@ jobs:
           sudo apt-get install -y -qq podman
 
       - name: Pull Fedora 44 build container
-        run: podman pull quay.io/fedora/fedora:44
+        run: podman pull quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599
 
       - name: Advisory BuildRequires resolution
         run: |
@@ -106,7 +106,7 @@ jobs:
                       "podman", "run", "--rm",
                       "-v", f"$(pwd)/pigeon/packages/{pkg}:/spec:Z",
                       "-v", "$(pwd)/pigeon/config/upstream-sources.json:/sources.json:Z",
-                      "quay.io/fedora/fedora:44",
+                      "quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599",
                       "bash", "-c",
                       "dnf install -y fedora-workstation-repositories && "
                       "printf '[hummingbird]\\nname=Hummingbird public\\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\\nenabled=1\\ngpgcheck=0\\n' > /etc/yum.repos.d/hummingbird.repo && "
@@ -157,12 +157,12 @@ jobs:
     if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
       - name: Download all stage artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: stage-*
           path: ~/stages
@@ -205,12 +205,12 @@ jobs:
       repomd_hash: ${{ steps.hash.outputs.hash }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
       - name: Download all stage artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: stage-*
           path: ~/stages
@@ -244,7 +244,7 @@ jobs:
 
       - name: Install cosign
         if: ${{ steps.artifacts.outputs.exists == 'true' }}
-        uses: sigstore/cosign-installer@v3
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
         with:
           cosign-release: 'v2.4.0'
 
@@ -270,7 +270,7 @@ jobs:
 
       - name: Generate SBOM (syft)
         if: ${{ steps.artifacts.outputs.exists == 'true' }}
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
         with:
           image: ghcr.io/huntedraven7/pigeon:latest
           format: spdx-json
@@ -278,7 +278,7 @@ jobs:
 
       - name: Upload SBOM as artifact
         if: ${{ steps.artifacts.outputs.exists == 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pigeon-sbom
           path: ~/pigeon-sbom.spdx.json
@@ -305,7 +305,7 @@ jobs:
       actions: read
       id-token: write
       attestations: write
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
     with:
       base64-subjects: |
         ${{ format('{{"ghcr.io/huntedraven7/pigeon:latest":"{0}"}}', needs.publish.outputs.repomd_hash) }}
@@ -318,7 +318,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.repomd_hash != '' }}
     steps:
       - name: Run Trivy scanner
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # master 2026-09-19
         with:
           image-ref: 'ghcr.io/huntedraven7/pigeon:latest'
           format: 'sarif'
@@ -328,6 +328,6 @@ jobs:
           ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@3ea06614dafe36dec890db3446326e0d40ce53d4 # v3
         with:
           sarif_file: 'trivy-results.sarif'
