@@ -1048,7 +1048,7 @@ Provides:       bundled(golang(sigs.k8s.io/json)) = v0.0.0~20241014173422~cfa47c
 %goprep %{?with_vendor:-k}
 %if %{with vendor}
 # Kestrel: unpack the committed vendor tree into the source root.
-tar -xzf %{SOURCE20}
+tar -xJf %{SOURCE20}
 %endif
 %autopatch -p1
 
