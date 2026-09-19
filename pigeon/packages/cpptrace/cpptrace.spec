@@ -41,6 +41,12 @@ symbol names and inline assembly.
 %license LICENSE
 %{_libdir}/libcpptrace.so.*
 %{_includedir}/cpptrace/
+%exclude %{_includedir}/ctrace/
+%exclude %{_includedir}/dwarf.h
+%exclude %{_includedir}/libdwarf.h
+%exclude %{_libdir}/cmake/libdwarf/
+%exclude %{_libdir}/libdwarf.a
+%exclude %{_libdir}/pkgconfig/libdwarf.pc
 
 %package devel
 Summary:        Development files for %{name}
@@ -54,6 +60,12 @@ Development files for cpptrace, including headers and CMake configuration.
 %{_libdir}/libcpptrace.so
 %{_libdir}/cmake/cpptrace/
 %{_includedir}/cpptrace/
+%exclude %{_includedir}/ctrace/
+%exclude %{_includedir}/dwarf.h
+%exclude %{_includedir}/libdwarf.h
+%exclude %{_libdir}/cmake/libdwarf/
+%exclude %{_libdir}/libdwarf.a
+%exclude %{_libdir}/pkgconfig/libdwarf.pc
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.4-1.hum1.pigeon
