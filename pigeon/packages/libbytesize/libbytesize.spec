@@ -9,7 +9,7 @@
 %define with_tools 0
 %endif
 
-%if %{with_tools} != 1
+%if 0%{?with_tools} != 1
 %define tools_opts --without-tools
 %endif
 
@@ -29,10 +29,10 @@ BuildRequires: gmp-devel
 BuildRequires: mpfr-devel
 BuildRequires: pcre2-devel
 BuildRequires: gettext-devel
-%if %{with_python3}
+%if 0%{?with_python3}
 BuildRequires: python3-devel
 %endif
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
 BuildRequires: gtk-doc
 %endif
 
@@ -50,7 +50,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 This package contains header files and pkg-config files needed for development
 with the libbytesize library.
 
-%if %{with_python3}
+%if 0%{?with_python3}
 %package -n python3-%{realname}
 Summary: Python 3 bindings for libbytesize
 Requires: %{name}%{?_isa} = %{version}-%{release}
@@ -60,7 +60,7 @@ This package contains Python 3 bindings for libbytesize making the use of
 the library from Python 3 easier and more convenient.
 %endif
 
-%if %{with_tools}
+%if 0%{?with_tools}
 %package tools
 Summary: Various nice tools based on libbytesize
 Requires: python3-%{realname} = %{version}-%{release}
@@ -97,17 +97,17 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %dir %{_includedir}/bytesize
 %{_includedir}/bytesize/bs_size.h
 %{_libdir}/pkgconfig/bytesize.pc
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
 %{_datadir}/gtk-doc/html/libbytesize
 %endif
 
-%if %{with_python3}
+%if 0%{?with_python3}
 %files -n python3-%{realname}
 %dir %{python3_sitearch}/bytesize
 %{python3_sitearch}/bytesize/*
 %endif
 
-%if %{with_tools}
+%if 0%{?with_tools}
 %files tools
 %{_bindir}/bscalc
 %{_mandir}/man1/bscalc.1*
