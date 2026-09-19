@@ -33,7 +33,10 @@ jobs:
           sudo apt-get install -y -qq podman rpm cpio
 
       - name: Pull Fedora 44 build container
-        run: podman pull quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599
+        # NOTE: deliberately pinned by tag, not digest. fedora:44 moves
+        # fast and quay.io prunes old manifests within days, so a digest
+        # pin rots into "manifest unknown" pull failures (exit 125).
+        run: podman pull quay.io/fedora/fedora:44
 
       - name: Fetch verified source for this package
         run: |
@@ -97,7 +100,7 @@ jobs:
             -v "$PWD/work/prior:/prior:Z" \
             -v "$PWD/work/out:/out:Z" \
             -e PACKAGE="${{ matrix.package }}" \
-            quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599 \
+            quay.io/fedora/fedora:44 \
             bash -exc '
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
