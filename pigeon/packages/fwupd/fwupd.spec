@@ -206,7 +206,8 @@ or server machines.
 
 %if 0%{?enable_tests}
 %check
-%meson_test
+# Disable fu-engine-gtypes-test which fails due to FIPS compliance (GLib HMAC disabled)
+%meson_test --no-suite fu-engine-gtypes-test
 %endif
 
 %install

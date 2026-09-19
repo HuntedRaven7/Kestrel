@@ -82,10 +82,12 @@ displaying them in a pretty way.
 %files
 %license LICENSE
 %{_bindir}/fastfetch
+%{_bindir}/flashfetch
 %{_datadir}/fastfetch/
 %{_datadir}/fish/vendor_completions.d/fastfetch.fish
 %{_datadir}/bash-completion/completions/fastfetch
 %{_datadir}/zsh/site-functions/_fastfetch
+%{_mandir}/man1/fastfetch.1*
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.66.0-2.hum1.pigeon
