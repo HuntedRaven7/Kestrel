@@ -43,6 +43,9 @@ symbol names and inline assembly.
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
+%description devel
+Development files for cpptrace, including headers and CMake configuration.
+
 %files devel
 %license LICENSE
 %{_libdir}/libcpptrace.so
@@ -50,5 +53,5 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 %{_includedir}/cpptrace/
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.4-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.4-1.hum1.pigeon
 - Initial Kestrel package for cpptrace
