@@ -143,3 +143,176 @@ def test_check_archive_accepts_gzip(tmp_path):
     arc = tmp_path / "a.tar.gz"
     arc.write_bytes(gzip.compress(b"data"))
     assert sp.check_archive(arc) is None
+
+
+# --- Tests for check_source ---
+
+
+def _setup_sources(tmp_path, monkeypatch, packages: dict):
+    """Helper to set up sources file and monkeypatch module paths."""
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": packages}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    monkeypatch.setattr(sp, "REPORTS", tmp_path / "reports")
+
+
+def test_check_source_unknown_package(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {"a": {"version": "1"}})
+    assert sp.check_source("no-such-pkg") is False
+    assert "no upstream-sources.json entry" in capsys.readouterr().out
+
+
+def test_check_source_local_package(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {"localpkg": {"version": "1", "local": True}})
+    assert sp.check_source("localpkg") is False
+    assert "no upstream-sources.json entry" in capsys.readouterr().out
+
+
+def test_check_source_ready_package(tmp_path, monkeypatch, capsys):
+    digest = "0" * 128
+    _setup_sources(tmp_path, monkeypatch, {
+        "ready": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                  "sha512": digest, "filename": "pkg.tar.gz"}
+    })
+    assert sp.check_source("ready") is True
+    assert "ready for fetch" in capsys.readouterr().out
+
+
+def test_check_source_local_package_passes(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {"localpkg": {"version": "1", "local": True}})
+    assert sp.cmd_check("localpkg") == 0
+    assert "local package" in capsys.readouterr().out
+
+
+def test_check_source_no_version(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {
+        "unversioned": {"url_template": "https://x/{version}/pkg.tar.gz", "sha512": "0" * 128}
+    })
+    assert sp.check_source("unversioned") is False
+    assert "not fetchable" in capsys.readouterr().out
+
+
+def test_check_source_no_digest(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {
+        "nodigest": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz"}
+    })
+    assert sp.check_source("nodigest") is False
+    assert "no recorded digest" in capsys.readouterr().out
+
+
+def test_check_source_handles_malformed_json(tmp_path, monkeypatch):
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text("{invalid json")
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    assert sp.check_source("pkg") is False
+
+
+# --- Tests for validate_upstream_sources ---
+
+
+def test_validate_accepts_valid_entries():
+    data = {"packages": {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                "sha512": "0" * 128, "filename": "pkg-1.0.tar.gz"}
+    }}
+    assert sp.validate_upstream_sources(data) == []
+
+
+def test_validate_rejects_stale_filename():
+    data = {"packages": {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg-1.0.tar.gz",
+                "sha512": "0" * 128, "filename": "pkg-TODO.tar.gz"}
+    }}
+    errors = sp.validate_upstream_sources(data)
+    assert any("stale filename" in e for e in errors)
+
+
+def test_validate_rejects_missing_version():
+    data = {"packages": {
+        "pkg": {"url_template": "https://x/{version}/pkg.tar.gz", "sha512": "0" * 128}
+    }}
+    errors = sp.validate_upstream_sources(data)
+    assert any("version" in e for e in errors)
+
+
+def test_validate_rejects_missing_sha512():
+    data = {"packages": {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz"}
+    }}
+    errors = sp.validate_upstream_sources(data)
+    assert any("sha512" in e for e in errors)
+
+
+def test_validate_skips_local_packages():
+    data = {"packages": {
+        "localpkg": {"version": "1", "local": True}
+    }}
+    assert sp.validate_upstream_sources(data) == []
+
+
+def test_validate_rejects_placeholder_url():
+    data = {"packages": {
+        "pkg": {"version": "1.0", "url_template": "TODO", "sha512": "0" * 128}
+    }}
+    errors = sp.validate_upstream_sources(data)
+    assert any("url_template" in e for e in errors)
+
+
+def test_cmd_validate_passes_with_valid_data(tmp_path, monkeypatch, capsys):
+    digest = "0" * 128
+    _setup_sources(tmp_path, monkeypatch, {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                "sha512": digest, "filename": "pkg-1.0.tar.gz"}
+    })
+    assert sp.cmd_validate() == 0
+    assert "validated 1 source entries" in capsys.readouterr().out
+
+
+def test_cmd_validate_fails_with_stale_filename(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg-1.0.tar.gz",
+                "sha512": "0" * 128, "filename": "pkg-TODO.tar.gz"}
+    })
+    assert sp.cmd_validate() == 1
+    assert "stale filename" in capsys.readouterr().out
+
+
+def test_cmd_validate_handles_missing_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(sp, "SOURCES", tmp_path / "nonexistent.json")
+    assert sp.cmd_validate() == 1
+
+
+def test_cmd_validate_handles_malformed_json(tmp_path, monkeypatch):
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text("{invalid json")
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    assert sp.cmd_validate() == 1
+
+
+# --- Tests for CLI integration ---
+
+
+def test_main_validate_command(tmp_path, monkeypatch, capsys):
+    digest = "0" * 128
+    _setup_sources(tmp_path, monkeypatch, {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                "sha512": digest, "filename": "pkg-1.0.tar.gz"}
+    })
+    assert sp.main(["validate"]) == 0
+    assert "validated 1 source entries" in capsys.readouterr().out
+
+
+def test_main_check_command(tmp_path, monkeypatch, capsys):
+    digest = "0" * 128
+    _setup_sources(tmp_path, monkeypatch, {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                "sha512": digest, "filename": "pkg-1.0.tar.gz"}
+    })
+    assert sp.main(["check", "pkg"]) == 0
+    assert "ready for fetch" in capsys.readouterr().out
+
+
+def test_main_check_unknown_package(tmp_path, monkeypatch, capsys):
+    _setup_sources(tmp_path, monkeypatch, {"other": {"version": "1"}})
+    assert sp.main(["check", "pkg"]) == 1
+    assert "no upstream-sources.json entry" in capsys.readouterr().out

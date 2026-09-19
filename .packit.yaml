@@ -374,6 +374,12 @@ packages:
     downstream_package_name: wlroots
     paths:
     - pigeon/packages/wlroots
+  voxtype:
+    specfile_path: voxtype.spec
+    upstream_package_name: voxtype
+    downstream_package_name: voxtype
+    paths:
+    - pigeon/packages/voxtype
   xdg-desktop-portal-gtk:
     specfile_path: xdg-desktop-portal-gtk.spec
     upstream_package_name: xdg-desktop-portal-gtk
