@@ -45,6 +45,7 @@ symbol names and inline assembly.
 %exclude %{_includedir}/dwarf.h
 %exclude %{_includedir}/libdwarf.h
 %exclude %{_libdir}/cmake/libdwarf/
+%exclude %{_libdir}/cmake/Findzstd.cmake
 %exclude %{_libdir}/cmake/zstd/
 %exclude %{_libdir}/libdwarf.a
 %exclude %{_libdir}/pkgconfig/libdwarf.pc
@@ -65,6 +66,7 @@ Development files for cpptrace, including headers and CMake configuration.
 %exclude %{_includedir}/dwarf.h
 %exclude %{_includedir}/libdwarf.h
 %exclude %{_libdir}/cmake/libdwarf/
+%exclude %{_libdir}/cmake/Findzstd.cmake
 %exclude %{_libdir}/cmake/zstd/
 %exclude %{_libdir}/libdwarf.a
 %exclude %{_libdir}/pkgconfig/libdwarf.pc
