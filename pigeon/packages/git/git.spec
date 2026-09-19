@@ -66,6 +66,8 @@ BuildRequires:  perl-interpreter
 BuildRequires:  perl-generators
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(ExtUtils::Embed)
+# GCC 16 defines unreachable() macro in stddef.h, conflicts with git's unreachable function
+BuildRequires:  sed
 %if %{with docs}
 BuildRequires: asciidoctor
 BuildRequires: xmlto
@@ -92,7 +94,11 @@ Documentation for %{name}.
 %endif
 
 %prep
-%autosetup -n git-2.47.0 -p1
+%autosetup -n git-2.47.0
+
+# GCC 16 defines unreachable() macro in stddef.h which conflicts with git's function
+# Undefine the macro in the compat header
+sed -i '1i #undef unreachable' git-compat-util.h -p1
 
 %build
 %make_build \
