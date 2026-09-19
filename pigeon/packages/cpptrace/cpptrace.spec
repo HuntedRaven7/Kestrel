@@ -18,6 +18,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  elfutils-libelf-devel
 BuildRequires:  libdwarf-devel
 BuildRequires:  libunwind-devel
+BuildRequires:  zstd-devel
 
 %description
 cpptrace is a C++ library for generating stack traces. It provides a simple
@@ -28,7 +29,11 @@ symbol names and inline assembly.
 %autosetup -n cpptrace-%{version} -p1
 
 %build
-%cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DCPPTRACE_BUILD_SHARED=ON
+%cmake -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCPPTRACE_BUILD_SHARED=ON \
+  -DCPPTRACE_USE_SYSTEM_LIBDWARF=ON \
+  -DCPPTRACE_USE_SYSTEM_ZSTD=ON
 %cmake_build
 
 %install
