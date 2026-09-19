@@ -5,12 +5,12 @@ on:
     branches: [main]
 jobs:
   contract:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 pigeon/tools/factory_contract.py
   packages:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install PyYAML
@@ -18,7 +18,7 @@ jobs:
       - run: python3 pigeon/tools/validate.py
       - run: python3 pigeon/tools/validate_packit_config.py
   unit:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install pytest

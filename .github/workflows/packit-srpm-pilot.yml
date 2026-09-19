@@ -16,7 +16,7 @@ permissions:
 jobs:
   validate-config:
     name: Validate .packit.yaml config
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -30,7 +30,7 @@ jobs:
 
   discover:
     name: Discover packages
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: validate-config
     outputs:
       packages: ${{ steps.discover.outputs.packages }}
@@ -49,7 +49,7 @@ jobs:
   srpm:
     name: Build SRPM (${{ matrix.package }})
     needs: discover
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -222,7 +222,7 @@ jobs:
   verify-all:
     name: Verify all SRPMs generated
     needs: srpm
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always()
     steps:
       - name: Check all matrix jobs succeeded
