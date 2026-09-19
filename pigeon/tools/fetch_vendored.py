@@ -135,7 +135,21 @@ def extract_srpm(srpm_path: Path, dest_dir: Path) -> bool:
 
 def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
     """Rename vendor/source tarballs to match spec expectations."""
+    # Load package info from upstream-sources.json
+    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
+        data = json.load(f)
+    entry = data["packages"].get(pkg_name, {})
+    version = entry.get("version", "")
+    upstream_filename = entry.get("filename", "")
+    source_filename = entry.get("source_filename", "")
+    vendor_filename = entry.get("vendor_filename", "")
+    if not version:
+        return
+    
     # Known tarball renames needed
+    # Fedora SRPM provides source_filename (e.g., runc-1.5.1.tar.gz)
+    # Spec expects upstream filename (e.g., v1.5.1.tar.gz for go packages)
+    # source_pipeline.py verify-staged looks for upstream_filename (filename field)
     renames = {
         "tailscale": {
             "vendor_from_pattern": "tailscale-*-vendored.tar.xz",
@@ -144,12 +158,14 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
             "source_to_template": "v{version}.tar.gz",
         },
         "runc": {
-            "source_from_pattern": "v{version}.tar.gz",
-            "source_to_template": "runc-{version}.tar.gz",
+            # Fedora SRPM has runc-1.5.1.tar.gz, spec expects v1.5.1.tar.gz
+            "source_from_pattern": "runc-{version}.tar.gz",
+            "source_to_template": "v{version}.tar.gz",
         },
         "containerd": {
-            "source_from_pattern": "v{version}.tar.gz",
-            "source_to_template": "containerd-{version}.tar.gz",
+            # Fedora SRPM has containerd-2.3.5.tar.gz, spec expects v2.3.5.tar.gz
+            "source_from_pattern": "containerd-{version}.tar.gz",
+            "source_to_template": "v{version}.tar.gz",
         },
     }
     
@@ -157,14 +173,6 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         return
     
     rename_info = renames[pkg_name]
-    
-    # Load version once
-    with open(ROOT / "pigeon" / "config" / "upstream-sources.json") as f:
-        data = json.load(f)
-    version = data["packages"][pkg_name].get("version", "")
-    upstream_filename = data["packages"][pkg_name].get("filename", "")
-    if not version:
-        return
     
     # Handle vendor tarball rename
     if "vendor_from_pattern" in rename_info:
@@ -179,8 +187,16 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
             if src != dst:
                 print(f"  Renaming {src.name} -> {dst.name}")
                 src.rename(dst)
+        # Fallback: if vendor_filename is specified and the target doesn't exist, look for it
+        elif vendor_filename:
+            vendor_target = vendor_to_template.format(version=version)
+            src = pkg_dir / vendor_filename
+            dst = pkg_dir / vendor_target
+            if src.is_file() and not dst.is_file():
+                print(f"  Renaming {src.name} -> {dst.name}")
+                src.rename(dst)
     
-    # Handle source tarball rename (upstream name -> Fedora name for rpmbuild)
+    # Handle source tarball rename (Fedora name -> upstream name for spec)
     if "source_from_pattern" in rename_info:
         source_from_pattern = rename_info["source_from_pattern"].format(version=version)
         source_to_template = rename_info["source_to_template"]
@@ -199,6 +215,26 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
                 if not upstream_copy.exists():
                     print(f"  Creating copy {dst.name} -> {upstream_filename} for verification")
                     shutil.copy2(dst, upstream_copy)
+        # Fallback: if source_filename is specified and matches the target, use it
+        elif source_filename:
+            source_target = source_to_template.format(version=version)
+            src = pkg_dir / source_filename
+            dst = pkg_dir / source_target
+            if src.is_file() and not dst.is_file():
+                print(f"  Renaming {src.name} -> {dst.name}")
+                src.rename(dst)
+            # If source_filename already matches target, ensure it exists
+            elif source_filename == source_target and src.is_file():
+                print(f"  Source tarball already correctly named: {src.name}")
+        
+        # Also ensure upstream filename exists for verification (filename field)
+        final_name = source_to_template.format(version=version)
+        final_path = pkg_dir / final_name
+        if final_path.is_file() and upstream_filename and upstream_filename != final_name:
+            upstream_copy = pkg_dir / upstream_filename
+            if not upstream_copy.exists():
+                print(f"  Creating copy {final_name} -> {upstream_filename} for verification")
+                shutil.copy2(final_path, upstream_copy)
 
 
 def fetch_vendored_source(pkg_name: str) -> bool:
