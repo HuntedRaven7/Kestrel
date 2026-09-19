@@ -40,7 +40,7 @@
       "version": "0.3.1",
       "url_template": "https://github.com/quickshell-mirror/quickshell/archive/refs/tags/v{version}.tar.gz",
       "sha512": "7da5b37a20369e52f14cba2cf03b948522c8d79598f4a54e456034f2d0f868cf525539f15d86ebacde547e862eac8d029a597d5e360cd443ed2404dbd4781ad9",
-      "stage": 3,
+      "stage": 2,
       "note": "Rebuild on every Qt bump (private-API ABI). Keep coupled to qt6-qtbase via Renovate group qt-quickshell.",
       "renovate": {
         "datasource": "github-tags",
