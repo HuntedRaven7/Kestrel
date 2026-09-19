@@ -69,40 +69,37 @@ Firmware for NVIDIA GPUs.
 mkdir -p %{buildroot}%{_firmwarepath}
 cp -a * %{buildroot}%{_firmwarepath}/
 
-# Copy license files to license dir for %license macro
-mkdir -p %{buildroot}%{_liconsdir}
-cp LICENSE* %{buildroot}%{_liconsdir}/ 2>/dev/null || true
-
-# Remove files that shouldn't be installed in firmware path
+# Remove files that should not be installed in firmware path
 rm -f %{buildroot}%{_firmwarepath}/*.txt
 rm -f %{buildroot}%{_firmwarepath}/*.md
 rm -f %{buildroot}%{_firmwarepath}/README
-rm -rf %{buildroot}%{_firmwarepath}/LICENSE*
-rm -rf %{buildroot}%{_firmwarepath}/COPYING*
 rm -f %{buildroot}%{_firmwarepath}/WHENCE
 rm -f %{buildroot}%{_firmwarepath}/Makefile
 rm -f %{buildroot}%{_firmwarepath}/*.patch
 
 %files
-%license %{_liconsdir}/LICENSE*
+%license LICENSE LICENSE-CRITERIA.md
 %{_firmwarepath}/*
 %exclude %{_firmwarepath}/WHENCE
 
 %files whence
-%license %{_liconsdir}/LICENSE*
+%license LICENSE LICENSE-CRITERIA.md
 %{_firmwarepath}/WHENCE
 
-%files amd-gpu-firmware
-%license %{_liconsdir}/LICENSE*
-%{_firmwarepath}/*
+%files -n amd-gpu-firmware
+%license LICENSE LICENSE-CRITERIA.md
+%{_firmwarepath}/amdgpu/
+%{_firmwarepath}/amdnpu/
+%{_firmwarepath}/radeon/
 
-%files intel-gpu-firmware
-%license %{_liconsdir}/LICENSE*
-%{_firmwarepath}/*
+%files -n intel-gpu-firmware
+%license LICENSE LICENSE-CRITERIA.md
+%{_firmwarepath}/i915/
+%{_firmwarepath}/xe/
 
-%files nvidia-gpu-firmware
-%license %{_liconsdir}/LICENSE*
-%{_firmwarepath}/*
+%files -n nvidia-gpu-firmware
+%license LICENSE LICENSE-CRITERIA.md
+%{_firmwarepath}/nvidia/
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 20260810-2.hum1.pigeon
