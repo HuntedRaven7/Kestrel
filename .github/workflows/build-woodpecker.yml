@@ -18,7 +18,7 @@ permissions:
 jobs:
   build:
     name: Build Woodpecker
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     permissions:
       contents: read
@@ -115,7 +115,7 @@ jobs:
   trivy-scan:
     name: Trivy scan
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
     steps:
       - name: Run Trivy scanner
@@ -136,7 +136,7 @@ jobs:
   promote:
     name: Promote to stable
     needs: [build, trivy-scan]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
     steps:
       - name: Promote testing -> stable
