@@ -36,6 +36,18 @@ symbol names and inline assembly.
 
 %install
 %cmake_install
+# Remove Findzstd.cmake - system libzstd-devel provides zstdConfig.cmake
+# Also fix cpptrace-config.cmake to use CONFIG mode for zstd (avoid Findzstd.cmake)
+CONFIG_FILE=%{buildroot}%{_libdir}/cmake/cpptrace/cpptrace-config.cmake
+sed -i '/set(CMAKE_MODULE_PATH_OLD/d' "$CONFIG_FILE"
+sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH};/d' "$CONFIG_FILE"
+sed -i '/find_dependency(zstd)/d' "$CONFIG_FILE"
+sed -i '/set(CMAKE_MODULE_PATH "\${CMAKE_MODULE_PATH_OLD}")/d' "$CONFIG_FILE"
+sed -i '/unset(CMAKE_MODULE_PATH_OLD)/d' "$CONFIG_FILE"
+# Add CONFIG mode find_dependency for zstd
+sed -i '/# Dependencies/a find_dependency(zstd CONFIG REQUIRED)' "$CONFIG_FILE"
+# Remove the installed Findzstd.cmake
+rm -f %{buildroot}%{_libdir}/cmake/cpptrace/Findzstd.cmake
 
 %files
 %license LICENSE
