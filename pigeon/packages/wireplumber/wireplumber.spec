@@ -16,7 +16,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  pkgconfig(gobject-2.0)
 BuildRequires:  pkgconfig(glib-2.0) >= 2.70.0
 BuildRequires:  pkgconfig(gio-unix-2.0)
-BuildRequires:  pkgconfig(pipewire-0.3) >= 1.0.0
+BuildRequires:  pkgconfig(pipewire-0.3)
 BuildRequires:  pkgconfig(lua) >= 5.1
 BuildRequires:  lua-devel
 BuildRequires:  systemd-rpm-macros

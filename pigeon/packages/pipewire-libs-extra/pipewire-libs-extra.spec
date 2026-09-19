@@ -57,8 +57,7 @@ PipeWire extra plugins: aptX, LC3plus and FFmpeg SPA plugins.
   -D lv2=enabled \
   -D session-managers=[]
 %meson_build \
-    spa-codec-bluez5-aptx \
-    spa-codec-bluez5-lc3plus \
+    spa-codec-bluez5 \
     spa-ffmpeg
 
 %install
