@@ -78,6 +78,8 @@ rm -f %{buildroot}%{_firmwarepath}/README
 rm -f %{buildroot}%{_firmwarepath}/LICENSE*
 rm -f %{buildroot}%{_firmwarepath}/COPYING*
 rm -f %{buildroot}%{_firmwarepath}/WHENCE
+# LICENSES is a directory, remove it if it exists
+rm -rf %{buildroot}%{_firmwarepath}/LICENSES
 rm -f %{buildroot}%{_firmwarepath}/*.txt
 rm -f %{buildroot}%{_firmwarepath}/Makefile
 rm -f %{buildroot}%{_firmwarepath}/*.patch
