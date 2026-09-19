@@ -43,9 +43,16 @@ def test_github_manager_covers_all_github_entries():
 
 
 def test_gitlab_manager_covers_all_gitlab_entries():
-    m = _by_description("gitlab-tags packages")
+    # Check freedesktop.org gitlab manager
+    m_freedesktop = _by_description("gitlab-tags packages (freedesktop instance)")
     raw = (ROOT / "pigeon" / "config" / "upstream-sources.json").read_text()
-    got = {(dep, ver) for ver, dep in _compile(m["matchStrings"][0]).findall(raw)}
+    got_freedesktop = {(dep, ver) for ver, dep in _compile(m_freedesktop["matchStrings"][0]).findall(raw)}
+    
+    # Check gnome.org gitlab manager
+    m_gnome = _by_description("gitlab-tags packages (gnome instance)")
+    got_gnome = {(dep, ver) for ver, dep in _compile(m_gnome["matchStrings"][0]).findall(raw)}
+    
+    got = got_freedesktop | got_gnome
     want = set()
     data = json.loads(raw)["packages"]
     for entry in data.values():
