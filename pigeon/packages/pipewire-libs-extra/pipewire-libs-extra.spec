@@ -6,6 +6,7 @@
 # Based on Utah's pipewire-libs-extra: enables aptX, LC3plus and FFmpeg SPA plugins.
 
 %global spaversion 0.2
+%global __meson_auto_features disabled
 
 Name:       pipewire-libs-extra
 Summary:    PipeWire extra plugins
@@ -15,6 +16,9 @@ License:    MIT
 URL:        https://pipewire.org/
 
 Source0:    https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/pipewire-%{version}.tar.gz
+
+# Update to LC3plus 1.8.0 APIs
+Patch0:     pipewire-lc3plus-api.patch
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  meson >= 0.49.0
@@ -74,3 +78,5 @@ install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
 * Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
 - Simplify to match Utah approach: always enable aptX, LC3plus and FFmpeg
 - Use %meson_build with specific targets for cleaner builds
+- Add %global __meson_auto_features disabled
+- Add LC3plus 1.8.0 API compatibility patch

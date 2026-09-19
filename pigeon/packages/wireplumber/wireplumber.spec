@@ -17,6 +17,7 @@ BuildRequires:  meson gcc pkgconfig
 BuildRequires:  pkgconfig(glib-2.0) >= 2.70.0
 BuildRequires:  pkgconfig(gobject-2.0)
 BuildRequires:  pkgconfig(gio-unix-2.0)
+BuildRequires:  pkgconfig(gmodule-2.0)
 BuildRequires:  pkgconfig(libspa-0.2) >= 0.2
 BuildRequires:  pkgconfig(libpipewire-0.3) >= 0.3.26
 BuildRequires:  pkgconfig(lua) >= 5.1
@@ -25,6 +26,7 @@ BuildRequires:  pkgconfig(systemd)
 BuildRequires:  systemd-devel >= 184
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gobject-introspection-devel
+BuildRequires:  python3-lxml doxygen
 %{?systemd_ordering}
 
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
@@ -102,3 +104,4 @@ mkdir -p %{buildroot}%{_datadir}/wireplumber/wireplumber.conf.d
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 0.5.8-1.hum1.pigeon
 - Align with Fedora/Utah: add libs subpackage, proper BuildRequires,
   disable docs/installation tests, use %find_lang
+- Add pkgconfig(gmodule-2.0), python3-lxml, doxygen BuildRequires
