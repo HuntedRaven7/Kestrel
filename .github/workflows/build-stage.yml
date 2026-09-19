@@ -64,7 +64,7 @@ jobs:
             -e PACKAGE="${{ matrix.package }}" \
             quay.io/fedora/fedora:44 \
             bash -exc '
-              dnf install -qy dnf-plugins-core rpm-build createrepo_c python3
+              dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
               # the live yum repo is the pulp-content endpoint below.
               # gpgcheck=0: no signing key is published for it (revisit).
