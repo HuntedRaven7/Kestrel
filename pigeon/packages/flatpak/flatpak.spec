@@ -46,6 +46,7 @@ BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-protocols) >= 1.32
 BuildRequires:  pkgconfig(wayland-scanner) >= 1.15
 BuildRequires:  pkgconfig(xau)
+BuildRequires:  pkgconfig(malcontent-0)
 BuildRequires:  bison
 BuildRequires:  bubblewrap >= 0.10.0
 BuildRequires:  docbook-dtds

@@ -46,7 +46,7 @@ Requires:       python3-libevdev python3-pyudev
 Utilities to handle and/or debug libwacom devices.
 
 %prep
-%autosetup -S git
+%autosetup -p1 -n libwacom-%{version}
 
 %build
 %meson -Dtests=disabled -Ddocumentation=disabled

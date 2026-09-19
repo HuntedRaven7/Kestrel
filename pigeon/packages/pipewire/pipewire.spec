@@ -17,6 +17,10 @@
 
 %bcond_without alsa
 %bcond_without vulkan
+%bcond_without bluez
+%bcond_without fdk-aac
+%bcond_without freeaptx
+%bcond_without lc3plus
 
 %if 0%{?rhel} && 0%{?rhel} < 9
 %bcond_with pulse
@@ -40,22 +44,32 @@ Source1:        pipewire.sysusers
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  avahi-devel
+%if %{with bluez}
 BuildRequires:  bluez-devel
+%endif
 BuildRequires:  docbook-dtds
 BuildRequires:  docbook-style-xsl
 BuildRequires:  doxygen
+%if %{with fdk-aac}
 BuildRequires:  fdk-aac-devel
+%endif
 BuildRequires:  gcc-c++
 BuildRequires:  gstreamer1-devel
+%if %{with freeaptx}
 BuildRequires:  libfreeaptx-devel
+%endif
+%if %{with lc3plus}
 BuildRequires:  liblc3plus-devel
+%endif
 BuildRequires:  libsndfile-devel
 BuildRequires:  libva-devel
 BuildRequires:  lilv-devel
 BuildRequires:  lua-devel
 BuildRequires:  meson >= 0.49.0
 BuildRequires:  ncurses-devel
+%if %{with bluez}
 BuildRequires:  pkgconfig(bluez) >= 4.101
+%endif
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(glib-2.0) >= 2.46.0
@@ -169,11 +183,11 @@ PipeWire utilities.
   -Dpipewire-pulse=%{?with_pulse:enabled} \
   -Dpipewire-vulkan=%{?with_vulkan:enabled} \
   -Dvalgrind=disabled \
-  -Dbluez5=enabled \
+  -Dbluez5=%{?with_bluez:enabled} \
   -Dbluez5-codec-ldac=disabled \
-  -Dbluez5-codec-lc3plus=enabled \
-  -Dbluez5-codec-aptx=enabled \
-  -Dbluez5-codec-aptxhd=enabled \
+  -Dbluez5-codec-lc3plus=%{?with_lc3plus:enabled} \
+  -Dbluez5-codec-aptx=%{?with_freeaptx:enabled} \
+  -Dbluez5-codec-aptxhd=%{?with_freeaptx:enabled} \
   -Dbluez5-codec-ldac-dec=disabled \
   -Dbluez5-codec-lc3=enabled \
   -Dffmpeg=enabled \
@@ -183,14 +197,6 @@ PipeWire utilities.
   -Dv4l2=disabled \
   -Drocm=disabled \
   -Dsession-managers=[] \
-  -Dlibcamera-plugin=disabled \
-  -Dv4l2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dffado-plugin=disabled \
-  -Dlibmysofa-plugin=disabled \
-  -Dlv2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dpipewire-jackserver-plugin=disabled \
   -Dlibcamera-plugin=disabled \
   -Dv4l2-plugin=disabled \
   -Droc-plugin=disabled \
