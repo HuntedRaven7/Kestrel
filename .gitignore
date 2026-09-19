@@ -8,3 +8,9 @@ __pycache__/
 .pytest_cache/
 pigeon/reports/
 pigeon/packages/*/*.tar.*
+# Committed deliberately: small release signatures verified by %gpgverify,
+# and lookaside-pinned grub2 archives. Specs reference these by exact
+# basename and hermetic builds must not fetch them over the network.
+!pigeon/packages/*/*.sig
+!pigeon/packages/grub2/gnulib-*.tar.gz
+!pigeon/packages/grub2/theme.tar.bz2

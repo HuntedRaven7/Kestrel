@@ -215,16 +215,16 @@
       "filename": "1.6.tar.gz"
     },
     "polkit": {
-      "version": "124",
-      "url_template": "https://gitlab.freedesktop.org/polkit/polkit/-/archive/{version}/polkit-{version}.tar.gz",
-      "sha512": "3c4fe60618cf6e74467dc0efac084a38c93b0a8e4e8c02d36de5ca35634ecff624b6977b54493e9b1ad41aa87693ac3246e14fe6f6b828f57b2012b869af9105",
+      "version": "127",
+      "url_template": "https://github.com/polkit-org/polkit/archive/refs/tags/{version}.tar.gz",
+      "sha512": "54b315f2ca05e957e7b9aafda16c1cddcc2266d6018c77dbf4cfe73b7d5b1569e6e07570884b9c5ecc4bdb3a29966169006aa727b089019d959208f2b53067e6",
       "stage": 2,
-      "note": "Fedora dist-git import. PolicyKit framework. Upstream latest is 124 (Fedora's 127 is downstream versioning); watch manually, github-tags depName is best-effort.",
+      "note": "Fedora dist-git import (spec is Version 127 from polkit-org/polkit on GitHub, the current upstream home).",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "polkit-project/polkit"
+        "depName": "polkit-org/polkit"
       },
-      "filename": "polkit-124.tar.gz"
+      "filename": "127.tar.gz"
     },
     "foot": {
       "version": "1.28.0",

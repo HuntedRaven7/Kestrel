@@ -12,7 +12,9 @@ Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 ## upstream patches
 # Raise to cmake 3.5 (for cmake4)
-Patch0:         https://github.com/sddm/sddm/commit/228778c2b4b7e26db1e1d69fe484ed75c5791c3a.patch
+# Upstream commit 228778c2b4b7e26db1e1d69fe484ed75c5791c3a, vendored into
+# git (hermetic builds must not fetch patches over the network)
+Patch0:         sddm-cmake-minimum-3.5.patch
 
 # Port all themes to Qt 6
 # Submitted: https://github.com/sddm/sddm/pull/1876

@@ -19,12 +19,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
       - name: Validate .packit.yaml vs upstream-sources.json
         run: |
+          pip install pyyaml -q
           python3 pigeon/tools/validate_packit_config.py
 
   discover:
@@ -35,7 +36,7 @@ jobs:
       packages: ${{ steps.discover.outputs.packages }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -64,7 +65,7 @@ jobs:
 
       - name: Checkout
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -99,6 +100,12 @@ jobs:
           echo "vendored output: '${{ steps.vendored.outputs.vendored }}'"
           echo "matrix package: '${{ matrix.package }}'"
           echo "contains check: ${{ contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}"
+
+      - name: Install SRPM tooling (rpm2cpio/cpio for vendored fetch)
+        if: ${{ steps.skip_check.outputs.skipped != 'true' }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq rpm cpio
 
       - name: Fetch vendored sources from Fedora (vendor + source tarballs)
         if: ${{ steps.skip_check.outputs.skipped != 'true' && contains(fromJson(steps.vendored.outputs.vendored), matrix.package) }}
@@ -206,7 +213,7 @@ jobs:
 
       - name: Upload SRPM
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: srpm-${{ matrix.package }}
           path: work/srpm/${{ matrix.package }}.src.rpm
