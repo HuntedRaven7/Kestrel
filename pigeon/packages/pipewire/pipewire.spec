@@ -44,21 +44,21 @@ Source1:        pipewire.sysusers
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  avahi-devel
-%if %{with bluez}
+%if %{with_bluez}
 BuildRequires:  bluez-devel
 %endif
 BuildRequires:  docbook-dtds
 BuildRequires:  docbook-style-xsl
 BuildRequires:  doxygen
-%if %{with fdk-aac}
+%if %{with_fdk_aac}
 BuildRequires:  fdk-aac-devel
 %endif
 BuildRequires:  gcc-c++
 BuildRequires:  gstreamer1-devel
-%if %{with freeaptx}
+%if %{with_freeaptx}
 BuildRequires:  libfreeaptx-devel
 %endif
-%if %{with lc3plus}
+%if %{with_lc3plus}
 BuildRequires:  liblc3plus-devel
 %endif
 BuildRequires:  libsndfile-devel
@@ -67,7 +67,7 @@ BuildRequires:  lilv-devel
 BuildRequires:  lua-devel
 BuildRequires:  meson >= 0.49.0
 BuildRequires:  ncurses-devel
-%if %{with bluez}
+%if %{with_bluez}
 BuildRequires:  pkgconfig(bluez) >= 4.101
 %endif
 BuildRequires:  pkgconfig(dbus-1)

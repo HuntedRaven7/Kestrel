@@ -161,6 +161,8 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         "runc": {
             # Fedora SRPM has runc-1.5.1.tar.gz, spec expects runc-1.5.1.tar.gz (from %{gosource})
             # But filename field is v1.5.1.tar.gz for upstream verification
+            "vendor_from_pattern": "runc-*-vendor.tar.bz2",
+            "vendor_to_template": "runc-{version}-vendor.tar.bz2",
             "source_from_pattern": "runc-{version}.tar.gz",
             "source_to_template": "runc-{version}.tar.gz",  # Keep Fedora name
         },
@@ -169,6 +171,12 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
             # But filename field is v2.3.5.tar.gz for upstream verification
             "source_from_pattern": "containerd-{version}.tar.gz",
             "source_to_template": "containerd-{version}.tar.gz",  # Keep Fedora name
+        },
+        "iio-sensor-proxy": {
+            # Upstream source is iio-sensor-proxy-3.9.tar.bz2 (from GitLab)
+            # Fedora SRPM provides this directly
+            "source_from_pattern": "iio-sensor-proxy-{version}.tar.bz2",
+            "source_to_template": "iio-sensor-proxy-{version}.tar.bz2",
         },
     }
     
