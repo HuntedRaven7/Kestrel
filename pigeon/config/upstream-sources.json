@@ -100,7 +100,7 @@
       "note": "Fedora dist-git import. Source from lookaside cache.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "wayland-project/xdg-desktop-portal-wlr"
+        "depName": "emersion/xdg-desktop-portal-wlr"
       },
       "filename": "xdg-desktop-portal-wlr-0.8.4.tar.gz"
     },
@@ -112,7 +112,7 @@
       "note": "Fedora dist-git import. Source from lookaside cache.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "wayland-project/xdg-desktop-portal-gtk"
+        "depName": "flatpak/xdg-desktop-portal-gtk"
       },
       "filename": "1.15.3.tar.gz"
     },
@@ -198,7 +198,7 @@
       "note": "Fedora dist-git import. Brightness control utility.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "Haikarainen/brightnessctl"
+        "depName": "Hummer12007/brightnessctl"
       },
       "filename": "0.5.1.tar.gz"
     },
@@ -253,8 +253,8 @@
       "stage": 2,
       "note": "Fedora dist-git import. Input device library.",
       "renovate": {
-        "datasource": "github-tags",
-        "depName": "wayland-project/libinput"
+        "datasource": "gitlab-tags",
+        "depName": "libinput/libinput"
       },
       "filename": "libinput-1.32.0.tar.gz"
     },
@@ -311,8 +311,8 @@
       "stage": 3,
       "note": "Fedora dist-git import. Mobile broadband modem manager.",
       "renovate": {
-        "datasource": "github-tags",
-        "depName": "Freedesktop/ModemManager"
+        "datasource": "gitlab-tags",
+        "depName": "mobile-broadband/ModemManager"
       },
       "filename": "ModemManager-1.24.2.tar.bz2"
     },
@@ -504,7 +504,7 @@
       "note": "Fedora dist-git import. Hardware data.",
       "renovate": {
         "datasource": "github-tags",
-        "depName": "VincentHW/hwdata"
+        "depName": "vcrhonek/hwdata"
       },
       "filename": "v0.411.tar.gz"
     },
@@ -551,7 +551,7 @@
       "stage": 3,
       "note": "Fedora dist-git import. Power management. Tags are v-prefixed.",
       "renovate": {
-        "datasource": "github-tags",
+        "datasource": "gitlab-tags",
         "depName": "upower/upower"
       },
       "filename": "upower-v1.91.4.tar.gz"
@@ -704,7 +704,7 @@
       "note": "Adwaita fonts from GNOME.",
       "renovate": {
         "datasource": "gitlab-tags",
-        "depName": "GNOME/adwaita-fonts"
+        "depName": "gnome/adwaita-fonts"
       },
       "filename": "adwaita-fonts-51.0.tar.xz"
     },
@@ -716,7 +716,7 @@
       "note": "Adwaita icon theme from GNOME.",
       "renovate": {
         "datasource": "gitlab-tags",
-        "depName": "GNOME/adwaita-icon-theme"
+        "depName": "gnome/adwaita-icon-theme"
       },
       "filename": "adwaita-icon-theme-51.0.tar.xz"
     },
