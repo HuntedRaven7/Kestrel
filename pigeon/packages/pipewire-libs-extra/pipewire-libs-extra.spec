@@ -1,93 +1,76 @@
-# Kestrel-original recipe (status: independent, not a Fedora dist-git import).
+# Kestrel-original recipe.
 # Upstream: https://gitlab.freedesktop.org/pipewire/pipewire (tag 1.6.8).
 # Source0 MUST match pigeon/config/upstream-sources.json (verified by
 # source_pipeline.py before any build).
+#
+# Based on Utah's pipewire-libs-extra: enables aptX, LC3plus and FFmpeg SPA plugins.
 
 %global spaversion 0.2
-
-# Optional codecs not in Fedora repos
-%bcond lc3plus 0
-%bcond freeaptx 0
-# ffmpeg is built when libavcodec is available; disabled if deps missing
-%bcond ffmpeg 1
 
 Name:       pipewire-libs-extra
 Summary:    PipeWire extra plugins
 Version:    1.6.8
-Release:    1.hum1.pigeon
+Release:    1%{?dist}
 License:    MIT
 URL:        https://pipewire.org/
 
-Source0:    https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.gz
+Source0:    https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/%{version}/pipewire-%{version}.tar.gz
 
 BuildRequires:  alsa-lib-devel
 BuildRequires:  meson >= 0.49.0
 BuildRequires:  gcc-c++
 BuildRequires:  git
-%if %{with lc3plus}
 BuildRequires:  liblc3plus-devel
-%endif
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(bluez) >= 4.101
-%if %{with freeaptx}
 BuildRequires:  pkgconfig(libfreeaptx)
-%endif
 BuildRequires:  pkgconfig(glib-2.0)
-%if %{with ffmpeg}
 BuildRequires:  pkgconfig(libavcodec)
 BuildRequires:  pkgconfig(libavfilter)
 BuildRequires:  pkgconfig(libswscale)
-%endif
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  sbc-devel
 
 Requires:       pipewire >= %{version}
 
 %description
-PipeWire extra plugins: aptX, LC3plus and FFmpeg SPA plugins.
+PipeWire media server Bluetooth aptX codec plugin.
 
 %prep
-%autosetup -p1 -n pipewire-1.6.8
+%autosetup -p1 -n pipewire-%{version}
 
 %build
 %meson \
   -D examples=disabled \
   -D bluez5=enabled \
-  -D bluez5-codec-aptx=%{?with_freeaptx:enabled}%{!?with_freeaptx:disabled} \
+  -D bluez5-codec-aptx=enabled \
   -D bluez5-codec-ldac-dec=disabled \
-  -D bluez5-codec-lc3plus=%{?with_lc3plus:enabled}%{!?with_lc3plus:disabled} \
-  -D ffmpeg=%{?with_ffmpeg:enabled}%{!?with_ffmpeg:disabled} \
+  -D bluez5-codec-lc3plus=enabled \
+  -D ffmpeg=enabled \
   -D lv2=enabled \
   -D session-managers=[]
-%meson_build
+
+%meson_build \
+    spa-codec-bluez5-aptx \
+    spa-codec-bluez5-lc3plus \
+    spa-ffmpeg
 
 %install
-%if %{with freeaptx}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-aptx.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
-%endif
-%if %{with lc3plus}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-lc3plus.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
-%endif
-%if %{with ffmpeg}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
-%endif
 
 %files
 %license COPYING
-%if %{with freeaptx}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
-%endif
-%if %{with lc3plus}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
-%endif
-%if %{with ffmpeg}
 %dir %{_libdir}/spa-%{spaversion}/ffmpeg
 %{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
-%endif
 
 %changelog
-* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
-- Initial Kestrel package (independent recipe)
+* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
+- Simplify to match Utah approach: always enable aptX, LC3plus and FFmpeg
+- Use %meson_build with specific targets for cleaner builds
