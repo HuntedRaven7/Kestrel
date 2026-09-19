@@ -164,8 +164,8 @@ def test_check_source_unknown_package(tmp_path, monkeypatch, capsys):
 
 def test_check_source_local_package(tmp_path, monkeypatch, capsys):
     _setup_sources(tmp_path, monkeypatch, {"localpkg": {"version": "1", "local": True}})
-    assert sp.check_source("localpkg") is False
-    assert "no upstream-sources.json entry" in capsys.readouterr().out
+    assert sp.check_source("localpkg") is True  # local packages are considered "ready"
+    assert "local package" in capsys.readouterr().out
 
 
 def test_check_source_ready_package(tmp_path, monkeypatch, capsys):
@@ -189,7 +189,7 @@ def test_check_source_no_version(tmp_path, monkeypatch, capsys):
         "unversioned": {"url_template": "https://x/{version}/pkg.tar.gz", "sha512": "0" * 128}
     })
     assert sp.check_source("unversioned") is False
-    assert "not fetchable" in capsys.readouterr().out
+    assert "not ready" in capsys.readouterr().out
 
 
 def test_check_source_no_digest(tmp_path, monkeypatch, capsys):
@@ -213,7 +213,7 @@ def test_check_source_handles_malformed_json(tmp_path, monkeypatch):
 def test_validate_accepts_valid_entries():
     data = {"packages": {
         "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
-                "sha512": "0" * 128, "filename": "pkg-1.0.tar.gz"}
+                "sha512": "0" * 128, "filename": "pkg.tar.gz"}
     }}
     assert sp.validate_upstream_sources(data) == []
 
@@ -262,7 +262,7 @@ def test_cmd_validate_passes_with_valid_data(tmp_path, monkeypatch, capsys):
     digest = "0" * 128
     _setup_sources(tmp_path, monkeypatch, {
         "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
-                "sha512": digest, "filename": "pkg-1.0.tar.gz"}
+                "sha512": digest, "filename": "pkg.tar.gz"}
     })
     assert sp.cmd_validate() == 0
     assert "validated 1 source entries" in capsys.readouterr().out
@@ -296,7 +296,7 @@ def test_main_validate_command(tmp_path, monkeypatch, capsys):
     digest = "0" * 128
     _setup_sources(tmp_path, monkeypatch, {
         "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
-                "sha512": digest, "filename": "pkg-1.0.tar.gz"}
+                "sha512": digest, "filename": "pkg.tar.gz"}
     })
     assert sp.main(["validate"]) == 0
     assert "validated 1 source entries" in capsys.readouterr().out
