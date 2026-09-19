@@ -91,6 +91,46 @@
       ],
       "datasourceTemplate": "github-tags",
       "depNameTemplate": "ublue-os/uupd"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - alsa-tools from alsa-project.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"alsa-tools\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.alsa-project.org/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - ffmpeg from ffmpeg.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"ffmpeg\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://ffmpeg.org/releases/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - git from kernel.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"git\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.kernel.org/pub/software/scm/git/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - linux-firmware from kernel.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"linux-firmware\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.kernel.org/pub/linux/kernel/firmware/"
     }
   ]
 }
