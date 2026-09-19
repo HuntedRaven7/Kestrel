@@ -20,65 +20,65 @@
 %define with_smartmontools 1
 
 # btrfs is not available on RHEL > 7
-%if 0%{?rhel} > 7 || %{with_btrfs} == 0
+%if 0%{?rhel} > 7 || 0%{?with_btrfs} == 0
 %define with_btrfs 0
 %define btrfs_copts --without-btrfs
 %endif
 
-%if %{with_btrfs} != 1
+%if 0%{?with_btrfs} != 1
 %define btrfs_copts --without-btrfs
 %endif
-%if %{with_crypto} != 1
+%if 0%{?with_crypto} != 1
 %define crypto_copts --without-crypto
 %else
-%if %{with_escrow} != 1
+%if 0%{?with_escrow} != 1
 %define crypto_copts --without-escrow
 %endif
 %endif
-%if %{with_dm} != 1
+%if 0%{?with_dm} != 1
 %define dm_copts --without-dm
 %else
 %endif
-%if %{with_loop} != 1
+%if 0%{?with_loop} != 1
 %define loop_copts --without-loop
 %endif
-%if %{with_lvm} != 1
+%if 0%{?with_lvm} != 1
 %define lvm_copts --without-lvm
 %endif
-%if %{with_lvm_dbus} != 1
+%if 0%{?with_lvm_dbus} != 1
 %define lvm_dbus_copts --without-lvm_dbus
 %endif
-%if %{with_mdraid} != 1
+%if 0%{?with_mdraid} != 1
 %define mdraid_copts --without-mdraid
 %endif
-%if %{with_mpath} != 1
+%if 0%{?with_mpath} != 1
 %define mpath_copts --without-mpath
 %endif
-%if %{with_swap} != 1
+%if 0%{?with_swap} != 1
 %define swap_copts --without-swap
 %endif
-%if %{with_part} != 1
+%if 0%{?with_part} != 1
 %define part_copts --without-part
 %endif
-%if %{with_fs} != 1
+%if 0%{?with_fs} != 1
 %define fs_copts --without-fs
 %endif
-%if %{with_nvdimm} != 1
+%if 0%{?with_nvdimm} != 1
 %define nvdimm_copts --without-nvdimm
 %endif
-%if %{with_tools} != 1
+%if 0%{?with_tools} != 1
 %define tools_copts --without-tools
 %endif
-%if %{with_gi} != 1
+%if 0%{?with_gi} != 1
 %define gi_copts --disable-introspection
 %endif
-%if %{with_nvme} != 1
+%if 0%{?with_nvme} != 1
 %define nvme_copts --without-nvme
 %endif
-%if %{with_smart} != 1
+%if 0%{?with_smart} != 1
 %define smart_copts --without-smart
 %endif
-%if %{with_smartmontools} != 1
+%if 0%{?with_smartmontools} != 1
 %define smartmontools_copts --without-smartmontools
 %endif
 
@@ -94,13 +94,13 @@ Source0:     https://github.com/storaged-project/libblockdev/releases/download/%
 
 BuildRequires: make
 BuildRequires: glib2-devel
-%if %{with_gi}
+%if 0%{?with_gi}
 BuildRequires: gobject-introspection-devel
 %endif
-%if %{with_python3}
+%if 0%{?with_python3}
 BuildRequires: python3-devel
 %endif
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
 BuildRequires: gtk-doc
 %endif
 BuildRequires: glib2-doc
@@ -139,7 +139,7 @@ Obsoletes: libblockdev-vdo-devel < %{version}-%{release}
 This package contains header files and pkg-config files needed for development
 with the libblockdev library.
 
-%if %{with_python3}
+%if 0%{?with_python3}
 %package -n python3-blockdev
 Summary:     Python3 gobject-introspection bindings for libblockdev
 Requires: %{name}%{?_isa} = %{version}-%{release}
@@ -170,7 +170,7 @@ This package contains header files and pkg-config files needed for development
 with the libblockdev-utils library.
 
 
-%if %{with_btrfs}
+%if 0%{?with_btrfs}
 %package btrfs
 BuildRequires: libbytesize-devel
 Summary:     The BTRFS plugin for the libblockdev library
@@ -193,14 +193,14 @@ with the libblockdev-btrfs plugin/library.
 %endif
 
 
-%if %{with_crypto}
+%if 0%{?with_crypto}
 %package crypto
 Requires: %{name}-utils%{?_isa} = %{version}-%{release}
 BuildRequires: cryptsetup-devel >= 2.3.0
 BuildRequires: libblkid-devel
 BuildRequires: keyutils-libs-devel
 
-%if %{with_escrow}
+%if 0%{?with_escrow}
 BuildRequires: volume_key-devel >= 0.3.9-7
 BuildRequires: nss-devel
 %endif
@@ -223,7 +223,7 @@ with the libblockdev-crypto plugin/library.
 %endif
 
 
-%if %{with_dm}
+%if 0%{?with_dm}
 %package dm
 BuildRequires: device-mapper-devel
 BuildRequires: systemd-devel
@@ -249,7 +249,7 @@ with the libblockdev-dm plugin/library.
 %endif
 
 
-%if %{with_fs}
+%if 0%{?with_fs}
 %package fs
 BuildRequires: libblkid-devel
 BuildRequires: libmount-devel
@@ -274,7 +274,7 @@ with the libblockdev-fs plugin/library.
 %endif
 
 
-%if %{with_loop}
+%if 0%{?with_loop}
 %package loop
 Summary:     The loop plugin for the libblockdev library
 Requires: %{name}-utils%{?_isa} = %{version}-%{release}
@@ -295,7 +295,7 @@ with the libblockdev-loop plugin/library.
 %endif
 
 
-%if %{with_lvm}
+%if 0%{?with_lvm}
 %package lvm
 BuildRequires: device-mapper-devel
 BuildRequires: libyaml-devel
@@ -318,7 +318,7 @@ This package contains header files and pkg-config files needed for development
 with the libblockdev-lvm plugin/library.
 %endif
 
-%if %{with_lvm_dbus}
+%if 0%{?with_lvm_dbus}
 %package lvm-dbus
 BuildRequires: device-mapper-devel
 BuildRequires: libyaml-devel
@@ -342,7 +342,7 @@ with the libblockdev-lvm-dbus plugin/library.
 %endif
 
 
-%if %{with_mdraid}
+%if 0%{?with_mdraid}
 %package mdraid
 BuildRequires: libbytesize-devel
 Summary:     The MD RAID plugin for the libblockdev library
@@ -365,7 +365,7 @@ with the libblockdev-mdraid plugin/library.
 %endif
 
 
-%if %{with_mpath}
+%if 0%{?with_mpath}
 %package mpath
 BuildRequires: device-mapper-devel
 Summary:     The multipath plugin for the libblockdev library
@@ -387,7 +387,7 @@ This package contains header files and pkg-config files needed for development
 with the libblockdev-mpath plugin/library.
 %endif
 
-%if %{with_nvdimm}
+%if 0%{?with_nvdimm}
 %package nvdimm
 BuildRequires: ndctl-devel
 BuildRequires: libuuid-devel
@@ -411,7 +411,7 @@ with the libblockdev-nvdimm plugin/library.
 %endif
 
 
-%if %{with_nvme}
+%if 0%{?with_nvme}
 %package nvme
 BuildRequires: libnvme-devel
 BuildRequires: libuuid-devel
@@ -434,7 +434,7 @@ with the libblockdev-nvme plugin/library.
 %endif
 
 
-%if %{with_part}
+%if 0%{?with_part}
 %package part
 BuildRequires: libfdisk-devel
 Summary:     The partitioning plugin for the libblockdev library
@@ -457,7 +457,7 @@ with the libblockdev-part plugin/library.
 %endif
 
 
-%if %{with_smart}
+%if 0%{?with_smart}
 %package smart
 BuildRequires: libatasmart-devel >= 0.17
 Summary:     The smart plugin for the libblockdev library
@@ -480,7 +480,7 @@ with the libblockdev-smart plugin/library.
 %endif
 
 
-%if %{with_smartmontools}
+%if 0%{?with_smartmontools}
 %package smartmontools
 BuildRequires: json-glib-devel
 Summary:     The smartmontools plugin for the libblockdev library
@@ -504,7 +504,7 @@ with the libblockdev-smart plugin/library.
 %endif
 
 
-%if %{with_swap}
+%if 0%{?with_swap}
 %package swap
 BuildRequires: libblkid-devel
 Summary:     The swap plugin for the libblockdev library
@@ -526,14 +526,14 @@ This package contains header files and pkg-config files needed for development
 with the libblockdev-swap plugin/library.
 %endif
 
-%if %{with_tools}
+%if 0%{?with_tools}
 %package tools
 Summary:    Various nice tools based on libblockdev
 Requires:   %{name} = %{version}-%{release}
 Requires:   %{name}-lvm = %{version}-%{release}
 BuildRequires: libbytesize-devel
 BuildRequires: parted-devel
-%if %{with_lvm_dbus} == 1
+%if 0%{?with_lvm_dbus} == 1
 Recommends: %{name}-lvm-dbus
 %endif
 
@@ -567,59 +567,59 @@ with the libblockdev-s390 plugin/library.
 Summary:     Meta-package that pulls all the libblockdev plugins as dependencies
 Requires: %{name}%{?_isa} = %{version}-%{release}
 
-%if %{with_btrfs}
+%if 0%{?with_btrfs}
 Requires: %{name}-btrfs%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_crypto}
+%if 0%{?with_crypto}
 Requires: %{name}-crypto%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_dm}
+%if 0%{?with_dm}
 Requires: %{name}-dm%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_fs}
+%if 0%{?with_fs}
 Requires: %{name}-fs%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_loop}
+%if 0%{?with_loop}
 Requires: %{name}-loop%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_lvm}
+%if 0%{?with_lvm}
 Requires: %{name}-lvm%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_mdraid}
+%if 0%{?with_mdraid}
 Requires: %{name}-mdraid%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_mpath}
+%if 0%{?with_mpath}
 Requires: %{name}-mpath%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_nvdimm}
+%if 0%{?with_nvdimm}
 Requires: %{name}-nvdimm%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_nvme}
+%if 0%{?with_nvme}
 Requires: %{name}-nvme%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_part}
+%if 0%{?with_part}
 Requires: %{name}-part%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_smart}
+%if 0%{?with_smart}
 Requires: %{name}-smart%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_smartmontools}
+%if 0%{?with_smartmontools}
 Requires: %{name}-smartmontools%{?_isa} = %{version}-%{release}
 %endif
 
-%if %{with_swap}
+%if 0%{?with_swap}
 Requires: %{name}-swap%{?_isa} = %{version}-%{release}
 %endif
 
@@ -659,63 +659,63 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %ldconfig_scriptlets
 %ldconfig_scriptlets utils
 
-%if %{with_btrfs}
+%if 0%{?with_btrfs}
 %ldconfig_scriptlets btrfs
 %endif
 
-%if %{with_crypto}
+%if 0%{?with_crypto}
 %ldconfig_scriptlets crypto
 %endif
 
-%if %{with_dm}
+%if 0%{?with_dm}
 %ldconfig_scriptlets dm
 %endif
 
-%if %{with_fs}
+%if 0%{?with_fs}
 %ldconfig_scriptlets fs
 %endif
 
-%if %{with_loop}
+%if 0%{?with_loop}
 %ldconfig_scriptlets loop
 %endif
 
-%if %{with_lvm}
+%if 0%{?with_lvm}
 %ldconfig_scriptlets lvm
 %endif
 
-%if %{with_lvm_dbus}
+%if 0%{?with_lvm_dbus}
 %ldconfig_scriptlets lvm-dbus
 %endif
 
-%if %{with_mdraid}
+%if 0%{?with_mdraid}
 %ldconfig_scriptlets mdraid
 %endif
 
-%if %{with_mpath}
+%if 0%{?with_mpath}
 %ldconfig_scriptlets mpath
 %endif
 
-%if %{with_nvdimm}
+%if 0%{?with_nvdimm}
 %ldconfig_scriptlets nvdimm
 %endif
 
-%if %{with_nvme}
+%if 0%{?with_nvme}
 %ldconfig_scriptlets nvme
 %endif
 
-%if %{with_part}
+%if 0%{?with_part}
 %ldconfig_scriptlets part
 %endif
 
-%if %{with_smart}
+%if 0%{?with_smart}
 %ldconfig_scriptlets smart
 %endif
 
-%if %{with_smartmontools}
+%if 0%{?with_smartmontools}
 %ldconfig_scriptlets smartmontools
 %endif
 
-%if %{with_swap}
+%if 0%{?with_swap}
 %ldconfig_scriptlets swap
 %endif
 
@@ -728,7 +728,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %{!?_licensedir:%global license %%doc}
 %license LICENSE
 %{_libdir}/libblockdev.so.*
-%if %{with_gi}
+%if 0%{?with_gi}
 %{_libdir}/girepository*/BlockDev*.typelib
 %endif
 %dir %{_sysconfdir}/libblockdev
@@ -741,14 +741,14 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %{_includedir}/blockdev/blockdev.h
 %{_includedir}/blockdev/plugins.h
 %{_libdir}/pkgconfig/blockdev.pc
-%if %{with_gtk_doc}
+%if 0%{?with_gtk_doc}
 %{_datadir}/gtk-doc/html/libblockdev
 %endif
-%if %{with_gi}
+%if 0%{?with_gi}
 %{_datadir}/gir*/BlockDev*.gir
 %endif
 
-%if %{with_python3}
+%if 0%{?with_python3}
 %files -n python3-blockdev
 %{python3_sitearch}/gi/overrides/BlockDev*
 %{python3_sitearch}/gi/overrides/__pycache__/BlockDev*
@@ -771,7 +771,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %{_includedir}/blockdev/logging.h
 
 
-%if %{with_btrfs}
+%if 0%{?with_btrfs}
 %files btrfs
 %{_libdir}/libbd_btrfs.so.*
 
@@ -782,7 +782,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_crypto}
+%if 0%{?with_crypto}
 %files crypto
 %{_libdir}/libbd_crypto.so.*
 
@@ -793,7 +793,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_dm}
+%if 0%{?with_dm}
 %files dm
 %{_libdir}/libbd_dm.so.*
 
@@ -804,7 +804,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_fs}
+%if 0%{?with_fs}
 %files fs
 %{_libdir}/libbd_fs.so.*
 
@@ -817,7 +817,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_loop}
+%if 0%{?with_loop}
 %files loop
 %{_libdir}/libbd_loop.so.*
 
@@ -828,7 +828,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_lvm}
+%if 0%{?with_lvm}
 %files lvm
 %{_libdir}/libbd_lvm.so.*
 
@@ -839,7 +839,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_lvm_dbus}
+%if 0%{?with_lvm_dbus}
 %files lvm-dbus
 %{_libdir}/libbd_lvm-dbus.so.*
 %config %{_sysconfdir}/libblockdev/3/conf.d/10-lvm-dbus.cfg
@@ -851,7 +851,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_mdraid}
+%if 0%{?with_mdraid}
 %files mdraid
 %{_libdir}/libbd_mdraid.so.*
 
@@ -862,7 +862,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_mpath}
+%if 0%{?with_mpath}
 %files mpath
 %{_libdir}/libbd_mpath.so.*
 
@@ -873,7 +873,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_nvdimm}
+%if 0%{?with_nvdimm}
 %files nvdimm
 %{_libdir}/libbd_nvdimm.so.*
 
@@ -884,7 +884,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_nvme}
+%if 0%{?with_nvme}
 %files nvme
 %{_libdir}/libbd_nvme.so.*
 
@@ -895,7 +895,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_part}
+%if 0%{?with_part}
 %files part
 %{_libdir}/libbd_part.so.*
 
@@ -906,7 +906,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_smart}
+%if 0%{?with_smart}
 %files smart
 %{_libdir}/libbd_smart.so.*
 
@@ -917,7 +917,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_smartmontools}
+%if 0%{?with_smartmontools}
 %files smartmontools
 %{_libdir}/libbd_smartmontools.so.*
 
@@ -928,7 +928,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_swap}
+%if 0%{?with_swap}
 %files swap
 %{_libdir}/libbd_swap.so.*
 
@@ -939,7 +939,7 @@ find %{buildroot} -type f -name "*.la" | xargs %{__rm}
 %endif
 
 
-%if %{with_tools}
+%if 0%{?with_tools}
 %files tools
 %{_bindir}/lvm-cache-stats
 %{_bindir}/vfat-resize
