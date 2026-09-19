@@ -31,13 +31,16 @@ Ghostty terminal emulator — default terminal of the Warbler desktop.
 %autosetup -n ghostty-%{version} -p1
 
 %build
-# Install Zig 0.15.2 (Fedora 44 ships 0.16.0 which has breaking changes)
-# See: https://github.com/ziglang/zig/releases/tag/0.15.2
+# Install Zig 0.15.2 (newer Fedora 44 ships 0.16.0 which has breaking changes;
+# older versions can't build ghostty v1.3.1 which requires 0.15.2).
+# See: https://ziglang.org/download/0.15.2/
+# Note: Zig 0.15.x uses the zig-x86_64-linux-NN.N.N naming scheme
+# (zig-linux-x86_64-NN.N.N was for 0.14.x and earlier).
 ZIG_VER=0.15.2
-ZIG_URL="https://ziglang.org/download/${ZIG_VER}/zig-linux-x86_64-${ZIG_VER}.tar.xz"
+ZIG_URL="https://ziglang.org/download/${ZIG_VER}/zig-x86_64-linux-${ZIG_VER}.tar.xz"
 curl -sSL "${ZIG_URL}" -o /tmp/zig.tar.xz
-xz -dc /tmp/zig.tar.xz | tar -x -C /tmp
-export PATH="/tmp/zig-linux-x86_64-${ZIG_VER}:$PATH"
+tar -xf /tmp/zig.tar.xz -C /tmp
+export PATH="/tmp/zig-x86_64-linux-${ZIG_VER}:$PATH"
 
 zig build -Doptimize=ReleaseFast -Dversion=v%{version} -p %{buildroot}%{_prefix}
 

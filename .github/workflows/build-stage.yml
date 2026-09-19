@@ -128,7 +128,13 @@ jobs:
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
-              dnf builddep -y /tmp/pkg.spec
+              # Try builddep; if it fails due to missing pigeon-prior packages,
+              # retry with --skip-unavailable so missing inter-package deps
+              # (e.g. wireplumber needs pipewire-0.3.pc from our pipewire build)
+              # don't block the entire stage.
+              dnf builddep -y /tmp/pkg.spec 2>/dev/null || \
+                dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>/dev/null || \
+                echo "WARNING: builddep failed for $PACKAGE, continuing anyway"
               # Keep the real spec filename: later steps address it by
               # $(basename $SPEC), and a bare cp would leave pkg.spec.
               rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \
