@@ -42,10 +42,31 @@ def render_url(entry: dict) -> str:
     return entry["url_template"].replace("{version}", str(entry["version"]))
 
 
-def download(url: str, dest: Path) -> None:
+def download(url: str, dest: Path, retries: int = 3, backoff: int = 5) -> None:
+    """Download with retry for transient network errors."""
+    import time
     req = urllib.request.Request(url, headers={"User-Agent": "kestrel-source-pipeline/1"})
-    with urllib.request.urlopen(req, timeout=120) as resp, dest.open("wb") as f:
-        shutil.copyfileobj(resp, f, length=CHUNK)
+    last_exc = None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp, dest.open("wb") as f:
+                shutil.copyfileobj(resp, f, length=CHUNK)
+            return
+        except urllib.error.URLError as exc:
+            last_exc = exc
+            if attempt < retries - 1:
+                print(f"  Download attempt {attempt + 1} failed: {exc}. Retrying in {backoff}s...")
+                time.sleep(backoff)
+                backoff *= 2
+            continue
+        except Exception as exc:
+            last_exc = exc
+            if attempt < retries - 1:
+                print(f"  Download attempt {attempt + 1} failed: {exc}. Retrying in {backoff}s...")
+                time.sleep(backoff)
+                backoff *= 2
+            continue
+    raise last_exc
 
 
 def sha512_of(path: Path) -> str:
