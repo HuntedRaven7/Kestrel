@@ -64,40 +64,23 @@ CFLAGS="%{optflags} -D_GNU_SOURCE" %configure
 make %{?_smp_mflags}
 
 %install
-mkdir -p %{buildroot}/%{_libdir}/pkgconfig
-install -m 0755 lib/.libs/libfuse.so.%{version} %{buildroot}/%{_libdir}
-install -m 0755 lib/.libs/libulockmgr.so.1.0.1 %{buildroot}/%{_libdir}
-install -p fuse.pc %{buildroot}/%{_libdir}/pkgconfig/
+%make_install
 
 # Install example binaries (fusexmp and fusexmp_fh are in example/, not util/)
-install -m 0755 example/.libs/fusexmp %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/fusexmp_fh %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/hello %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/hello_ll %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/fioc %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/fioclient %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/fsel %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/fselclient %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/cusexmp %{buildroot}/%{_bindir}
-install -m 0755 example/.libs/null %{buildroot}/%{_bindir}
+# Some example programs (fioclient, fselclient) don't have explicit LDADD
+# in the Makefile and may fail to link; install only what was built.
+for prog in fusexmp fusexmp_fh hello hello_ll fioc fioclient fsel fselclient cusexmp null; do
+  if [ -f "example/.libs/$prog" ]; then
+    install -m 0755 "example/.libs/$prog" %{buildroot}/%{_bindir}/
+  fi
+done
 
-# Install sbin binaries
-mkdir -p %{buildroot}/%{_sbindir}
-install -m 0755 util/.libs/fusermount %{buildroot}/%{_sbindir}
-install -m 0755 util/.libs/ulockmgr_server %{buildroot}/%{_sbindir}
+# Set setgid bit on fusermount (required for FUSE mounting)
+chmod u+s %{buildroot}/%{_sbindir}/fusermount 2>/dev/null || true
 
 %files
 %license COPYING
-%{_bindir}/fusexmp
-%{_bindir}/fusexmp_fh
-%{_bindir}/hello
-%{_bindir}/hello_ll
-%{_bindir}/fioc
-%{_bindir}/fioclient
-%{_bindir}/fsel
-%{_bindir}/fselclient
-%{_bindir}/cusexmp
-%{_bindir}/null
+%{_bindir}/*
 %{_sbindir}/*
 
 %files libs
