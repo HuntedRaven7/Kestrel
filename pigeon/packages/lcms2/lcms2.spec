@@ -38,7 +38,7 @@ Provides:       littlecms-devel = %{version}-%{release}
 Development files for LittleCMS.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n Little-CMS-lcms%{version}
 
 %build
 %meson -Dutils=true
