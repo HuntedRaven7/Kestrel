@@ -11,6 +11,9 @@ Summary:        Window switcher, run dialog, and dmenu replacement
 License:        MIT
 URL:            https://github.com/davatorium/rofi
 Source0:        https://github.com/davatorium/rofi/archive/refs/tags/%{version}.tar.gz
+# Submodules (git archives don't include submodule contents)
+Source1:        https://github.com/sardemff7/libgwater/archive/refs/heads/master.tar.gz
+Source2:        https://github.com/sardemff7/libnkutils/archive/refs/heads/master.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -44,6 +47,9 @@ Rofi launcher for the Warbler desktop (drun + window modes).
 
 %prep
 %autosetup -n rofi-%{version} -p1
+# Populate submodule subprojects
+tar -xzf %{SOURCE1} -C subprojects/libgwater --strip-components=1
+tar -xzf %{SOURCE2} -C subprojects/libnkutils --strip-components=1
 
 %build
 %meson -Dcheck=disabled
