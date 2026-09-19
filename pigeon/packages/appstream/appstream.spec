@@ -13,7 +13,7 @@ Release: 1.hum1.pigeon
 
 License: GPL-2.0-or-later AND LGPL-2.1-or-later
 URL:     https://github.com/ximion/appstream
-Source0: https://www.freedesktop.org/software/appstream/releases/AppStream-1.1.3.tar.xz
+Source0: https://github.com/ximion/appstream/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires: cmake
 BuildRequires: docbook5-style-xsl
