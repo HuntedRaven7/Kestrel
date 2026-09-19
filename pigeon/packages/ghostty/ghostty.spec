@@ -20,7 +20,6 @@ URL:            https://github.com/ghostty-org/ghostty
 Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  zig >= 0.15.2
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(fontconfig)
@@ -32,6 +31,13 @@ Ghostty terminal emulator — default terminal of the Warbler desktop.
 %autosetup -n ghostty-%{version} -p1
 
 %build
+# Install Zig 0.15.2 (Fedora 44 ships 0.16.0 which has breaking changes)
+# See: https://github.com/ziglang/zig/releases/tag/0.15.2
+ZIG_VER=0.15.2
+curl -sSL "https://ziglang.org/download/${ZIG_VER}/zig-linux-x86_64-${ZIG_VER}.tar.xz" \
+  | tar -xJ -C /tmp
+export PATH="/tmp/zig-linux-x86_64-${ZIG_VER}:$PATH"
+
 zig build -Doptimize=ReleaseFast -Dversion=v%{version} -p %{buildroot}%{_prefix}
 
 %install

@@ -155,7 +155,7 @@ def rename_vendor_tarball(pkg_name: str, pkg_dir: Path) -> None:
         "tailscale": {
             "vendor_from_pattern": "tailscale-*-vendored.tar.xz",
             "vendor_to_template": "tailscale-{version}-vendor.tar.xz",
-            "source_from_pattern": "tailscale-*.tar.gz",
+            "source_from_pattern": "v{version}.tar.gz",
             "source_to_template": "v{version}.tar.gz",
         },
         "runc": {
