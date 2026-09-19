@@ -18,7 +18,7 @@
 %bcond_without alsa
 %bcond_without vulkan
 %bcond_without bluez
-%bcond_without fdk-aac
+%bcond_without fdk_aac
 %bcond_without freeaptx
 %bcond_without lc3plus
 
