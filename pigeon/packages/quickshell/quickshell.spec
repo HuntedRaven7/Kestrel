@@ -22,6 +22,7 @@ BuildRequires:  cli11-devel
 BuildRequires:  cpptrace-devel
 BuildRequires:  jemalloc-devel
 BuildRequires:  libdrm-devel
+BuildRequires:  libzstd-devel
 BuildRequires:  pam-devel
 BuildRequires:  polkit-devel
 BuildRequires:  pkgconfig(libpipewire-0.3)
