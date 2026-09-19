@@ -5,5 +5,5 @@
     "warbler": { "title": "Warbler", "description": "Hummingbird-based Mango desktop" },
     "woodpecker": { "title": "Woodpecker", "description": "Hummingbird-based server" }
   },
-  "uupd_version": "0.1.0"
+  "uupd_version": "v0.5.1"
 }

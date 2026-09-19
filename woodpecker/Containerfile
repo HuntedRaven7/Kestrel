@@ -3,7 +3,7 @@
 # Consumes Pigeon RPM repo by digest (Renovate-owned).
 # No GUI stack — shares base stages with Warbler, stops before desktop layer.
 
-ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:5c05afed5a70b3438e5584cfe6342328e8d1a221cb6efa50913c12aa0c037393
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:db1007fdcda076f2d7fd0e2adfe998141dd1908b8f66c732654f762c6a8b2728
 ARG BASE_IMAGE_SHA=sha256:5c05afed5a70b3438e5584cfe6342328e8d1a221cb6efa50913c12aa0c037393
 ARG PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon
 ARG PIGEON_IMAGE_SHA=sha256:TODO_PIGEON_IMAGE_SHA
