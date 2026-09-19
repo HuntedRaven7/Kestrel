@@ -393,15 +393,15 @@
     },
     "crun": {
       "version": "1.29.1",
-      "url_template": "https://github.com/containers/crun/archive/refs/tags/{version}.tar.gz",
-      "sha512": "30d009e3bae8c9176fe35fdb4d8c9aeba4f4e0d8c7286c512b8fda9876d398a43b7b11b702142ea3cb8d925b5840b9f3a9fa677e4966a5420e619a274c87f7c6",
+      "url_template": "https://github.com/containers/crun/releases/download/{version}/crun-{version}.tar.zst",
+      "sha512": "d12ff1252b20fe8ac1015c7581fde3eabbefca396b8cd9c7fac94eb12606e7ace0c8f561651fa9983a7ae98ba1489c72da6d6aa563061faf1b274d5075ac22bd",
       "stage": 2,
-      "note": "Fedora dist-git import. OCI container runtime (C).",
+      "note": "Fedora dist-git import. OCI container runtime (C). Release attachment (bundles populated libocispec submodule + generated files; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
         "depName": "containers/crun"
       },
-      "filename": "1.29.1.tar.gz"
+      "filename": "crun-1.29.1.tar.zst"
     },
     "podman": {
       "version": "6.1.2",
