@@ -23,17 +23,17 @@ jobs:
         include: ${{ fromJson(inputs.packages) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
       - name: Install podman
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq podman
+          sudo apt-get install -y -qq podman rpm cpio
 
       - name: Pull Fedora 44 build container
-        run: podman pull quay.io/fedora/fedora:44
+        run: podman pull quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599
 
       - name: Fetch verified source for this package
         run: |
@@ -41,8 +41,43 @@ jobs:
           python3 pigeon/tools/source_pipeline.py fetch "${{ matrix.package }}" \
             --output work/src --stage-into pigeon/packages
 
+      - name: Stage vendored and secondary sources
+        # source_pipeline.py only stages the primary Source0 archive, but
+        # rpmbuild needs every Source/Patch present: Go vendor trees
+        # (runc/containerd/tailscale via Koji SRPM, bootc via release
+        # tarball) and any dist-git sidecar audit --fix can fetch.
+        run: |
+          PKG="${{ matrix.package }}"
+          if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('vendored') else 1)"; then
+            echo "Fetching vendored sources for $PKG"
+            python3 pigeon/tools/fetch_vendored.py --package "$PKG"
+          fi
+          if [ "$PKG" = bootc ]; then
+            VER=$(python3 -c "import json; print(json.load(open('pigeon/config/upstream-sources.json'))['packages']['bootc']['version'])")
+            curl -fsSL --retry 3 \
+              -o "pigeon/packages/bootc/bootc-${VER}-vendor.tar.zstd" \
+              "https://github.com/bootc-dev/bootc/releases/download/v${VER}/bootc-${VER}-vendor.tar.zstd"
+          fi
+          python3 pigeon/tools/audit_sources.py --fix --package "$PKG"
+
+      - name: Alias staged source under spec Source0 names
+        # Fedora specs reference lookaside-renamed tarballs while upstream
+        # URLs serve tag-named files (libblockdev-3.5.0.tar.gz vs 3.5.0.tar.gz).
+        # The packit lane bridges this positionally; raw rpmbuild needs the
+        # spec's basename present, so link it to the verified staged archive.
+        run: |
+          if [ -n "$(ls work/src 2>/dev/null)" ]; then
+            SPEC=$(ls pigeon/packages/${{ matrix.package }}/*.spec | head -1)
+            STAGED=$(ls work/src/* | head -1)
+            python3 pigeon/tools/spec_source_alias.py --spec "$SPEC" \
+              --sources work/src --staged "$STAGED" \
+              --recipe-dir "pigeon/packages/${{ matrix.package }}"
+          else
+            echo "no staged source (local package?), skipping aliases"
+          fi
+
       - name: Download prior-stage RPMs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           # Earlier waves (and any already-finished same-wave jobs).
           # Later waves cannot exist yet: the caller serializes stages
@@ -62,7 +97,7 @@ jobs:
             -v "$PWD/work/prior:/prior:Z" \
             -v "$PWD/work/out:/out:Z" \
             -e PACKAGE="${{ matrix.package }}" \
-            quay.io/fedora/fedora:44 \
+            quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599 \
             bash -exc '
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
@@ -105,7 +140,7 @@ jobs:
             || echo "WARNING: no RPMs produced for ${{ matrix.package }}"
 
       - name: Upload stage artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: stage-${{ inputs.stage }}-${{ matrix.package }}
           path: ~/stages/${{ inputs.stage }}/${{ matrix.package }}/

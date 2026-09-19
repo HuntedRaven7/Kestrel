@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
 
@@ -221,7 +221,7 @@ jobs:
           cat /tmp/gap-report.md
 
       - name: Upload gap report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gap-report
           path: /tmp/gap-report.md
@@ -251,7 +251,7 @@ jobs:
           cat /tmp/gap-summary.json
 
       - name: Upload gap summary JSON
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: gap-summary
           path: /tmp/gap-summary.json

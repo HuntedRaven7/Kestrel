@@ -36,8 +36,9 @@ Source10:       create-vendor-tarball.sh
 # tar -cJf tailscale-%{version}-vendor.tar.xz vendor
 Source20:       tailscale-%{version}-vendor.tar.xz
 
-# Fedora-specific patch to handle pre-installed user unit
-Patch:          tailscale-1.92.5-systray-unit.patch
+# Fedora-specific patch to handle pre-installed user unit (unversioned
+# filename: survives version bumps without renaming)
+Patch:          tailscale-systray-unit.patch
 
 BuildRequires:     systemd-rpm-macros
 Requires:          iproute

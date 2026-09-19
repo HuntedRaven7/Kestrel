@@ -1,0 +1,11 @@
+# TASCAM US-428 usb sound card.
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8000", RUN+="/usr/lib/udev/tascam_fw"
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8001", RUN+="/usr/lib/udev/tascam_fpga"
+
+# TASCAM US-224 usb sound card.
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8004", RUN+="/usr/lib/udev/tascam_fw"
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8005", RUN+="/usr/lib/udev/tascam_fpga"
+
+# TASCAM US-122 usb sound card.
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8006", RUN+="/usr/lib/udev/tascam_fw"
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1604", ATTRS{idProduct}=="8007", RUN+="/usr/lib/udev/tascam_fpga"
