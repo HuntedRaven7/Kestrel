@@ -124,6 +124,44 @@ jobs:
         run: |
           python3 pigeon/tools/audit_sources.py --fix --package "$PACKAGE"
 
+      # Fetch .sig for swayidle BEFORE packit build (packit downloads all SourceN)
+      - name: Fetch swayidle signature from Fedora lookaside
+        if: ${{ steps.skip_check.outputs.skipped != 'true' && matrix.package == 'swayidle' }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import urllib.request
+          import re
+          from pathlib import Path
+          
+          pkg = "swayidle"
+          pkg_dir = Path("pigeon/packages") / pkg
+          
+          # Get hash from dist-git sources file
+          sources_url = f"https://src.fedoraproject.org/rpms/{pkg}/raw/rawhide/f/sources"
+          req = urllib.request.Request(sources_url, headers={"User-Agent": "kestrel-audit-sources/1"})
+          with urllib.request.urlopen(req, timeout=60) as resp:
+              sources_text = resp.read().decode()
+          
+          sig_file = None
+          for line in sources_text.splitlines():
+              m = re.match(r"SHA512 \((\S+)\) = (\S+)", line)
+              if m and m.group(1).endswith(".sig"):
+                  sig_file = m.group(1)
+                  sig_hash = m.group(2)
+                  break
+          
+          if sig_file:
+              lookaside_url = f"https://src.fedoraproject.org/repo/pkgs/{pkg}/{sig_file}/sha512/{sig_hash}/{sig_file}"
+              print(f"Fetching {sig_file} from {lookaside_url}")
+              req = urllib.request.Request(lookaside_url, headers={"User-Agent": "kestrel-audit-sources/1"})
+              with urllib.request.urlopen(req, timeout=120) as resp, open(pkg_dir / sig_file, "wb") as f:
+                  f.write(resp.read())
+              print(f"Staged {sig_file}")
+          else:
+              print("No .sig file found in dist-git sources")
+          EOF
+
       - name: Build SRPM with packit
         if: ${{ steps.skip_check.outputs.skipped != 'true' }}
         env:
