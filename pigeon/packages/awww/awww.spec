@@ -27,7 +27,7 @@ BuildRequires:  gcc
 # common/build.rs probes liblz4 >= 1.8 via pkg-config
 BuildRequires:  pkgconfig(liblz4)
 # dav1d-sys crate needs dav1d library
-BuildRequires:  dav1d-devel
+BuildRequires:  libdav1d-devel
 
 %description
 awww: animated wallpaper daemon for Wayland (here: Mango). Binaries:
