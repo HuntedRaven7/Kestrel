@@ -73,7 +73,7 @@ This package provides a utility to simplify reinstalling the current system to a
 %autosetup -n bootc-1.16.10
 
 %build
-%cargo_build --profile release
+%cargo_build
 
 %install
 %cargo_install
