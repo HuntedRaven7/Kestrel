@@ -96,9 +96,10 @@ Documentation for %{name}.
 %prep
 %autosetup -n git-2.47.0
 
-# GCC 16 defines unreachable() macro in stddef.h which conflicts with git's function
-# Undefine the macro in the compat header
-sed -i '1i #undef unreachable' git-compat-util.h
+# GCC 16 defines unreachable() as a macro in <stddef.h> (via __attribute_unreachable),
+# which conflicts with git's local unreachable() function in reflog.c.
+# Undefine the macro after stddef.h is included (line 252 area).
+sed -i '/#include <stddef.h>/a #undef unreachable' git-compat-util.h
 
 %build
 %make_build \

@@ -258,14 +258,23 @@ def fetch_vendored_source(pkg_name: str) -> bool:
 
     print(f"Fetching vendored sources for {pkg_name} {version}...")
 
-    # Try Koji first
-    srpm_url = fetch_srpm_from_koji(pkg_name, version)
+    # Use vendor_url directly if provided (avoids Koji search issues)
+    vendor_url = entry.get("vendor_url")
+    srpm_url = None
     srpm_path = None
+
+    if vendor_url:
+        print(f"  Using vendor_url from upstream-sources.json")
+        srpm_url = vendor_url
+    else:
+        # Try Koji first
+        srpm_url = fetch_srpm_from_koji(pkg_name, version)
 
     if srpm_url:
         with tempfile.TemporaryDirectory(prefix=f"kestrel-{pkg_name}-") as tmp:
             srpm_path = Path(tmp) / f"{pkg_name}.src.rpm"
-            print(f"  Downloading SRPM from Koji...")
+            source_desc = "vendor_url" if vendor_url else "Koji"
+            print(f"  Downloading SRPM from {source_desc}...")
             try:
                 req = urllib.request.Request(srpm_url, headers={"User-Agent": "kestrel-vendored-sources/1"})
                 with urllib.request.urlopen(req, timeout=120) as resp, open(srpm_path, "wb") as f:
@@ -275,7 +284,7 @@ def fetch_vendored_source(pkg_name: str) -> bool:
                         total += len(chunk)
                     print(f"  Downloaded {total} bytes")
             except Exception as exc:
-                print(f"  Failed to download SRPM from Koji: {exc}")
+                print(f"  Failed to download SRPM from {source_desc}: {exc}")
                 srpm_path = None
 
             # Extract here while temp dir is still alive
@@ -286,7 +295,7 @@ def fetch_vendored_source(pkg_name: str) -> bool:
                     ensure_source_tarball(pkg_name, entry, PKGS / pkg_name)
                     return True
 
-    # If Koji failed, try dnf download from dist-git
+    # If SRPM download failed, try dnf download from dist-git
     if not srpm_path:
         srpm_path = fetch_srpm_from_distgit(pkg_name, version)
         if srpm_path:
@@ -296,10 +305,12 @@ def fetch_vendored_source(pkg_name: str) -> bool:
                 srpm_path.rename(tmp_path)
                 srpm_path = tmp_path
                 if not extract_srpm(srpm_path, PKGS / pkg_name):
-                    return False
-                rename_vendor_tarball(pkg_name, PKGS / pkg_name)
-                ensure_source_tarball(pkg_name, entry, PKGS / pkg_name)
-                return True
+                    # Extraction failed, fall through to upstream download
+                    srpm_path = None
+                else:
+                    rename_vendor_tarball(pkg_name, PKGS / pkg_name)
+                    ensure_source_tarball(pkg_name, entry, PKGS / pkg_name)
+                    return True
 
     # Last resort: try to download source tarball directly from upstream
     print(f"  Koji/dist-git unavailable, trying upstream download for {pkg_name}...")

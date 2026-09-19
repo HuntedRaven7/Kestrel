@@ -28,6 +28,8 @@ BuildRequires:  gcc
 BuildRequires:  pkgconfig(liblz4)
 # dav1d-sys crate needs dav1d library
 BuildRequires:  libdav1d-devel
+# waybackend-scanner crate needs wayland-protocols
+BuildRequires:  pkgconfig(wayland-protocols)
 
 %description
 awww: animated wallpaper daemon for Wayland (here: Mango). Binaries:

@@ -48,6 +48,8 @@ BuildRequires: rust-toolset
 BuildRequires: cargo-rpm-macros >= 25
 %endif
 BuildRequires: systemd
+BuildRequires: cargo
+BuildRequires: rustc
 
 Requires: composefs
 Requires: ostree
@@ -71,6 +73,8 @@ This package provides a utility to simplify reinstalling the current system to a
 
 %prep
 %autosetup -n bootc-1.16.10
+# Unpack vendor tree for hermetic offline build
+tar --zstd -xf %{SOURCE1}
 
 %build
 %cargo_build

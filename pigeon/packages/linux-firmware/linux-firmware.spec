@@ -69,25 +69,40 @@ Firmware for NVIDIA GPUs.
 mkdir -p %{buildroot}%{_firmwarepath}
 cp -a * %{buildroot}%{_firmwarepath}/
 
-# Remove files that shouldn't be installed
+# Copy license files to license dir for %license macro
+mkdir -p %{buildroot}%{_liconsdir}
+cp LICENSE* %{buildroot}%{_liconsdir}/ 2>/dev/null || true
+
+# Remove files that shouldn't be installed in firmware path
 rm -f %{buildroot}%{_firmwarepath}/*.txt
 rm -f %{buildroot}%{_firmwarepath}/*.md
 rm -f %{buildroot}%{_firmwarepath}/README
 rm -rf %{buildroot}%{_firmwarepath}/LICENSE*
 rm -rf %{buildroot}%{_firmwarepath}/COPYING*
 rm -f %{buildroot}%{_firmwarepath}/WHENCE
-rm -f %{buildroot}%{_firmwarepath}/*.txt
 rm -f %{buildroot}%{_firmwarepath}/Makefile
 rm -f %{buildroot}%{_firmwarepath}/*.patch
 
 %files
-%license LICENSE*
+%license %{_liconsdir}/LICENSE*
 %{_firmwarepath}/*
 %exclude %{_firmwarepath}/WHENCE
 
 %files whence
-%license GPL-1.0-or-later AND GPL-2.0-or-later AND MIT AND LicenseRef-Callaway-Redistributable-no-modification-permitted
+%license %{_liconsdir}/LICENSE*
 %{_firmwarepath}/WHENCE
+
+%files amd-gpu-firmware
+%license %{_liconsdir}/LICENSE*
+%{_firmwarepath}/*
+
+%files intel-gpu-firmware
+%license %{_liconsdir}/LICENSE*
+%{_firmwarepath}/*
+
+%files nvidia-gpu-firmware
+%license %{_liconsdir}/LICENSE*
+%{_firmwarepath}/*
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 20260810-2.hum1.pigeon
