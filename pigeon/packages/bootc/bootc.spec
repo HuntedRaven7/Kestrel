@@ -89,5 +89,5 @@ This package provides a utility to simplify reinstalling the current system to a
 %{_datadir}/bash-completion/completions/bootc
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.16.10-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.16.10-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

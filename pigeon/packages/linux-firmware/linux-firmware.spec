@@ -92,5 +92,5 @@ rm -f %{buildroot}%{_firmwarepath}/*.patch
 %{_firmwarepath}/WHENCE
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 20260810-2.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 20260810-2.hum1.pigeon
 - Initial Kestrel package (independent recipe)

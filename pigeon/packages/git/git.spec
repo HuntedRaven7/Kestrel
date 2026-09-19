@@ -60,7 +60,7 @@ BuildRequires:  libcurl-devel
 BuildRequires:  openssl-devel
 BuildRequires:  expat-devel
 BuildRequires:  gettext-devel
-BuildRequires:  libpcre2-devel
+BuildRequires:  pcre2-devel
 BuildRequires:  perl-generators
 BuildRequires:  perl-interpreter
 BuildRequires:  perl-generators
@@ -115,5 +115,5 @@ Documentation for %{name}.
 %{_mandir}/man7/git*.7*
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 2.47.0-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.47.0-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

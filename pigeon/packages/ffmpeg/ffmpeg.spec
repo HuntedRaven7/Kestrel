@@ -259,5 +259,5 @@ FFmpeg runtime libraries.
 %postun libs -p /sbin/ldconfig
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 7.1-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 7.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

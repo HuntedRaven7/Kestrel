@@ -106,7 +106,11 @@ jobs:
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
               # the live yum repo is the pulp-content endpoint below.
               # gpgcheck=0: no signing key is published for it (revisit).
-              printf "[hummingbird]\nname=Hummingbird public\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\nenabled=1\ngpgcheck=0\n" \
+              # exclude=ruby*: Hummingbird ships ruby3.3+ruby3.4 stacks that
+              # file-conflict with each other and Fedora ruby 4.0 during
+              # builddep; our builds do not need Hummingbird ruby, so
+              # resolve the whole ruby subtree from Fedora coherently.
+              printf "[hummingbird]\nname=Hummingbird public\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\nenabled=1\ngpgcheck=0\nexclude=ruby* rubygem*\n" \
                 > /etc/yum.repos.d/hummingbird.repo
               # Prior waves as a local repo (empty on stage 0).
               if [ -n "$(find /prior -name "*.rpm" | head -1)" ]; then
