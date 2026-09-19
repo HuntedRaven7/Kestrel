@@ -70,6 +70,11 @@ GPU acceleration can be enabled with: voxtype setup gpu --enable
 
 %build
 export CARGO_HOME=%{_builddir}/cargo
+# PIE is default for Rust binaries; ensure C/C++ code is compiled with -fPIE
+# to match, otherwise linker fails with "recompile with -fPIE" errors.
+export CFLAGS="%{build_cflags} -fPIE -pie"
+export CXXFLAGS="%{build_cxxflags} -fPIE -pie"
+export LDFLAGS="%{build_ldflags} -pie"
 
 # Build AVX2 baseline binary (compatible with most CPUs from 2013+)
 # Disable AVX-512 and GFNI in both Rust code and whisper.cpp to prevent
@@ -130,6 +135,9 @@ install -D -m 755 packaging/scripts/voxtype-configure-launcher \
 %check
 %if %{with check}
 export CARGO_HOME=%{_builddir}/cargo
+export CFLAGS="%{build_cflags} -fPIE -pie"
+export CXXFLAGS="%{build_cxxflags} -fPIE -pie"
+export LDFLAGS="%{build_ldflags} -pie"
 # Only test with AVX2 build to avoid SIGILL in build environments
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
