@@ -3,7 +3,7 @@
 %define with_gtk_doc 1
 %define with_tools 1
 
-%if (! 0%{?fedora} && 0%{?rhel} <= 7) || %{with_python3} == 0
+%if (! 0%{?fedora} && 0%{?rhel} <= 7) || 0%{?with_python3} == 0
 %define with_python3 0
 %define python3_opts --without-python3
 %define with_tools 0
