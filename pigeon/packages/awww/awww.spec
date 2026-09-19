@@ -29,6 +29,9 @@ BuildRequires:  pkgconfig(liblz4)
 # dav1d-sys crate needs dav1d library
 BuildRequires:  libdav1d-devel
 # waybackend-scanner crate needs wayland-protocols
+# and uses pkg-config to find wayland.xml from wayland-client/wayland-scanner
+BuildRequires:  pkgconfig(wayland-client)
+BuildRequires:  pkgconfig(wayland-scanner)
 BuildRequires:  pkgconfig(wayland-protocols)
 
 %description
