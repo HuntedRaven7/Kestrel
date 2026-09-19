@@ -43,7 +43,7 @@ This package contains installed tests for %{name}.
 %autosetup -n flatpak-xdg-utils-1.0.6
 
 %build
-%meson -Dinstalled_tests=true -Dman-pages=true
+%meson -Dinstalled_tests=true
 %meson_build
 
 %install

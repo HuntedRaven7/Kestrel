@@ -98,7 +98,7 @@ Documentation for %{name}.
 
 # GCC 16 defines unreachable() macro in stddef.h which conflicts with git's function
 # Undefine the macro in the compat header
-sed -i '1i #undef unreachable' git-compat-util.h -p1
+sed -i '1i #undef unreachable' git-compat-util.h
 
 %build
 %make_build \

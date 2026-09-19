@@ -127,7 +127,7 @@ jobs:
               # $(basename $SPEC), and a bare cp would leave pkg.spec.
               cp /tmp/pkg.spec "$RPMBUILD/SPECS/$(basename $SPEC)"
               # Verified archive plus every committed recipe input
-              # (patches, .sig/keys, sysusers units, vendor trees).
+              # (patches, .sig/keys, sysusers units, vendor trees, macros).
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \

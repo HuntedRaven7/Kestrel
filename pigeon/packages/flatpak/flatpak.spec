@@ -64,6 +64,7 @@ BuildRequires:  /usr/bin/socat
 BuildRequires:  /usr/bin/xdg-dbus-proxy
 BuildRequires:  /usr/bin/xmlto
 BuildRequires:  /usr/bin/xsltproc
+BuildRequires:  selinux-policy-devel
 
 Requires:       appstream%{?_isa} >= 1.0.0~
 Requires:       bubblewrap >= 0.10.0
@@ -101,7 +102,8 @@ Requires:       flatpak = %{version}-%{release}
 %meson \
   -Dsystemd=enabled \
   -Dsystemduserunitdir=/usr/lib/systemd/user \
-  -Dsystemdsystemunitdir=%{_unitdir}
+  -Dsystemdsystemunitdir=%{_unitdir} \
+  -Dselinux_module=disabled
 %meson_build
 
 %install
