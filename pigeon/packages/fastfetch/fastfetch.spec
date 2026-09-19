@@ -88,5 +88,5 @@ displaying them in a pretty way.
 %{_datadir}/zsh/site-functions/_fastfetch
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 2.66.0-2.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.66.0-2.hum1.pigeon
 - Initial Kestrel package (independent recipe)

@@ -63,5 +63,5 @@ mv %{buildroot}%{_bindir}/xdg-open %{buildroot}%{_bindir}/flatpak-xdg-open
 %{_bindir}/flatpak-spawn
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.6-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.0.6-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

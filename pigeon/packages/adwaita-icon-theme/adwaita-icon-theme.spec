@@ -75,5 +75,5 @@ gtk-update-icon-cache --force %{_datadir}/icons/Adwaita &>/dev/null || :
 %{_datadir}/pkgconfig/adwaita-icon-theme.pc
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 51-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 51-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

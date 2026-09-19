@@ -98,10 +98,9 @@ Requires:       flatpak = %{version}-%{release}
 
 %build
 %meson \
-  -Dsystemd=true \
-  -Dsystemd_user_unit_dir=/usr/lib/systemd/user \
-  -Dsystemd_system_unit_dir=%{_unitdir} \
-  -Dselinux=true
+  -Dsystemd=enabled \
+  -Dsystemduserunitdir=/usr/lib/systemd/user \
+  -Dsystemdsystemunitdir=%{_unitdir}
 %meson_build
 
 %install
@@ -146,5 +145,5 @@ systemctl --user daemon-reload >/dev/null 2>&1 || :
 %{_includedir}/flatpak/
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.19.0-1.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.19.0-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)

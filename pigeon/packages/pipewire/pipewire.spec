@@ -282,5 +282,5 @@ PipeWire utilities.
 %{_mandir}/man1/pw-*.1*
 
 %changelog
-* Thu Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-3.hum1.pigeon
+* Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-3.hum1.pigeon
 - Initial Kestrel package (independent recipe)

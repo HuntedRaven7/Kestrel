@@ -88,44 +88,94 @@ This package contains tools for uploading firmware to sound cards.
 %autosetup -p1
 
 %build
-%if "%{builddirstools}" != ""
-for d in %{builddirstools}; do
-  make -C $d
+# sbiload lives under seq/ upstream; Fedora builds it from the top level
+mv seq/sbiload . ; rm -rf seq
+for d in %{builddirstools} %{builddirsfirmw}; do
+  cd $d ; %configure
+  make %{?_smp_mflags} || exit 1
+  cd ..
 done
-%endif
-
-%if "%{builddirsfirmw}" != ""
-for d in %{builddirsfirmw}; do
-  make -C $d
-done
-%endif
 
 %install
-%if "%{builddirstools}" != ""
-for d in %{builddirstools}; do
-  make -C $d DESTDIR=%{buildroot} install
+for d in %{builddirstools} %{builddirsfirmw}; do
+  case $d in
+    usx2yloader)
+      (cd $d ; %make_install hotplugdir=/usr/lib/udev) || exit 1
+      ;;
+    *)
+      (cd $d ; %make_install) || exit 1
+      ;;
+  esac
 done
-%endif
 
-%if "%{builddirsfirmw}" != ""
-for d in %{builddirsfirmw}; do
-  make -C $d DESTDIR=%{buildroot} install
+# udev rules for firmware loaders (vendored Source1)
+mkdir -p %{buildroot}%{_sysconfdir}/udev/rules.d
+install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/udev/rules.d
+
+# harvest per-tool READMEs/COPYINGs for %doc (each independently: most
+# tools ship only one of the two)
+for d in %{builddirstools} %{builddirsfirmw}; do
+  if [[ -s "${d}"/README || -s "${d}"/COPYING ]]; then
+    mkdir -p "%{buildroot}%{_pkgdocdir}/${d}"
+    [[ -s "${d}"/README ]] && cp -a "${d}"/README "%{buildroot}%{_pkgdocdir}/${d}/"
+    [[ -s "${d}"/COPYING ]] && cp -a "${d}"/COPYING "%{buildroot}%{_pkgdocdir}/${d}/"
+  fi
 done
-%endif
+
+# usx2yloader installs a legacy hotplug usermap; udev rules cover it
+rm -f %{buildroot}/usr/lib/udev/tascam_fw.usermap
 
 %files
-%doc TODO
-%license COPYING
-%{_bindir}/*
-%{_datadir}/alsa-tools/
-%{_datadir}/applications/*alsa-tools*.desktop
-%{_datadir}/icons/hicolor/*/apps/*alsa-tools*.png
+%dir %{_pkgdocdir}
+%doc %{_pkgdocdir}/as10k1
+%doc %{_pkgdocdir}/echomixer
+%doc %{_pkgdocdir}/envy24control
+%doc %{_pkgdocdir}/hdspconf
+%doc %{_pkgdocdir}/hdspmixer
+%doc %{_pkgdocdir}/hwmixvolume
+%doc %{_pkgdocdir}/rmedigicontrol
+%doc %{_pkgdocdir}/sbiload
+%doc %{_pkgdocdir}/hda-verb
+%doc %{_pkgdocdir}/hdajackretask
+%license %{_pkgdocdir}/as10k1/COPYING
+%{_bindir}/as10k1
+%{_bindir}/echomixer
+%{_bindir}/envy24control
+%{_bindir}/hdspconf
+%{_bindir}/hdspmixer
+%{_bindir}/hwmixvolume
+%{_bindir}/rmedigicontrol
+%{_bindir}/sbiload
+%{_bindir}/sscape_ctl
+%{_bindir}/us428control
+%{_bindir}/hda-verb
+%{_bindir}/hdajackretask
+%{_bindir}/hdajacksensetest
+%{_datadir}/sounds/*
+%{_datadir}/man/man1/envy24control.1.gz
+%{_datadir}/applications/*.desktop
+%{_datadir}/icons/hicolor/*/apps/*.png
+
+# sb16_csp stuff which is excluded for PPC
+%ifnarch ppc ppc64
+%doc %{_pkgdocdir}/sb16_csp
+%{_bindir}/cspctl
+%{_datadir}/man/man1/cspctl.1.gz
+%endif
 
 %files firmware
-%doc TODO
-%license COPYING
-%{_libdir}/alsa-tools/
-%{_datadir}/alsa-tools/firmware/
+%dir %{_pkgdocdir}
+%doc %{_pkgdocdir}/hdsploader
+%doc %{_pkgdocdir}/mixartloader
+%doc %{_pkgdocdir}/usx2yloader
+%doc %{_pkgdocdir}/vxloader
+%license %{_pkgdocdir}/hdsploader/COPYING
+%{_bindir}/hdsploader
+%{_bindir}/mixartloader
+%{_bindir}/usx2yloader
+%{_bindir}/vxloader
+/usr/lib/udev/tascam_fpga
+/usr/lib/udev/tascam_fw
 %config(noreplace) %{_sysconfdir}/udev/rules.d/90-alsa-tools-firmware.rules
 
 %changelog
