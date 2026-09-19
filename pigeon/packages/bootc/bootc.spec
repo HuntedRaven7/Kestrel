@@ -75,8 +75,11 @@ This package provides a utility to simplify reinstalling the current system to a
 %autosetup -n bootc-1.16.10
 # Unpack vendor tree for hermetic offline build
 tar --zstd -xf %{SOURCE1}
-# Set up .cargo/config.toml for offline/vendored build
+# Default -v vendor config doesn't support non-crates.io deps (i.e. git)
+cp .cargo/vendor-config.toml .
 %cargo_prep -N
+cat vendor-config.toml >> .cargo/config.toml
+rm vendor-config.toml
 
 %build
 %cargo_build
@@ -97,3 +100,4 @@ tar --zstd -xf %{SOURCE1}
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.16.10-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Use vendor-config.toml for git dependencies (composefs-ctl)

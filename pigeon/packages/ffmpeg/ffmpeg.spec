@@ -111,9 +111,7 @@ BuildRequires: libva-devel
 BuildRequires: libvorbis-devel
 BuildRequires: opus-devel
 BuildRequires: speex-devel
-%if %{with all_codecs}
 BuildRequires: theora-devel
-%endif
 BuildRequires: lame-devel
 BuildRequires: libvpx-devel
 BuildRequires: libwebp-devel
@@ -202,3 +200,4 @@ FFmpeg runtime libraries.
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 7.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Add theora-devel BuildRequires for --enable-libtheora
