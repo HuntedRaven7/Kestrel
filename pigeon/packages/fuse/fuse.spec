@@ -71,7 +71,16 @@ install -p fuse.pc %{buildroot}/%{_libdir}/pkgconfig/
 
 %files
 %license COPYING
-%{_bindir}/*
+%{_bindir}/fusexmp
+%{_bindir}/fusexmp_fh
+%{_bindir}/hello
+%{_bindir}/hello_ll
+%{_bindir}/fioc
+%{_bindir}/fioclient
+%{_bindir}/fsel
+%{_bindir}/fselclient
+%{_bindir}/cusexmp
+%{_bindir}/null
 %{_sbindir}/*
 
 %files libs

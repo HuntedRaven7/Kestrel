@@ -111,7 +111,9 @@ BuildRequires: libva-devel
 BuildRequires: libvorbis-devel
 BuildRequires: opus-devel
 BuildRequires: speex-devel
+%if %{with all_codecs}
 BuildRequires: theora-devel
+%endif
 BuildRequires: libvpx-devel
 BuildRequires: libwebp-devel
 BuildRequires: xz-devel
@@ -123,8 +125,10 @@ BuildRequires: pkgconfig(xcb-xfixes)
 BuildRequires: pkgconfig(xcb-shape)
 BuildRequires: pkgconfig(xcb-xfixes)
 BuildRequires: pulseaudio-libs-devel
+%if %{with all_codecs}
 BuildRequires: sdl2-devel
 BuildRequires: SDL2-devel
+%endif
 BuildRequires: libva-devel
 BuildRequires: libvdpau-devel
 

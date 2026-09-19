@@ -3,7 +3,6 @@
 # Source0 MUST match pigeon/config/upstream-sources.json (verified by
 # source_pipeline.py before any build).
 
-%bcond blake3 0
 %bcond stemming 0
 
 Summary: Utilities to generate, maintain and access the AppStream database
@@ -35,9 +34,6 @@ BuildRequires: pkgconfig(gdk-pixbuf-2.0)
 BuildRequires: pkgconfig(gi-docgen) >= 2021.1
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(gobject-introspection-1.0)
-%if %{with blake3}
-BuildRequires: pkgconfig(libblake3)
-%endif
 BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libfyaml)
 BuildRequires: pkgconfig(librsvg-2.0)
@@ -78,7 +74,6 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %build
 %meson \
-  -Dblake3=%{with blake3} \
   -Dstemming=%{with stemming} \
   -Ddocs=true \
   -Dman=true

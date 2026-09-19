@@ -6,6 +6,10 @@
 %global spaversion 0.2
 %global __meson_auto_features disabled
 
+# Optional codecs not in Fedora repos
+%bcond lc3plus 0
+%bcond freeaptx 0
+
 Name:       pipewire-libs-extra
 Summary:    PipeWire extra plugins
 Version:    1.6.8
@@ -19,10 +23,14 @@ BuildRequires:  alsa-lib-devel
 BuildRequires:  meson >= 0.49.0
 BuildRequires:  gcc-c++
 BuildRequires:  git
+%if %{with lc3plus}
 BuildRequires:  liblc3plus-devel
+%endif
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(bluez) >= 4.101
+%if %{with freeaptx}
 BuildRequires:  pkgconfig(libfreeaptx)
+%endif
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(libavcodec)
 BuildRequires:  pkgconfig(libavfilter)
@@ -42,9 +50,9 @@ PipeWire extra plugins: aptX, LC3plus and FFmpeg SPA plugins.
 %meson \
   -D examples=disabled \
   -D bluez5=enabled \
-  -D bluez5-codec-aptx=enabled \
+  -D bluez5-codec-aptx=%{?with_freeaptx:enabled}%{!?with_freeaptx:disabled} \
   -D bluez5-codec-ldac-dec=disabled \
-  -D bluez5-codec-lc3plus=enabled \
+  -D bluez5-codec-lc3plus=%{?with_lc3plus:enabled}%{!?with_lc3plus:disabled} \
   -D ffmpeg=enabled \
   -D lv2=enabled \
   -D session-managers=[]
@@ -63,8 +71,12 @@ install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
 
 %files
 %license COPYING
+%if %{with freeaptx}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
+%endif
+%if %{with lc3plus}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
+%endif
 %dir %{_libdir}/spa-%{spaversion}/ffmpeg
 %{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
 
