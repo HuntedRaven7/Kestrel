@@ -128,13 +128,16 @@ jobs:
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
-              # Try builddep; if it fails due to missing pigeon-prior packages,
-              # retry with --skip-unavailable so missing inter-package deps
-              # (e.g. wireplumber needs pipewire-0.3.pc from our pipewire build)
-              # don't block the entire stage.
-              dnf builddep -y /tmp/pkg.spec 2>/dev/null || \
-                dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>/dev/null || \
-                echo "WARNING: builddep failed for $PACKAGE, continuing anyway"
+              # Install build dependencies. Use --skip-unavailable so missing
+              # inter-package deps (e.g. wireplumber needs pipewire-0.3.pc from
+              # our pipewire build) don't block the entire stage. Packages that
+              # fail to resolve will simply be skipped; the build may fail if
+              # they're critical.
+              dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>&1 || \
+                echo "WARNING: builddep failed for $PACKAGE, continuing with available deps"
+              # Ensure core build tools are present even if builddep skipped them
+              dnf install -qy rpm-build meson ninja-build gcc gcc-c++ make pkgconfig \
+                python3 2>&1 || true
               # Keep the real spec filename: later steps address it by
               # $(basename $SPEC), and a bare cp would leave pkg.spec.
               rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \

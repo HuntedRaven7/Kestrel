@@ -4,11 +4,12 @@
 # source_pipeline.py before any build).
 
 %global spaversion 0.2
-%global __meson_auto_features disabled
 
 # Optional codecs not in Fedora repos
 %bcond lc3plus 0
 %bcond freeaptx 0
+# ffmpeg is built when libavcodec is available; disabled if deps missing
+%bcond ffmpeg 1
 
 Name:       pipewire-libs-extra
 Summary:    PipeWire extra plugins
@@ -32,9 +33,11 @@ BuildRequires:  pkgconfig(bluez) >= 4.101
 BuildRequires:  pkgconfig(libfreeaptx)
 %endif
 BuildRequires:  pkgconfig(glib-2.0)
+%if %{with ffmpeg}
 BuildRequires:  pkgconfig(libavcodec)
 BuildRequires:  pkgconfig(libavfilter)
 BuildRequires:  pkgconfig(libswscale)
+%endif
 BuildRequires:  pkgconfig(lilv-0)
 BuildRequires:  sbc-devel
 
@@ -53,18 +56,24 @@ PipeWire extra plugins: aptX, LC3plus and FFmpeg SPA plugins.
   -D bluez5-codec-aptx=%{?with_freeaptx:enabled}%{!?with_freeaptx:disabled} \
   -D bluez5-codec-ldac-dec=disabled \
   -D bluez5-codec-lc3plus=%{?with_lc3plus:enabled}%{!?with_lc3plus:disabled} \
-  -D ffmpeg=enabled \
+  -D ffmpeg=%{?with_ffmpeg:enabled}%{!?with_ffmpeg:disabled} \
   -D lv2=enabled \
   -D session-managers=[]
 %meson_build
 
 %install
+%if %{with freeaptx}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-aptx.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
+%endif
+%if %{with lc3plus}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-lc3plus.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
+%endif
+%if %{with ffmpeg}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
+%endif
 
 %files
 %license COPYING
@@ -74,8 +83,10 @@ install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
 %if %{with lc3plus}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
 %endif
+%if %{with ffmpeg}
 %dir %{_libdir}/spa-%{spaversion}/ffmpeg
 %{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
+%endif
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-1.hum1.pigeon
