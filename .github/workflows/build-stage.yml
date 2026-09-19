@@ -38,17 +38,14 @@ jobs:
         # pin rots into "manifest unknown" pull failures (exit 125).
         run: podman pull quay.io/fedora/fedora:44
 
-      - name: Fetch verified source for this package
-        run: |
-          mkdir -p work/src
-          python3 pigeon/tools/source_pipeline.py fetch "${{ matrix.package }}" \
-            --output work/src --stage-into pigeon/packages
-
       - name: Stage vendored and secondary sources
         # source_pipeline.py only stages the primary Source0 archive, but
         # rpmbuild needs every Source/Patch present: Go vendor trees
         # (runc/containerd/tailscale via Koji SRPM, bootc via release
         # tarball) and any dist-git sidecar audit --fix can fetch.
+        # For vendored packages, fetch_vendored.py must run BEFORE
+        # source_pipeline.py fetch since the latter validates the source
+        # tarball is present.
         run: |
           PKG="${{ matrix.package }}"
           if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('vendored') else 1)"; then
@@ -63,11 +60,17 @@ jobs:
           fi
           python3 pigeon/tools/audit_sources.py --fix --package "$PKG"
 
+      - name: Fetch verified source for this package
+        run: |
+          mkdir -p work/src
+          python3 pigeon/tools/source_pipeline.py fetch "${{ matrix.package }}" \
+            --output work/src --stage-into pigeon/packages
+
       - name: Alias staged source under spec Source0 names
         # Fedora specs reference lookaside-renamed tarballs while upstream
         # URLs serve tag-named files (libblockdev-3.5.0.tar.gz vs 3.5.0.tar.gz).
         # The packit lane bridges this positionally; raw rpmbuild needs the
-        # spec's basename present, so link it to the verified staged archive.
+        # spec basename present, so link it to the verified staged archive.
         run: |
           if [ -n "$(ls work/src 2>/dev/null)" ]; then
             SPEC=$(ls pigeon/packages/${{ matrix.package }}/*.spec | head -1)
