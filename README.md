@@ -1,4 +1,4 @@
-# Project Swan
+# Project Kestrel
 
 > One source of reason for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
 
