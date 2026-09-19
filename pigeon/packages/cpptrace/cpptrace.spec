@@ -71,6 +71,8 @@ rm -f %{buildroot}%{_libdir}/cmake/cpptrace/Findzstd.cmake
 %package devel
 Summary:        Development files for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+# cpptrace-config.cmake does find_dependency(zstd CONFIG REQUIRED)
+Requires:       libzstd-devel
 
 %description devel
 Development files for cpptrace, including headers and CMake configuration.
