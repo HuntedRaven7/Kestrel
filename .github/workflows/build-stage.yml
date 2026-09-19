@@ -128,11 +128,11 @@ jobs:
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
-              # Install build dependencies. Use --skip-unavailable so missing
-              # inter-package deps (e.g. wireplumber needs pipewire-0.3.pc from
-              # our pipewire build) don't block the entire stage. Packages that
-              # fail to resolve will simply be skipped; the build may fail if
-              # they're critical.
+              # Try builddep; if it fails due to missing pigeon-prior packages,
+              # retry with --skip-unavailable so missing inter-package deps
+              # (e.g. wireplumber needs pipewire-0.3.pc from our pipewire build)
+              # do not block the entire stage. Packages that fail to resolve
+              # will simply be skipped; the build may fail if they are critical.
               dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>&1 || \
                 echo "WARNING: builddep failed for $PACKAGE, continuing with available deps"
               # Ensure core build tools are present even if builddep skipped them
