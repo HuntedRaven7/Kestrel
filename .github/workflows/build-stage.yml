@@ -120,16 +120,17 @@ jobs:
               fi
               SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
               cp "$SPEC" /tmp/pkg.spec
-              dnf builddep -y /tmp/pkg.spec
               export RPMBUILD=/root/rpmbuild
               mkdir -p "$RPMBUILD"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-              # Keep the real spec filename: later steps address it by
-              # $(basename $SPEC), and a bare cp would leave pkg.spec.
-              cp /tmp/pkg.spec "$RPMBUILD/SPECS/$(basename $SPEC)"
-              # Verified archive plus every committed recipe input
-              # (patches, .sig/keys, sysusers units, vendor trees, macros).
+              # Copy committed recipe inputs (patches, .sig/keys, sysusers units,
+              # vendor trees, macros) into SOURCES before builddep so that
+              # dnf can resolve SourceN references that require local files.
               cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
               cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
+              cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
+              dnf builddep -y /tmp/pkg.spec
+              # Keep the real spec filename: later steps address it by
+              # $(basename $SPEC), and a bare cp would leave pkg.spec.
               rpmbuild -br "$RPMBUILD/SPECS/$(basename $SPEC)" \
                 --define "_topdir $RPMBUILD"
               rpmbuild -ba "$RPMBUILD/SPECS/$(basename $SPEC)" \
