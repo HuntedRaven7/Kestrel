@@ -39,10 +39,14 @@ def main() -> int:
                 f"stale filename for {name}: {entry.get('filename')!r} != {expected!r}"
             )
     # .packit.yaml coverage (only if recipes exist and yaml parses).
+    # rpmbuild/local packages are intentionally excluded from .packit.yaml.
     packit = ROOT / ".packit.yaml"
     if yaml is not None and packit.exists():
         pkgs = (yaml.safe_load(packit.read_text()) or {}).get("packages", {})
         for r in sorted(recipes):
+            entry = sources["packages"].get(r, {})
+            if entry.get("srpm") == "rpmbuild" or entry.get("local"):
+                continue
             if r not in pkgs:
                 errors.append(f"recipe without packit entry: {r}")
         for p in sorted(pkgs):
