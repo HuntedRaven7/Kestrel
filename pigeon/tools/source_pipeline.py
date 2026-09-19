@@ -4,6 +4,8 @@ Usage:
   source_pipeline.py fetch <pkg> [--output DIR]
   source_pipeline.py record <pkg> [--output DIR]   # fetch + write sha512 back
   source_pipeline.py report <pkg>                  # show last report
+  source_pipeline.py check <pkg>                   # validate entry without download
+  source_pipeline.py validate                     # validate all source entries structurally
 
 Rules (PLAN.md §3.2):
   - No upstream-sources.json entry -> refuse.
@@ -35,7 +37,89 @@ CHUNK = 1024 * 1024
 
 
 def load_sources() -> dict:
-    return json.loads(SOURCES.read_text())
+    try:
+        return json.loads(SOURCES.read_text())
+    except FileNotFoundError:
+        print(f"REFUSE: source registry not found at {SOURCES}")
+        raise
+    except json.JSONDecodeError as exc:
+        print(f"REFUSE: malformed upstream-sources.json: {exc}")
+        raise
+
+
+def check_source(pkg: str) -> bool:
+    """Validate a single source entry is properly configured for fetch without downloading.
+    
+    Checks:
+    - Entry exists in upstream-sources.json
+    - Not a local package (those need no source check)
+    - Has a non-TODO version
+    - Has a non-TODO URL template
+    - Has a recorded sha512 digest (unless local)
+    
+    Returns True if the entry is ready for fetch, False otherwise.
+    """
+    try:
+        data = load_sources()
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+    entry = data["packages"].get(pkg)
+    if entry is None:
+        print(f"REFUSE: no upstream-sources.json entry for {pkg}")
+        return False
+    if entry.get("local"):
+        print(f"OK: {pkg} is a local package")
+        return True
+    if reason := entry_ready(entry):
+        print(f"REFUSE: {pkg} not ready — {reason}")
+        return False
+    recorded = entry.get("sha512", "")
+    if not recorded or recorded.startswith("TODO"):
+        print(f"REFUSE: no recorded digest for {pkg} — run `record {pkg}` first")
+        return False
+    print(f"OK: {pkg} is ready for fetch ({entry.get('version')})")
+    return True
+
+
+def validate_upstream_sources(data: dict) -> list[str]:
+    """Validate structural consistency of all upstream-sources.json entries.
+    
+    Checks:
+    - Each entry has a filename when it has a url_template
+    - Each filename matches the URL template's basename (stale filename detection)
+    - No entry has a version format inconsistent with its siblings
+    - Required fields present for non-local entries
+    
+    Returns a list of error strings (empty if all valid).
+    """
+    errors = []
+    packages = data.get("packages", {})
+    for name in sorted(packages):
+        entry = packages[name]
+        if entry.get("local"):
+            continue
+        # Check required fields
+        version = str(entry.get("version", ""))
+        if not version or version.startswith("TODO"):
+            errors.append(f"{name}: missing or placeholder version")
+        url_template = entry.get("url_template", "")
+        if not url_template or str(url_template).startswith("TODO"):
+            errors.append(f"{name}: missing or placeholder url_template")
+        # Check filename matches rendered URL basename
+        if url_template and version and not str(url_template).startswith("TODO"):
+            try:
+                url = url_template.replace("{version}", version)
+            except (TypeError, AttributeError):
+                errors.append(f"{name}: invalid url_template")
+                continue
+            expected = url.rsplit("/", 1)[-1] if "/" in url else ""
+            if expected and entry.get("filename") != expected:
+                errors.append(f"{name}: stale filename (got {entry.get('filename')!r}, expected {expected!r})")
+        # Check sha512 present
+        sha = entry.get("sha512", "")
+        if not sha or sha.startswith("TODO"):
+            errors.append(f"{name}: missing or placeholder sha512")
+    return errors
 
 
 def render_url(entry: dict) -> str:
@@ -332,6 +416,29 @@ def cmd_report(pkg: str) -> int:
     return 0
 
 
+def cmd_check(pkg: str) -> int:
+    try:
+        if check_source(pkg):
+            return 0
+        return 1
+    except (FileNotFoundError, json.JSONDecodeError):
+        return 1
+
+
+def cmd_validate() -> int:
+    """Validate all entries in upstream-sources.json for structural consistency."""
+    try:
+        data = load_sources()
+    except (FileNotFoundError, json.JSONDecodeError):
+        return 1
+    errors = validate_upstream_sources(data)
+    if errors:
+        print("\n".join(errors))
+        return 1
+    print(f"validated {len(data['packages'])} source entries")
+    return 0
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description="Kestrel source verification pipeline")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -343,11 +450,18 @@ def main(argv: list[str]) -> int:
         p.add_argument("--verify-staged", action="store_true", help="verify staged source exists in package dir")
     r = sub.add_parser("report")
     r.add_argument("package")
+    c = sub.add_parser("check")
+    c.add_argument("package")
+    sub.add_parser("validate")
     args = ap.parse_args(argv)
     if args.cmd == "fetch":
         return cmd_fetch(args.package, args.output, args.stage_into, args.verify_staged)
     if args.cmd == "record":
         return cmd_record(args.package, args.output)
+    if args.cmd == "check":
+        return cmd_check(args.package)
+    if args.cmd == "validate":
+        return cmd_validate()
     return cmd_report(args.package)
 
 

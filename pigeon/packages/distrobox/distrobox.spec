@@ -53,6 +53,12 @@ done
 %license COPYING.md
 %{_bindir}/distrobox
 %{_bindir}/distrobox-*
+%{_datadir}/bash-completion/completions/distrobox
+%{_datadir}/bash-completion/completions/distrobox-*
+%{_datadir}/icons/hicolor/*/apps/terminal-distrobox-icon.*
+%{_datadir}/icons/hicolor/scalable/apps/terminal-distrobox-icon.svg
+%{_mandir}/man1/distrobox*.1*
+%{_datadir}/zsh/site-functions/_distrobox*
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.8.2.5-1.hum1.pigeon

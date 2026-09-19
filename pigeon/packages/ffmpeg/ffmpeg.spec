@@ -210,31 +210,10 @@ Complete and free FFmpeg build
   --enable-libvpx \
   --enable-libwebp \
   --enable-libx264 \
-  --enable-libx265 \
-  --enable-gpl \
-  --enable-nonfree \
-  --enable-version3 \
-  --enable-libass \
-  --enable-libfreetype \
-  --enable-libvorbis \
-  --enable-libopus \
-  --enable-libtheora \
-  --enable-libvpx \
-  --enable-libwebp \
-  --enable-libx264 \
-  --enable-libx265 \
-  --enable-gpl \
-  --enable-nonfree \
-  --enable-version3 \
-  --enable-libass \
-  --enable-libfreetype \
-  --enable-libvorbis \
-  --enable-libopus \
-  --enable-libtheora \
-  --enable-libvpx \
-  --enable-libwebp \
-  --enable-libx264 \
   --enable-libx265
+# Remove --build flag that ffmpeg configure doesn't accept
+sed -i 's/--build=x86_64-redhat-linux //' config.mak
+sed -i 's/--host=x86_64-redhat-linux //' config.mak
 
 %make_build
 

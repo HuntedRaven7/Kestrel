@@ -46,7 +46,7 @@ Rofi launcher for the Warbler desktop (drun + window modes).
 %autosetup -n rofi-%{version} -p1
 
 %build
-%meson -Dcheck=disabled -Dlibgwater=disabled
+%meson -Dcheck=disabled
 %meson_build
 
 %install
