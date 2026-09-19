@@ -87,7 +87,9 @@ jobs:
           sudo apt-get install -y -qq podman
 
       - name: Pull Fedora 44 build container
-        run: podman pull quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599
+        # NOTE: tag pin, not digest — see build-stage.yml (quay prunes old
+        # fedora:44 manifests, digest pins rot into pull failures).
+        run: podman pull quay.io/fedora/fedora:44
 
       - name: Advisory BuildRequires resolution
         run: |
@@ -106,7 +108,7 @@ jobs:
                       "podman", "run", "--rm",
                       "-v", f"$(pwd)/pigeon/packages/{pkg}:/spec:Z",
                       "-v", "$(pwd)/pigeon/config/upstream-sources.json:/sources.json:Z",
-                      "quay.io/fedora/fedora@sha256:b0b2ac1c4a682dea428ae05a0065824178ad951c304c3ac15c29daa8335e0599",
+                      "quay.io/fedora/fedora:44",
                       "bash", "-c",
                       "dnf install -y fedora-workstation-repositories && "
                       "printf '[hummingbird]\\nname=Hummingbird public\\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\\nenabled=1\\ngpgcheck=0\\n' > /etc/yum.repos.d/hummingbird.repo && "
