@@ -44,6 +44,16 @@
     },
     {
       "customType": "regex",
+      "description": "upstream-sources.json gitlab-tags packages (gnome instance). Same field-order contract as above.",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"version\":\\s*\"(?<currentValue>[^\"]+)\",\\s*\"url_template\":\\s*\"[^\"]*\",\\s*\"sha512\":\\s*\"[^\"]*\"(?:,\\s*\"stage\":\\s*\\d+)?(?:,\\s*\"note\":\\s*\"[^\"]*\")?,\\s*\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
+      ],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.gnome.org"
+    },
+    {
+      "customType": "regex",
       "description": "upstream-sources.json gitlab-tags packages (freedesktop instance). Same field-order contract as above.",
       "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
       "matchStrings": [
