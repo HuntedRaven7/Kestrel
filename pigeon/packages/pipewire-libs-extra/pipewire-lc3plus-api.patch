@@ -1,0 +1,89 @@
+diff -Naur pipewire-1.6.2.old/spa/plugins/bluez5/a2dp-codec-lc3plus.c pipewire-1.6.2/spa/plugins/bluez5/a2dp-codec-lc3plus.c
+--- pipewire-1.6.2.old/spa/plugins/bluez5/a2dp-codec-lc3plus.c	2026-03-17 11:55:00.427848646 +0100
++++ pipewire-1.6.2/spa/plugins/bluez5/a2dp-codec-lc3plus.c	2026-03-17 11:56:51.401359541 +0100
+@@ -25,6 +25,20 @@
+ #define BITRATE_MAX 512000
+ #define BITRATE_DEFAULT 160000
+ 
++static LC3PLUS_FrameDuration frame_dms_to_duration(int frame_dms)
++{
++	switch (frame_dms) {
++	case 25:
++		return LC3PLUS_FRAME_DURATION_2p5MS;
++	case 50:
++		return LC3PLUS_FRAME_DURATION_5MS;
++	case 100:
++		return LC3PLUS_FRAME_DURATION_10MS;
++	default:
++		return LC3PLUS_FRAME_DURATION_UNDEFINED;
++	}
++}
++
+ struct dec_data {
+ 	int frame_size;
+ 	int fragment_size;
+@@ -370,15 +384,11 @@
+ 	}
+ 	if ((this->enc = calloc(1, size)) == NULL)
+ 		goto error_errno;
+-	if (lc3plus_enc_init(this->enc, this->samplerate, this->channels) != LC3PLUS_OK) {
++	if (lc3plus_enc_init(this->enc, this->samplerate, this->channels, 1, NULL) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+-	if (lc3plus_enc_set_frame_ms(this->enc, this->frame_dms/10.0f) != LC3PLUS_OK) {
+-		res = -EINVAL;
+-		goto error;
+-	}
+-	if (lc3plus_enc_set_hrmode(this->enc, 1) != LC3PLUS_OK) {
++	if (lc3plus_enc_set_frame_dms(this->enc, frame_dms_to_duration(this->frame_dms)) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+@@ -399,15 +409,11 @@
+ 	}
+ 	if ((this->dec = calloc(1, size)) == NULL)
+ 		goto error_errno;
+-	if (lc3plus_dec_init(this->dec, this->samplerate, this->channels, LC3PLUS_PLC_ADVANCED) != LC3PLUS_OK) {
+-		res = -EINVAL;
+-		goto error;
+-	}
+-	if (lc3plus_dec_set_frame_ms(this->dec, this->frame_dms/10.0f) != LC3PLUS_OK) {
++	if (lc3plus_dec_init(this->dec, this->samplerate, this->channels, LC3PLUS_PLC_ADVANCED, 1) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+-	if (lc3plus_dec_set_hrmode(this->dec, 1) != LC3PLUS_OK) {
++	if (lc3plus_dec_set_frame_dms(this->dec, frame_dms_to_duration(this->frame_dms)) != LC3PLUS_OK) {
+ 		res = -EINVAL;
+ 		goto error;
+ 	}
+@@ -579,12 +585,12 @@
+ 
+ 	if (this->channels == 1) {
+ 		inputs[0] = (int32_t *)src;
+-		res = lc3plus_enc24(this->enc, inputs, dst, &size);
++		res = lc3plus_enc24(this->enc, inputs, dst, &size, NULL);
+ 	} else {
+ 		inputs[0] = this->buf[0];
+ 		inputs[1] = this->buf[1];
+ 		deinterleave_32_c2(inputs, src, this->e.samples);
+-		res = lc3plus_enc24(this->enc, inputs, dst, &size);
++		res = lc3plus_enc24(this->enc, inputs, dst, &size, NULL);
+ 	}
+ 	if (SPA_UNLIKELY(res != LC3PLUS_OK))
+ 		return -EINVAL;
+@@ -711,11 +717,11 @@
+ 
+ 	if (this->channels == 1) {
+ 		outputs[0] = (int32_t *)dst;
+-		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, 0);
++		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, NULL, 0);
+ 	} else {
+ 		outputs[0] = this->buf[0];
+ 		outputs[1] = this->buf[1];
+-		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, 0);
++		res = lc3plus_dec24(this->dec, (void *)src, src_size, outputs, NULL, 0);
+ 		interleave_32_c2(dst, (const int32_t**)outputs, samples);
+ 	}
+ 	if (SPA_UNLIKELY(res != LC3PLUS_OK && res != LC3PLUS_DECODE_ERROR))

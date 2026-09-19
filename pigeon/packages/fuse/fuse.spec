@@ -66,15 +66,6 @@ make %{?_smp_mflags}
 %install
 %make_install
 
-# Install example binaries (fusexmp and fusexmp_fh are in example/, not util/)
-# Some example programs (fioclient, fselclient) don't have explicit LDADD
-# in the Makefile and may fail to link; install only what was built.
-for prog in fusexmp fusexmp_fh hello hello_ll fioc fioclient fsel fselclient cusexmp null; do
-  if [ -f "example/.libs/$prog" ]; then
-    install -m 0755 "example/.libs/$prog" %{buildroot}/%{_bindir}/
-  fi
-done
-
 # Set setgid bit on fusermount (required for FUSE mounting)
 chmod u+s %{buildroot}/%{_sbindir}/fusermount 2>/dev/null || true
 
@@ -97,3 +88,4 @@ chmod u+s %{buildroot}/%{_sbindir}/fusermount 2>/dev/null || true
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.9.9-26.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Remove example program installation to fix unpackaged files error

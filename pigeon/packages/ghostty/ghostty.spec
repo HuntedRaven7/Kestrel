@@ -42,7 +42,7 @@ curl -sSL "${ZIG_URL}" -o /tmp/zig.tar.xz
 tar -xf /tmp/zig.tar.xz -C /tmp
 export PATH="/tmp/zig-x86_64-linux-${ZIG_VER}:$PATH"
 
-zig build -Doptimize=ReleaseFast -Dversion=v%{version} -p %{buildroot}%{_prefix}
+zig build -Doptimize=ReleaseFast -p %{buildroot}%{_prefix}
 
 %install
 # zig build -p installs above; nothing more to stage.
@@ -60,3 +60,4 @@ zig build -Doptimize=ReleaseFast -Dversion=v%{version} -p %{buildroot}%{_prefix}
 %changelog
 * Thu Sep 17 2026 Kestrel <kestrel@localhost> - 1.3.1-1.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Remove invalid -Dversion zig build option

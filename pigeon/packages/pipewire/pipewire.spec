@@ -18,9 +18,9 @@
 %bcond_without alsa
 %bcond_without vulkan
 %bcond_without bluez
-%bcond_without fdk_aac
-%bcond_without freeaptx
-%bcond_without lc3plus
+%bcond_with fdk_aac
+%bcond_with freeaptx
+%bcond_with lc3plus
 
 %if 0%{?rhel} && 0%{?rhel} < 9
 %bcond_with pulse
@@ -88,7 +88,11 @@ BuildRequires:  sbc-devel
 BuildRequires:  systemd
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  vala
+%if (0%{?fedora} && 0%{?fedora} < 44) || (0%{?rhel} && 0%{?rhel} < 11)
 BuildRequires:  webrtc-audio-processing-devel
+%else
+BuildRequires:  webrtc-audio-processing2-devel
+%endif
 
 Requires:       rtkit
 Requires:       wireplumber
@@ -290,3 +294,5 @@ PipeWire utilities.
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 1.6.8-3.hum1.pigeon
 - Initial Kestrel package (independent recipe)
+- Disable optional codecs (fdk-aac, freeaptx, lc3plus) by default for Fedora 44 compat
+- Fix webrtc-audio-processing version for Fedora 44+
