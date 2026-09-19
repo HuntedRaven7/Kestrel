@@ -18,7 +18,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  elfutils-libelf-devel
 BuildRequires:  libdwarf-devel
 BuildRequires:  libunwind-devel
-BuildRequires:  zstd-devel
+BuildRequires:  libzstd-devel
 
 %description
 cpptrace is a C++ library for generating stack traces. It provides a simple
