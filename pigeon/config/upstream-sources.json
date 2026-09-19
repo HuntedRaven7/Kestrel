@@ -347,15 +347,15 @@
     },
     "firewalld": {
       "version": "2.5.2",
-      "url_template": "https://github.com/firewalld/firewalld/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "cded29ecb816e82b185c5b0ed680e8a95c71242c3afaec1c4eb9b6b7c87069fda7c5d5fb1563cea7230af5fc8d39c95b52b54fdd58250a5ee0298eb789b64daf",
+      "url_template": "https://github.com/firewalld/firewalld/releases/download/v{version}/firewalld-{version}.tar.bz2",
+      "sha512": "70f9dea048f36ed0b7d99b5c36933d1d6b40306f8348c860fb7de5313977cb40ed291b066fd839eb6aba79f366b8047f9734553636ff4a0c23bfdf05ac16b594",
       "stage": 2,
-      "note": "Fedora dist-git import. Firewall daemon.",
+      "note": "Fedora dist-git import. Firewall daemon. Release attachment (contains generated configure; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
         "depName": "firewalld/firewalld"
       },
-      "filename": "v2.5.2.tar.gz"
+      "filename": "firewalld-2.5.2.tar.bz2"
     },
     "containerd": {
       "version": "2.3.5",
@@ -510,27 +510,27 @@
     },
     "libblockdev": {
       "version": "3.5.0",
-      "url_template": "https://github.com/storaged-project/libblockdev/archive/refs/tags/{version}.tar.gz",
-      "sha512": "cf25962694ed854baa370cfb96f934f2c9bc4f7ef62b31274a182b0317dc5178259fab8e43230bdd16d51055a809420637bfac0d62267845a814ed245e28a322",
+      "url_template": "https://github.com/storaged-project/libblockdev/releases/download/{version}/libblockdev-{version}.tar.gz",
+      "sha512": "bdc22bd2ec23a6e0fcee9e41d6e4ed05645b7c5413874e6ed8bc0f2ad17d5e671ed966e8697a2a2b65738eb49830ade3c302a93f9facb7542685e544ebe9106a",
       "stage": 2,
-      "note": "Fedora dist-git import. Block device library.",
+      "note": "Fedora dist-git import. Block device library. Release attachment (contains generated configure; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
         "depName": "storaged-project/libblockdev"
       },
-      "filename": "3.5.0.tar.gz"
+      "filename": "libblockdev-3.5.0.tar.gz"
     },
     "libbytesize": {
       "version": "2.12",
-      "url_template": "https://github.com/storaged-project/libbytesize/archive/refs/tags/{version}.tar.gz",
-      "sha512": "2742e9ad9377295fce298a2b70a1a6b9859f36fea3b9ac74d2281b359a1419917c04e001bda1d999aa4f993733bb4d6f0e2a2c7ed3b0b89080140df7ee96fc6c",
+      "url_template": "https://github.com/storaged-project/libbytesize/releases/download/{version}/libbytesize-{version}.tar.gz",
+      "sha512": "90eaa77b9e2cdafa1ac9e286c11fd7304c00146d0c33e942e36636968933cc683c00de7a3f715123b302fd9b2013ac4620c52371be7c69a1b33e02570847b091",
       "stage": 2,
-      "note": "Fedora dist-git import. Byte size library.",
+      "note": "Fedora dist-git import. Byte size library. Release attachment (contains generated configure; codeload archives do not).",
       "renovate": {
         "datasource": "github-tags",
         "depName": "storaged-project/libbytesize"
       },
-      "filename": "2.12.tar.gz"
+      "filename": "libbytesize-2.12.tar.gz"
     },
     "udisks2": {
       "version": "2.11.2",
