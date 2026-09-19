@@ -23,7 +23,7 @@ permissions:
 jobs:
   prepare:
     name: Prepare build plan
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       matrix0: ${{ steps.plan.outputs.matrix0 }}
       matrix1: ${{ steps.plan.outputs.matrix1 }}
@@ -72,7 +72,7 @@ jobs:
 
   preflight:
     name: Preflight BuildRequires check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: prepare
     if: ${{ needs.prepare.outputs.changed != '[]' }}
     steps:
@@ -154,7 +154,7 @@ jobs:
 
   precedence:
     name: Precedence check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [prepare, rebuild0, rebuild1, rebuild2]
     if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
     steps:
@@ -195,7 +195,7 @@ jobs:
 
   publish:
     name: Publish to GHCR
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [prepare, precedence]
     if: ${{ github.ref == 'refs/heads/main' && needs.precedence.result == 'success' }}
     permissions:
@@ -315,7 +315,7 @@ jobs:
 
   trivy-scan:
     name: Trivy vulnerability scan
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: publish
     if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.repomd_hash != '' }}
     steps:
