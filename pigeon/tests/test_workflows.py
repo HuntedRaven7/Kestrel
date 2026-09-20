@@ -82,3 +82,36 @@ def test_publish_collects_all_stages():
         assert stage in assembly, (
             f"publish assembly drops stage {stage}: "
             f"built RPMs never reach GHCR")
+
+
+def _build_stage():
+    return yaml.safe_load((WORKFLOWS / "build-stage.yml").read_text())
+
+
+def test_package_cache_restores_before_compiling_and_publishes_misses():
+    # Per-package GHCR cache: resolve key -> restore attempt -> compile
+    # only on miss -> publish the miss. A hit must be indistinguishable
+    # from a build downstream (same stage artifact either way).
+    data = _build_stage()
+    steps = data["jobs"]["build"]["steps"]
+    names = [s.get("name", "") for s in steps]
+    assert "Resolve build root for cache key" in names
+    assert "Restore package RPM cache" in names
+    assert "Publish package RPM cache" in names
+    assert "tools/package_cache_key.py" in yaml.safe_dump(data)
+    by_name = {s.get("name", ""): s for s in steps}
+    build = by_name["Build in Fedora container"]
+    assert "package_cache_restore" in build.get("if", ""), (
+        "the compile must be skipped on a cache hit")
+    assert "hit != 'true'" in build.get("if", "")
+
+
+def test_cache_hit_materialises_as_the_ordinary_stage_artifact():
+    # Precedence/publish only ever see ~/stages via work/out; a hit that
+    # bypassed work/out would ship an empty package.
+    data = _build_stage()
+    steps = data["jobs"]["build"]["steps"]
+    by_name = {s.get("name", ""): s for s in steps}
+    use_cached = by_name["Use cached RPMs"]
+    assert "work/out" in use_cached.get("run", ""), (
+        "cache hits must land in work/out like fresh builds")
