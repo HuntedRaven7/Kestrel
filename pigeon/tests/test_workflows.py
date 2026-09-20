@@ -168,6 +168,10 @@ def test_srpm_wave_gates_all_rebuilds():
     # to srpm.yml so the same build can run from packit-srpm-pilot.
     assert jobs["srpm"].get("uses", "").endswith("srpm.yml"), (
         "rebuild-pigeon srpm job must delegate to the reusable srpm.yml workflow")
+    # Mandatory after preflight: the advisory BuildRequires check gates the
+    # SRPM wave so broken specs never reach rpmbuild -bs.
+    assert "preflight" in jobs["srpm"].get("needs", []), (
+        "srpm does not wait for preflight (broken specs would reach rpmbuild)")
 
 
 def test_srpm_wave_builds_and_uploads_per_package_srpms():
