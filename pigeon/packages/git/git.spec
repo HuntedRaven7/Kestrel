@@ -1,8 +1,10 @@
 # Pass --without docs to rpmbuild if you don't want the documentation
 %bcond_without docs
 
-# Pass --without tests to rpmbuild if you don't want to run the tests
-%bcond_without tests
+# Pass --with tests to rpmbuild if you want to run the tests.
+# Disabled by default: the suite is hostile to the pigeon container
+# (no full init, restricted FS) and fails massively under %check.
+%bcond_with tests
 
 %global gitexecdir          %{_libexecdir}/git-core
 

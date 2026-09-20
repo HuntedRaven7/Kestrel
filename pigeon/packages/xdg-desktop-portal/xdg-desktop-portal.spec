@@ -1,4 +1,4 @@
-%bcond docs %{undefined rhel}
+%bcond_with docs
 
 %global flatpak_version 1.5.0
 %global geoclue_version 2.5.2
