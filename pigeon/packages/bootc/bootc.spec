@@ -80,6 +80,7 @@ cp .cargo/vendor-config.toml .
 %cargo_prep -N
 cat vendor-config.toml >> .cargo/config.toml
 rm vendor-config.toml
+%cargo_vendor_manifest
 
 %build
 %cargo_build

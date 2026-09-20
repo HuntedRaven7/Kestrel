@@ -81,7 +81,7 @@ export LDFLAGS="%{build_ldflags} -pie"
 # SIGILL on older CPUs.
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
-CMAKE_C_FLAGS="-mno-avx512f -mno-gfni" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni" \
+CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
 cargo build --release --locked
 cp target/release/voxtype target/release/voxtype-avx2
 
@@ -94,7 +94,7 @@ cp target/release/voxtype target/release/voxtype-avx512
 cargo clean
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
-CMAKE_C_FLAGS="-mno-avx512f -mno-gfni" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni" \
+CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
 cargo build --release --locked --features gpu-vulkan
 cp target/release/voxtype target/release/voxtype-vulkan
 
@@ -141,7 +141,7 @@ export LDFLAGS="%{build_ldflags} -pie"
 # Only test with AVX2 build to avoid SIGILL in build environments
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
-CMAKE_C_FLAGS="-mno-avx512f -mno-gfni" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni" \
+CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
 cargo test --release --locked
 %endif
 

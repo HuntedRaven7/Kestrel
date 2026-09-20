@@ -430,7 +430,8 @@ git add .							\
 git commit -a -q -m "%{tarversion} baseline."			\
 git am --whitespace=nowarn %%{patches} </dev/null		\
 rm -r build-aux m4						\
-./bootstrap							\
+chmod +x bootstrap										\
+./bootstrap											\
 %{nil}
 
 %define do_efi_configure()					\

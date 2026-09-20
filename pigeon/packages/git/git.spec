@@ -107,7 +107,7 @@ sed -i '/#include <stddef.h>/a #undef unreachable' git-compat-util.h
 
 %build
 %make_build \
-  CFLAGS="%{build_cflags}" \
+  CFLAGS="%{build_cflags} -std=gnu99" \
   NO_PERL=0 \
   USE_LIBPCRE2=1 \
   INSTALL_SYMLINKS=1

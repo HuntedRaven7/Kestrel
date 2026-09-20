@@ -8,6 +8,14 @@
 %global spaversion 0.2
 %global __meson_auto_features disabled
 
+%if 0%{?fedora} && 0%{?fedora} < 45
+%bcond freeaptx 1
+%bcond lc3plus 1
+%else
+%bcond freeaptx 0
+%bcond lc3plus 0
+%endif
+
 Name:       pipewire-libs-extra
 Summary:    PipeWire extra plugins
 Version:    1.6.8
@@ -47,30 +55,50 @@ PipeWire media server Bluetooth aptX codec plugin.
 %meson \
   -D examples=disabled \
   -D bluez5=enabled \
+  %if %{?with_freeaptx:1}%{!?with_freeaptx:0}
   -D bluez5-codec-aptx=enabled \
+  %else
+  -D bluez5-codec-aptx=disabled \
+  %endif
   -D bluez5-codec-ldac-dec=disabled \
+  %if %{?with_lc3plus:1}%{!?with_lc3plus:0}
   -D bluez5-codec-lc3plus=enabled \
+  %else
+  -D bluez5-codec-lc3plus=disabled \
+  %endif
   -D ffmpeg=enabled \
   -D lv2=enabled \
   -D session-managers=[]
 
 %meson_build \
+    %if %{?with_freeaptx:1}%{!?with_freeaptx:0}
     spa-codec-bluez5-aptx \
+    %endif
+    %if %{?with_lc3plus:1}%{!?with_lc3plus:0}
     spa-codec-bluez5-lc3plus \
+    %endif
     spa-ffmpeg
 
 %install
+%if %{?with_freeaptx:1}%{!?with_freeaptx:0}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-aptx.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
+%endif
+%if %{?with_lc3plus:1}%{!?with_lc3plus:0}
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/bluez5/libspa-codec-bluez5-lc3plus.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
+%endif
 install -pm 0755 -D %{_vpath_builddir}/spa/plugins/ffmpeg/libspa-ffmpeg.so \
     %{buildroot}%{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
 
 %files
 %license COPYING
+%if %{?with_freeaptx:1}%{!?with_freeaptx:0}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-aptx.so
+%endif
+%if %{?with_lc3plus:1}%{!?with_lc3plus:0}
 %{_libdir}/spa-%{spaversion}/bluez5/libspa-codec-bluez5-lc3plus.so
+%endif
 %dir %{_libdir}/spa-%{spaversion}/ffmpeg
 %{_libdir}/spa-%{spaversion}/ffmpeg/libspa-ffmpeg.so
 
