@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import re
+import subprocess
 import sys
 import tarfile
 import urllib.request
@@ -67,8 +68,22 @@ def parse_spec(path: Path):
         macros.setdefault("url", m.group(1))
         macros.setdefault("URL", m.group(1))
     lines = []
-    for m in re.finditer(r"^(Source\d*|Patch\d*)\s*:\s*(\S+)", text, re.M):
-        lines.append((m.group(1), m.group(2)))
+    # Track %if 0 blocks: Source/Patch lines inside them are inactive
+    # (e.g. openjpeg's data.tar.xz, only needed when runcheck=1).
+    in_if0 = False
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith("%if") and re.match(r"%if\s+0\b", s):
+            in_if0 = True
+            continue
+        if s.startswith("%endif"):
+            in_if0 = False
+            continue
+        if in_if0:
+            continue
+        m = re.match(r"^(Source\d*|Patch\d*)\s*:\s*(\S+)", s)
+        if m:
+            lines.append((m.group(1), m.group(2)))
     checks = []
     skipped_first_source = False
     for tag, val in lines:
@@ -95,6 +110,17 @@ def expand(val: str, macros: dict) -> str:
     while prev != val:
         prev = val
         val = re.sub(r"%\{(\w+)\}", sub, val)
+    for name in macros:
+        val = val.replace(f"%{name}", macros[name])
+    def cmd_sub(m):
+        cmd = m.group(1)
+        cmd = re.sub(r"%\{(\w+)\}", sub, cmd)
+        try:
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
+            return result.stdout.strip()
+        except Exception:
+            return m.group(0)
+    val = re.sub(r"%\(([^)]+)\)", cmd_sub, val)
     return val
 
 

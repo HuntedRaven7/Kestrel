@@ -146,7 +146,6 @@ gh workflow run import-package.yml -f package=pkgname
 
 ## References
 
-- [PLAN.md](PLAN.md) — Full design document
 - [AGENTS.md](AGENTS.md) — Agent instructions + skill router
 - [docs/architecture.md](docs/architecture.md) — Architecture details
 - [docs/building.md](docs/building.md) — Build instructions
