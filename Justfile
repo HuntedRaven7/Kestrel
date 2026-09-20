@@ -69,6 +69,31 @@ qemu-boot-iso iso-path="iso-output/warbler-main-local.iso" memory="4G":
 import pkg:
     echo "TODO: import Fedora dist-git rawhide branch for {{ pkg }} into pigeon/packages/{{ pkg }}/ (PR, with .hummingbird-upstream.json)"
 
+srpm pkg:
+    #!/usr/bin/env bash
+    # Local SRPM build mirroring the rebuild-pigeon SRPM wave
+    # (stage-sources + rpmbuild -bs). Requires rpm-build on the host.
+    set -euo pipefail
+    mkdir -p work/srpm
+    PKG="{{ pkg }}"
+    if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('vendored') else 1)"; then \
+      python3 pigeon/tools/fetch_vendored.py --package "$PKG"; \
+    fi
+    if [ "$PKG" = bootc ]; then \
+      VER=$(python3 -c "import json; print(json.load(open('pigeon/config/upstream-sources.json'))['packages']['bootc']['version'])"); \
+      curl -fsSL --retry 3 \
+        -o "pigeon/packages/bootc/bootc-${VER}-vendor.tar.zstd" \
+        "https://github.com/bootc-dev/bootc/releases/download/v${VER}/bootc-${VER}-vendor.tar.zstd"; \
+    fi
+    python3 pigeon/tools/audit_sources.py --fix --package "$PKG"
+    python3 pigeon/tools/source_pipeline.py fetch "$PKG" \
+      --output work/srpm --stage-into pigeon/packages
+    SPEC=$(ls pigeon/packages/"$PKG"/*.spec | head -1)
+    rpmbuild -bs "$SPEC" \
+      --define "_sourcedir $PWD/pigeon/packages/$PKG" \
+      --define "_srcrpmdir $PWD/work/srpm"
+    ls work/srpm/*.src.rpm
+
 bump-check:
     echo "TODO: report Renovate open bump PRs"
 

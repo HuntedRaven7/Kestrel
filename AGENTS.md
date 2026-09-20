@@ -12,7 +12,7 @@ Load only the skill matching the task; do not read every skill.
 
 | Task / Domain | Skill to load |
 |---|---|
-| RPM recipes, specs, Mock/rpmbuild, Packit SRPMs | `pigeon-packaging` |
+| RPM recipes, specs, Mock/rpmbuild, SRPM builds | `pigeon-packaging` |
 | `upstream-sources.json`, source verification, Renovate bumps | `pigeon-source-verify` |
 | Warbler Containerfile, contracts, system_files, ISO | `warbler-image` |
 | Woodpecker server image, services, uupd | `woodpecker-server` |
@@ -32,13 +32,13 @@ Load only the skill matching the task; do not read every skill.
 ## Sources of truth
 
 1. Read the file being changed and its callers before editing.
-2. `PLAN.md` for locked decisions (GHCR owner, `.hum1.pigeon` suffix, Packit+Renovate ownership).
+2. `PLAN.md` for locked decisions (GHCR owner, `.hum1.pigeon` suffix, Renovate-owned lock versions).
 3. Workflows, `Justfile`, and `tools/` output are current truth; prose that disagrees is stale.
-4. Verify external syntax against current official docs before changing Containerfile, Packit, Renovate, cosign, or bootc usage.
+4. Verify external syntax against current official docs before changing Containerfile, Renovate, cosign, or bootc usage.
 
 ## Development workflow
 
 - `just --list` before inventing maintenance commands.
 - `just check` for config changes; `just test` for `tools/` changes.
 - Commits use `<type>(<scope>): <description>`.
-- Version bumps come from Renovate/Packit PRs, never hand-edited versions.
+- Version bumps come from Renovate PRs (lock) carried into specs via `just sync-versions`, never hand-edited versions.
