@@ -18,11 +18,13 @@ Rules (PLAN.md §3.2):
   - Every run writes pigeon/reports/<pkg>.json; failed verification leaves the
     previous source unchanged (we never write a digest on failure).
   - Secondary inputs ("extra_sources": [{filename, url_template, sha512}])
-    are fetched + verified exactly like the primary and staged alongside it,
-    so large binaries (e.g. git-submodule tarballs) never need committing
-    to git. The staged filename is decoupled from the URL basename on
-    purpose (commit-pinned upstream URLs served under stable recipe names).
+    are fetched + verified exactly like the primary and staged alongside it.
+    The staged filename is decoupled from the URL basename on purpose.
     Prefer immutable (commit/tag-pinned) extra URLs over floating branches.
+  - Vendored extras ("vendored": true) hash a committed file under
+    pigeon/packages/<pkg>/ — no download (used for cargo vendor trees that
+    have no lookaside URL). Signature/checksum sidecars (.sig/.asc/.gpg/
+    .sign/.sha*sum) may WARN on failure; all other extras fail closed.
 """
 from __future__ import annotations
 
@@ -85,7 +87,10 @@ def check_source(pkg: str) -> bool:
         return False
     for i, extra in enumerate(entry.get("extra_sources", []) or []):
         xsha = extra.get("sha512", "")
-        if not extra.get("filename") or not extra.get("url_template"):
+        if not extra.get("filename"):
+            print(f"REFUSE: {pkg} extra_sources[{i}] missing filename")
+            return False
+        if not extra.get("vendored") and not extra.get("url_template"):
             print(f"REFUSE: {pkg} extra_sources[{i}] missing filename/url_template")
             return False
         if not xsha or str(xsha).startswith("TODO"):
@@ -139,9 +144,10 @@ def validate_upstream_sources(data: dict) -> list[str]:
             where = f"{name}: extra_sources[{i}]"
             if not extra.get("filename"):
                 errors.append(f"{where}: missing filename")
-            xurl = extra.get("url_template", "")
-            if not xurl or str(xurl).startswith("TODO"):
-                errors.append(f"{where}: missing or placeholder url_template")
+            if not extra.get("vendored"):
+                xurl = extra.get("url_template", "")
+                if not xurl or str(xurl).startswith("TODO"):
+                    errors.append(f"{where}: missing or placeholder url_template")
             xsha = extra.get("sha512", "")
             if not xsha or str(xsha).startswith("TODO"):
                 errors.append(f"{where}: missing or placeholder sha512")
@@ -291,17 +297,22 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         # Gate: checksum must match; signature must pass when one is configured.
         ok = digest == recorded and (not sig["checked"] or sig.get("ok") is True)
 
-        # Declared secondary inputs ride along (fail open - primary source
-        # verification is the gate; extras like .sha256sum are non-essential).
+        # Declared secondary inputs ride along. Signature/checksum sidecars
+        # may WARN; everything else (vendor trees, submodule tarballs) fails
+        # closed so rpmbuild never sees a missing SourceN.
         extras = []
+        extras_ok = True
         for extra in entry.get("extra_sources", []) or []:
             res = fetch_extra(pkg, extra, str(entry.get("version", "")),
                               workdir, output, stage_into)
             extras.append(res)
             if res["ok"]:
                 print(f"OK: extra {res['filename']} verified")
-            else:
+            elif _extra_is_sidecar(res.get("filename", "")):
                 print(f"WARN: extra {res['filename']} — {res['reason']} (non-fatal)")
+            else:
+                print(f"FAIL: extra {res['filename']} — {res['reason']}")
+                extras_ok = False
 
         # Copy to output directory if specified
         if output:
@@ -317,10 +328,13 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
             "sha512": digest, "expected": recorded, "signature": sig,
-            "extra_sources": extras, "ok": ok,
+            "extra_sources": extras, "ok": ok and extras_ok,
         })
         if not ok:
             print(f"FAIL: verification failed for {pkg} (digest match: {digest == recorded})")
+            return 1
+        if not extras_ok:
+            print(f"FAIL: required extra_sources failed for {pkg}")
             return 1
         print(f"OK: {pkg}@{entry.get('version')} verified ({archive.name})")
 
@@ -470,20 +484,60 @@ def render_extra_url(extra: dict, version: str) -> str:
     return extra["url_template"].replace("{version}", str(version))
 
 
+_SIDECAR_SUFFIXES = (
+    ".sig", ".asc", ".gpg", ".sign",
+    ".sha256sum", ".sha512sum", ".md5sum",
+)
+
+
+def _extra_is_sidecar(filename: str) -> bool:
+    """Signature/checksum sidecars may WARN; archive extras fail closed."""
+    return filename.endswith(_SIDECAR_SUFFIXES)
+
+
 def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
                 output: str | None, stage_into: str | None) -> dict:
     """Download + verify one declared secondary input. Returns a result dict
     with ok/filename/sha512 (and reason when not ok). Stages by the declared
-    filename, which is intentionally decoupled from the URL basename."""
+    filename, which is intentionally decoupled from the URL basename.
+
+    Vendored extras ("vendored": true) hash a committed file under
+    pigeon/packages/<pkg>/ and never download.
+    """
     filename = extra.get("filename", "")
-    url = render_extra_url(extra, version)
     recorded = extra.get("sha512", "")
-    if not filename or not extra.get("url_template"):
+    if not filename:
         return {"ok": False, "filename": filename,
-                "reason": "missing filename/url_template"}
+                "reason": "missing filename"}
     if not recorded or str(recorded).startswith("TODO"):
         return {"ok": False, "filename": filename,
                 "reason": f"no recorded digest — run `record {pkg}` first"}
+
+    if extra.get("vendored"):
+        staged = ROOT / "pigeon" / "packages" / pkg / filename
+        if not staged.is_file():
+            return {"ok": False, "filename": filename,
+                    "reason": f"vendored file not staged: {filename}"}
+        if reason := check_archive(staged):
+            return {"ok": False, "filename": filename, "reason": reason}
+        digest = sha512_of(staged)
+        ok = digest == recorded
+        if ok:
+            if output:
+                Path(output).mkdir(parents=True, exist_ok=True)
+                shutil.copy(staged, Path(output) / filename)
+            if stage_into:
+                pkg_dir = ROOT / stage_into / pkg
+                if pkg_dir.exists() and pkg_dir.resolve() != staged.parent.resolve():
+                    shutil.copy(staged, pkg_dir / filename)
+        return {"ok": ok, "filename": filename, "vendored": True,
+                "sha512": digest, "expected": recorded,
+                "reason": None if ok else "digest mismatch"}
+
+    if not extra.get("url_template"):
+        return {"ok": False, "filename": filename,
+                "reason": "missing filename/url_template"}
+    url = render_extra_url(extra, version)
     dest = workdir / filename
     try:
         download(url, dest)
@@ -493,8 +547,7 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
     # Signature files (.sig, .asc, .gpg, .sign) and checksum files
     # (.sha256sum, .sha512sum, .md5sum) are not archives — skip
     # the archive magic check so they are accepted.
-    if not filename.endswith((".sig", ".asc", ".gpg", ".sign",
-                               ".sha256sum", ".sha512sum", ".md5sum")):
+    if not _extra_is_sidecar(filename):
         if reason := check_archive(dest):
             return {"ok": False, "filename": filename, "reason": reason}
     digest = sha512_of(dest)
@@ -514,10 +567,25 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
 
 def record_extra(pkg: str, extra: dict, version: str, workdir: Path) -> dict:
     """Download one secondary input and lock its digest. Returns a result
-    dict; on success the caller writes digest back to the lock entry."""
+    dict; on success the caller writes digest back to the lock entry.
+
+    Vendored extras hash the committed file under pigeon/packages/<pkg>/.
+    """
     filename = extra.get("filename", "")
+    if not filename:
+        return {"ok": False, "filename": filename,
+                "reason": "missing filename"}
+    if extra.get("vendored"):
+        staged = ROOT / "pigeon" / "packages" / pkg / filename
+        if not staged.is_file():
+            return {"ok": False, "filename": filename,
+                    "reason": f"vendored file not staged: {filename}"}
+        if reason := check_archive(staged):
+            return {"ok": False, "filename": filename, "reason": reason}
+        return {"ok": True, "filename": filename, "vendored": True,
+                "sha512": sha512_of(staged)}
     url = render_extra_url(extra, version) if extra.get("url_template") else ""
-    if not filename or not url:
+    if not url:
         return {"ok": False, "filename": filename,
                 "reason": "missing filename/url_template"}
     dest = workdir / filename
