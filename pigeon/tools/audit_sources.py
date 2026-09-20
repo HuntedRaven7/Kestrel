@@ -11,8 +11,9 @@ Usage:
   audit_sources.py --fix -p foot    # same, scoped to one recipe (for CI matrix)
 
 Rules:
-  - The FIRST Source: line per spec is skipped: packit's create_archive
-    action overrides Source0 positionally with our verified staged archive.
+  - The FIRST Source: line per spec is skipped: the staged verified
+    archive satisfies Source0 positionally (source_pipeline fetch stages
+    it under the lock filename).
   - Any reference resolving to our staged archive basename is skipped.
   - Plain filenames must exist in the recipe dir (macros like %{name} are
     expanded from the spec preamble best-effort).
@@ -180,10 +181,12 @@ def declared_extras() -> dict:
 
 
 def srpm_methods() -> dict:
-    """SRPM lane per package: `packit` (default) or `rpmbuild`.
+    """SRPM approach per package: `standard` (default) or `rpmbuild`.
 
-    The rpmbuild lane has no packit download step, so its remote sources
-    must be vendored into the recipe dir.
+    The rpmbuild approach (plain `rpmbuild -bs` over committed Sources,
+    for specs no SRPM parser can handle, e.g. grub2) has no download step
+    for secondary sources, so its remote sources must be vendored into
+    the recipe dir.
     """
     import json
 
@@ -194,7 +197,7 @@ def srpm_methods() -> dict:
             if e.get("local") or e.get("srpm") == "rpmbuild":
                 out[pkg] = "rpmbuild"
             else:
-                out[pkg] = "packit"
+                out[pkg] = "standard"
     except Exception:  # noqa: BLE001
         pass
     return out
@@ -236,8 +239,8 @@ def audit(fix: bool = False, only: str | None = None) -> int:
                 # from lookaside) needs no network; rpmbuild uses the local copy.
                 if (pkgdir / val.rsplit("/", 1)[-1]).is_file():
                     continue
-                # rpmbuild-lane packages get no packit download step, so a
-                # remote source is a hard miss: fetch the URL itself.
+                # rpmbuild-approach packages get no downloader for secondary
+                # sources, so a remote source is a hard miss: fetch the URL itself.
                 if methods.get(pkgdir.name) == "rpmbuild":
                     base = val.rsplit("/", 1)[-1].split("#", 1)[0]
                     missing.setdefault(pkgdir.name, []).append(f"{tag} -> {base}")
