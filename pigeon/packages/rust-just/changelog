@@ -1,0 +1,18 @@
+* Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.8-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Tue Feb 15 2022 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 0.9.8-4
+- Rebuild with package notes
+
+* Fri Jan 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.8-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Sun Jul 04 09:45:37 CEST 2021 Olivier Lemasle <o.lemasle@gmail.com> - 0.9.8-1
+- Update to upstream 0.9.8; enable tests
+- Add shell completions
+
+* Sat Jul 03 12:57:26 CEST 2021 Olivier Lemasle <o.lemasle@gmail.com> - 0.9.6-1
+- Initial package

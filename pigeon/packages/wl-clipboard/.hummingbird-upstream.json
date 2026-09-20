@@ -1,0 +1,8 @@
+{
+  "package": "wl-clipboard",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/wl-clipboard.git",
+  "commit": "15fc43781a4010d8012335b4d619ac7044c3e238",
+  "tree": "7a874cf2c2c1b791d8c3c6cc590ead3ac72718f0",
+  "imported_at": "2026-08-29T06:03:09.041598+00:00"
+}

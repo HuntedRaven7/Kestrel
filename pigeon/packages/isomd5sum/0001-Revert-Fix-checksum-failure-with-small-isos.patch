@@ -1,0 +1,67 @@
+From 14e4bac91c6aba61fe56c8d9a59cf7f07dbb99ab Mon Sep 17 00:00:00 2001
+From: "Brian C. Lane" <bcl@redhat.com>
+Date: Mon, 29 Apr 2024 11:35:14 -0700
+Subject: [PATCH] Revert "Fix checksum failure with small isos"
+
+This reverts commit e313746011768ed69587fcda88ff65951af90ccc.
+
+This patch causes short checksums (57 characters instead of 60) to be
+written, resulting in a checksum that doesn't cover the whole iso and
+which fails when checked with previous checkisomd5sum versions.
+
+The incorrect checksums are shown with a ';FR' at the end instead of the
+last 3 digits.
+---
+ libcheckisomd5.c   | 4 ++--
+ libimplantisomd5.c | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/libcheckisomd5.c b/libcheckisomd5.c
+index adcd938..2d350bc 100644
+--- a/libcheckisomd5.c
++++ b/libcheckisomd5.c
+@@ -66,7 +66,7 @@ static enum isomd5sum_status checkmd5sum(int isofd, checkCallback cb, void *cbda
+     size_t previous_fragment = 0UL;
+     off_t offset = 0LL;
+     while (offset < total_size) {
+-        const size_t nbyte = MIN((size_t)(total_size - offset), MIN(fragment_size, buffer_size));
++        const size_t nbyte = MIN((size_t)(total_size - offset), buffer_size);
+ 
+         ssize_t nread = read(isofd, buffer, nbyte);
+         if (nread <= 0L)
+@@ -89,7 +89,7 @@ static enum isomd5sum_status checkmd5sum(int isofd, checkCallback cb, void *cbda
+             const size_t current_fragment = offset / fragment_size;
+             const size_t fragmentsize = FRAGMENT_SUM_SIZE / info->fragmentcount;
+             /* If we're onto the next fragment, calculate the previous sum and check. */
+-            if (current_fragment != previous_fragment && current_fragment < info->fragmentcount) {
++            if (current_fragment != previous_fragment) {
+                 if (!validate_fragment(&hashctx, current_fragment, fragmentsize,
+                                        info->fragmentsums, NULL)) {
+                     /* Exit immediately if current fragment sum is incorrect */
+diff --git a/libimplantisomd5.c b/libimplantisomd5.c
+index d5f32fc..217c896 100644
+--- a/libimplantisomd5.c
++++ b/libimplantisomd5.c
+@@ -109,8 +109,8 @@ int implantISOFD(int isofd, int supported, int forceit, int quiet, char **errstr
+     const off_t fragment_size = total_size / (FRAGMENT_COUNT + 1);
+     size_t previous_fragment = 0UL;
+     off_t offset = 0LL;
+-    while (offset < total_size && previous_fragment < FRAGMENT_COUNT) {
+-        const size_t nbyte = MIN((size_t)(total_size - offset), MIN(fragment_size, buffer_size));
++    while (offset < total_size) {
++        const size_t nbyte = MIN((size_t)(total_size - offset), buffer_size);
+         ssize_t nread = read(isofd, buffer, nbyte);
+         if (nread <= 0L)
+             break;
+@@ -119,7 +119,7 @@ int implantISOFD(int isofd, int supported, int forceit, int quiet, char **errstr
+         const size_t current_fragment = offset / fragment_size;
+         const size_t fragmentsize = FRAGMENT_SUM_SIZE / FRAGMENT_COUNT;
+         /* If we're onto the next fragment, calculate the previous sum and check. */
+-        if (current_fragment != previous_fragment && current_fragment < FRAGMENT_COUNT) {
++        if (current_fragment != previous_fragment) {
+             validate_fragment(&hashctx, current_fragment, fragmentsize, NULL, fragmentsums);
+             previous_fragment = current_fragment;
+         }
+-- 
+2.44.0
+

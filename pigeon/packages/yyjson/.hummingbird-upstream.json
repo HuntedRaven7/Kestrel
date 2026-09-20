@@ -1,0 +1,8 @@
+{
+  "package": "yyjson",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/yyjson.git",
+  "commit": "b31c6e3c19e0f7f9bb95094c3eb2621470a84434",
+  "tree": "c6ab761ff301d89c8dcd99baa92262c411d76833",
+  "imported_at": "2026-08-30T15:47:53.018310+00:00"
+}

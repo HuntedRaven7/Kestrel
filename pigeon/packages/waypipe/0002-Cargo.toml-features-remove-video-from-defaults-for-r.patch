@@ -1,0 +1,26 @@
+From eed41ad0ef6ae0784b30df8e20b7293846610f23 Mon Sep 17 00:00:00 2001
+From: Dominique Martinet <asmadeus@codewreck.org>
+Date: Sun, 7 Dec 2025 11:58:21 +0000
+Subject: [PATCH 2/2] Cargo.toml: features: remove video from defaults (for
+ rhel)
+
+---
+ Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 4d5fb42494b9..75e4845750af 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -20,7 +20,7 @@ path = "src/test_proto.rs"
+ required-features = ["test_proto"]
+ 
+ [features]
+-default = ["video", "dmabuf", "lz4", "zstd", "gbmfallback"]
++default = ["dmabuf", "lz4", "zstd", "gbmfallback"]
+ video = ["dep:waypipe-ffmpeg-wrapper", "dep:waypipe-shaders", "dmabuf"]
+ dmabuf = ["dep:ash"]
+ lz4 = ["dep:waypipe-lz4-wrapper"]
+-- 
+2.52.0
+

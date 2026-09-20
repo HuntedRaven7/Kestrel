@@ -1,0 +1,8 @@
+* Tue Sep 03 2024 Morten Stevens <mstevens@fedoraproject.org> - 0.7-3
+- Rebuilt for mbedTLS 3.6.1
+
+* Sat Apr 30 2022 Artem Polishchuk <ego.cordatus@gmail.com> - 0.7-2
+- build: Trigger udev reload for udev-rules sub-package
+
+* Sun Jan 02 2022 Artem Polishchuk <ego.cordatus@gmail.com> - 0.7-1
+- Initial package

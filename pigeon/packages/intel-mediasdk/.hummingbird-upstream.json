@@ -1,0 +1,8 @@
+{
+  "package": "intel-mediasdk",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/intel-mediasdk.git",
+  "commit": "b5dac252dade9b1565cd922f4825e43946404bf4",
+  "tree": "ecf618183c1d7878f55d470546e02a6f052a133f",
+  "imported_at": "2026-08-29T06:02:45.131991+00:00"
+}

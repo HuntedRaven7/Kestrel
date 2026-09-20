@@ -1,0 +1,8 @@
+{
+  "package": "pixman",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/pixman.git",
+  "commit": "bf83d145a32e97973e2cf3afb4971e8cc8cbfa99",
+  "tree": "867e3fdab5407a78297845769ceb94cd6035553a",
+  "imported_at": "2026-08-30T15:47:37.293832+00:00"
+}

@@ -1,0 +1,8 @@
+{
+  "package": "pulseaudio",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/pulseaudio.git",
+  "commit": "c739e36fb0910060ded8fd580a6d257db0185c7f",
+  "tree": "2375a80f2be409b9d666ebc634fb083007c53ddd",
+  "imported_at": "2026-08-30T15:47:38.432870+00:00"
+}

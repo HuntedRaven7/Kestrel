@@ -1,0 +1,8 @@
+{
+  "package": "xdg-user-dirs-gtk",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/xdg-user-dirs-gtk.git",
+  "commit": "2e5a274b9b4adf4eaad98665354e812fd28931b6",
+  "tree": "20c2efe985edead71ad34a374820016d31aec341",
+  "imported_at": "2026-08-30T15:47:53.447898+00:00"
+}

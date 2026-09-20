@@ -1,0 +1,8 @@
+{
+  "package": "gstreamer1-plugins-good",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/gstreamer1-plugins-good.git",
+  "commit": "b6145456d71e3e8c07c79b36e8123cb690c47019",
+  "tree": "e80b258191bccc9e85dbbc6408dac14c2c4cdbb3",
+  "imported_at": "2026-08-30T15:47:09.953335+00:00"
+}

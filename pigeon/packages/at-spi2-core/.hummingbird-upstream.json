@@ -1,0 +1,8 @@
+{
+  "package": "at-spi2-core",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/at-spi2-core.git",
+  "commit": "352d852fd409a7853c91d0b985ff9147d5959fc8",
+  "tree": "dac3fbcf0cf6b2c39d37f04630f29f5671601e85",
+  "imported_at": "2026-08-30T15:46:53.404901+00:00"
+}

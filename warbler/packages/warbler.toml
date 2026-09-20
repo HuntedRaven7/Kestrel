@@ -75,7 +75,6 @@ fuse = "*"
 flatpak-xdg-utils = "*"
 
 # System utilities
-bootc = "1.16.10"
 distrobox = "1.8.2.5"
 fastfetch = "2.66.0"
 git = "2.47.0"

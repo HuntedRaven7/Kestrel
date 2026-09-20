@@ -1,0 +1,8 @@
+{
+  "package": "gtk3",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/gtk3.git",
+  "commit": "c5e97ff9539c32063fe88dad2d02d398611a730e",
+  "tree": "dc71335346d9eb8819dd1c0e7ad57b790691eea1",
+  "imported_at": "2026-08-30T15:47:10.921571+00:00"
+}

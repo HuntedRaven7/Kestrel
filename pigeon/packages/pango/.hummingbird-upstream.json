@@ -1,0 +1,8 @@
+{
+  "package": "pango",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/pango.git",
+  "commit": "5859ecbad5771c995687cf7eb1aaa0211cf87e4c",
+  "tree": "bdf8be163063a28d1ae27f409ec03158c9a4385e",
+  "imported_at": "2026-08-29T09:08:15.714141+00:00"
+}

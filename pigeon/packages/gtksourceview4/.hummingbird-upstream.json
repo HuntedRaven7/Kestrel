@@ -1,0 +1,8 @@
+{
+  "package": "gtksourceview4",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/gtksourceview4.git",
+  "commit": "4a472785fccd3b087e62586a2bcfd11f2a4303b2",
+  "tree": "31664342755d7892307bfcd7d6f64d4e2663f0c4",
+  "imported_at": "2026-08-30T15:47:09.014119+00:00"
+}

@@ -145,10 +145,6 @@ flatpak
 flatpak-builder
 flatpak-session-helper
 
-# Bootc
-bootc
-bootc-image-builder
-
 # Firmware
 linux-firmware
 linux-firmware-whence

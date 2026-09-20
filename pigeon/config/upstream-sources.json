@@ -778,18 +778,6 @@
       },
       "filename": "v1.1.3.tar.gz"
     },
-    "bootc": {
-      "version": "1.16.10",
-      "url_template": "https://github.com/bootc-dev/bootc/releases/download/v{version}/bootc-{version}.tar.zstd",
-      "sha512": "9ede03ec8d24d359a69a2522cf0658eefb4273a2b611558c5d672a235bce49cdadf9c0908fda79c756ccf6e6ef37dff9a758a03e75fdc8a9528120e437cbb522",
-      "stage": 3,
-      "note": "Bootable container system.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "bootc-dev/bootc"
-      },
-      "filename": "bootc-1.16.10.tar.zstd"
-    },
     "distrobox": {
       "version": "1.8.2.5",
       "url_template": "https://github.com/89luca89/distrobox/archive/refs/tags/1.8.2.5/distrobox-1.8.2.5.tar.gz",

@@ -7,9 +7,7 @@ Summary:        Color Management Engine
 # plugins/threaded/src/ is GPL-3.0-or-later
 License:        MIT AND GPL-3.0-or-later
 URL:            http://www.littlecms.com/
-# Kestrel: upstream https mirror (littlecms.com is unreachable to automation;
-# our verified Source0 in upstream-sources.json). Do not revert on re-import.
-Source0:        https://github.com/mm2/Little-CMS/archive/refs/tags/lcms%{version}.tar.gz
+Source0:        http://www.littlecms.com/lcms2-%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  libjpeg-devel
@@ -38,7 +36,7 @@ Provides:       littlecms-devel = %{version}-%{release}
 Development files for LittleCMS.
 
 %prep
-%autosetup -p1 -n Little-CMS-lcms%{version}
+%autosetup -p1
 
 %build
 %meson -Dutils=true

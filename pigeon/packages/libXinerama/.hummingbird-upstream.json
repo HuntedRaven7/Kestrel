@@ -1,0 +1,8 @@
+{
+  "package": "libXinerama",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/libXinerama.git",
+  "commit": "daa8f7a43fa16976d2bfc2a841143f8204d99468",
+  "tree": "6d1965306a6f1ff42a8ac7af085b8c2fe52c2ed6",
+  "imported_at": "2026-08-30T15:47:17.151794+00:00"
+}

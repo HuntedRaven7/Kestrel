@@ -1,0 +1,12 @@
+diff -Naur MediaSDK-intel-mediasdk-23.2.2-original/builder/FindGlobals.cmake MediaSDK-intel-mediasdk-23.2.2/builder/FindGlobals.cmake
+--- MediaSDK-intel-mediasdk-23.2.2-original/builder/FindGlobals.cmake	2023-05-06 02:51:49.000000000 +0100
++++ MediaSDK-intel-mediasdk-23.2.2/builder/FindGlobals.cmake	2025-11-03 22:14:04.440364909 +0000
+@@ -25,7 +25,7 @@
+ set( CMAKE_BUILD_WITH_INSTALL_RPATH TRUE )
+ set( CMAKE_SKIP_BUILD_RPATH TRUE )
+ 
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_C_STANDARD 11)
+ 
+ collect_oses()

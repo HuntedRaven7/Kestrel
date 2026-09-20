@@ -1,0 +1,8 @@
+{
+  "package": "intel-gmmlib",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/intel-gmmlib.git",
+  "commit": "b2548a5238c0b10e858033696c135be54bf8f64a",
+  "tree": "3390a15bebebe19b49fd68834b4a8b864ba41b5e",
+  "imported_at": "2026-08-29T06:02:43.813991+00:00"
+}

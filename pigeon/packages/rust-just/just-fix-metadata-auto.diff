@@ -1,0 +1,18 @@
+--- just-1.57.0/Cargo.toml	2006-07-24T01:21:28+00:00
++++ just-1.57.0/Cargo.toml	2026-07-25T17:21:02.240393+00:00
+@@ -189,10 +189,6 @@
+     "user",
+     "fs",
+ ]
+-
+-[target."cfg(windows)".dependencies.ctrlc]
+-version = "3.1.1"
+-features = ["termination"]
+ 
+ [lints.clippy]
+ arbitrary_source_item_ordering = "deny"
+@@ -227,3 +223,4 @@
+ [profile.release]
+ lto = true
+ codegen-units = 1
++

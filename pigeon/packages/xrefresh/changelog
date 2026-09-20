@@ -1,0 +1,18 @@
+* Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.6-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.0.6-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Fri Jul 02 2021 Davide Cavalca <dcavalca@fedoraproject.org> - 1.0.6-3
+- Unretire package
+- Install docs
+- Misc spec cosmetic changes
+
+* Thu Apr 08 2021 Peter Hutterer <peter.hutterer@redhat.com> - 1.0.6-2
+- Fix Obsoletes line to actually obsolete the -39 server-utils (#1932754)
+
+* Wed Mar 03 2021 Peter Hutterer <peter.hutterer@redhat.com> 1.0.6-1
+- Split xrefresh out from xorg-x11-server-utils into a separate package
+  (#1934393)
+

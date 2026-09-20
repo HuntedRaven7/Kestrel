@@ -1,0 +1,8 @@
+{
+  "package": "intel-vpl-gpu-rt",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/intel-vpl-gpu-rt.git",
+  "commit": "1bc90352d6123306a5e7af9b2d2f6b378f7ea2e6",
+  "tree": "2eb773607fec439b3e2db5f9ed5191cc5bb34143",
+  "imported_at": "2026-08-29T06:02:45.683017+00:00"
+}

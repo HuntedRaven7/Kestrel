@@ -1,0 +1,3 @@
+# openrgb
+
+The openrgb package

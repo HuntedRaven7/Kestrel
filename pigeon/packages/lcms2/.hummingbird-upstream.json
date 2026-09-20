@@ -1,0 +1,8 @@
+{
+  "package": "lcms2",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/lcms2.git",
+  "commit": "c0f033adc3aa403736a7d6f9cf2f371fc3803883",
+  "tree": "e6ff83c182a93e4274f3bb4961030ffd63fb7dd7",
+  "imported_at": "2026-08-30T15:47:16.110879+00:00"
+}
