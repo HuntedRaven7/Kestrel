@@ -106,6 +106,16 @@ def parse_spec(path: Path):
 def expand(val: str, macros: dict) -> str:
     def sub(m):
         return macros.get(m.group(1), m.group(0))
+    def cmd_sub(m):
+        cmd = m.group(1)
+        cmd = re.sub(r"%\{(\w+)\}", sub, cmd)
+        cmd = re.sub(r"%(\w+)(?![\w{])", lambda m: macros.get(m.group(1), m.group(0)), cmd)
+        try:
+            # Use bash explicitly for shell commands (rpm uses bash for %() macros)
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10, executable="/bin/bash")
+            return result.stdout.strip()
+        except Exception:
+            return m.group(0)
     prev = None
     while prev != val:
         prev = val
@@ -114,16 +124,6 @@ def expand(val: str, macros: dict) -> str:
         val = re.sub(r"%(\w+)(?![\w{])", lambda m: macros.get(m.group(1), m.group(0)), val)
     for name in macros:
         val = val.replace(f"%{name}", macros[name])
-def cmd_sub(m):
-    cmd = m.group(1)
-    cmd = re.sub(r"%\{(\w+)\}", sub, cmd)
-    cmd = re.sub(r"%(\w+)(?![\w{])", lambda m: macros.get(m.group(1), m.group(0)), cmd)
-    try:
-        # Use bash explicitly for shell commands (rpm uses bash for %() macros)
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10, executable="/bin/bash")
-        return result.stdout.strip()
-    except Exception:
-        return m.group(0)
     val = re.sub(r"%\(([^)]+)\)", cmd_sub, val)
     return val
 
