@@ -9,8 +9,10 @@
 %global __meson_auto_features disabled
 
 %if 0%{?fedora} && 0%{?fedora} < 45
-%bcond freeaptx 1
-%bcond lc3plus 1
+# Kestrel: forced off — freeaptx/lc3plus -devel packages live in RPMFusion,
+# which is not enabled in our buildroots (No match on F44).
+%bcond freeaptx 0
+%bcond lc3plus 0
 %else
 %bcond freeaptx 0
 %bcond lc3plus 0
@@ -32,10 +34,14 @@ BuildRequires:  alsa-lib-devel
 BuildRequires:  meson >= 0.49.0
 BuildRequires:  gcc-c++
 BuildRequires:  git
+%if %{with lc3plus}
 BuildRequires:  liblc3plus-devel
+%endif
 BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(bluez) >= 4.101
+%if %{with freeaptx}
 BuildRequires:  pkgconfig(libfreeaptx)
+%endif
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(libavcodec)
 BuildRequires:  pkgconfig(libavfilter)
