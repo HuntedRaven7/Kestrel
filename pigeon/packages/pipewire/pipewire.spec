@@ -186,6 +186,7 @@ PipeWire utilities.
 # default when their deps are present, systemd user service made explicit.
 %meson \
   -Dsystemd-user-service=enabled \
+  -Daudiotestsrc=disabled -Dvideotestsrc=disabled \
   -Dbluez5=%{?with_bluez:enabled} \
   -Dbluez5-codec-ldac=disabled \
   -Dbluez5-codec-lc3plus=disabled \
