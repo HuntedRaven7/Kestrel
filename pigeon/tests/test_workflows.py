@@ -129,3 +129,23 @@ def test_resolve_and_build_share_the_dnf_cache():
             f"{step} is missing the shared dnf cache mount")
         assert "keepcache=1" in run, (
             f"{step} does not retain RPMs in the shared cache")
+
+
+def test_shared_dnf_cache_has_a_single_weekly_writer():
+    # Matrix jobs only RESTORE (70 parallel writers would thrash the 10GB
+    # budget); exactly one scheduled job saves.
+    data = _build_stage()
+    steps = data["jobs"]["build"]["steps"]
+    uses = [s.get("uses", "") for s in steps]
+    assert any(u.startswith("actions/cache/restore@") for u in uses), (
+        "build-stage does not restore the shared dnf cache")
+    assert not any(u.startswith("actions/cache/save@") for u in uses), (
+        "build-stage must never save: single-writer seed owns that")
+    seed = yaml.safe_load((WORKFLOWS / "seed-dnf-cache.yml").read_text())
+    # NOTE: bare `on:` parses as boolean True under YAML 1.1.
+    triggers = seed.get("on", seed.get(True, {}))
+    assert "schedule" in triggers, "seed job is not scheduled"
+    seed_uses = [s.get("uses", "") for s in
+                 seed["jobs"]["seed"]["steps"]]
+    assert any(u.startswith("actions/cache/save@") for u in seed_uses), (
+        "seed job does not save the shared dnf cache")
