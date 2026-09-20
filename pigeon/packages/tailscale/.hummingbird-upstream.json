@@ -1,0 +1,8 @@
+{
+  "package": "tailscale",
+  "branch": "stable",
+  "remote": "https://pkgs.tailscale.com/stable/tailscale_1.98.8_amd64.tgz",
+  "commit": "v1.98.8",
+  "tree": "",
+  "imported_at": "2026-09-20T09:00:00.000000+00:00"
+}
