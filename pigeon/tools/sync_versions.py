@@ -54,7 +54,7 @@ def drift_for(packages_root: Path, data: dict) -> list[tuple[str, str, str]]:
         entry = data.get("packages", {}).get(pkgdir.name)
         if not entry or entry.get("local"):
             continue
-        lock_ver = str(entry.get("version", ""))
+        lock_ver = str(entry.get("spec_version", entry.get("version", "")))
         if not lock_ver or lock_ver.startswith("TODO"):
             continue
         spec_ver = parse_spec_version(specs[0])
