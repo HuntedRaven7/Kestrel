@@ -40,6 +40,9 @@ Source0:        https://github.com/fish-shell/fish-shell/archive/%{githash}/%{na
 # For forked pcre2 crate that includes https://github.com/BurntSushi/rust-pcre2/pull/38
 Source10:       https://github.com/fish-shell/rust-pcre2/archive/%{rust_pcre2_fish_tag}/rust-pcre2-%{rust_pcre2_fish_tag}.tar.gz
 
+# Vendored Rust dependencies
+Source11:       fish-vendor-%{version_base}.tar.gz
+
 # Backports from upstream (0001~500)
 
 # Proposed upstream (501~1000)
@@ -110,6 +113,9 @@ tar -C ./third-party-forks/rust-pcre2 --strip-components=1 -xf %{SOURCE10}
 echo "%{version}" > version
 %endif
 
+# Extract vendored dependencies
+tar -xf %{SOURCE11}
+
 # Change the bundled scripts to invoke the python binary directly.
 for f in $(find share/tools -type f -name '*.py'); do
     sed -i -e '1{s@^#!.*@#!%{__python3}@}' "$f"
@@ -120,9 +126,14 @@ mv .cargo/config.toml fishshell-cargo-config.toml
 %cargo_prep
 cat fishshell-cargo-config.toml >> .cargo/config.toml
 
+# Configure cargo to use vendored sources
+cat >> .cargo/config.toml <<'EOF'
+[source.crates-io]
+replace-with = "vendored-sources"
 
-%generate_buildrequires
-%cargo_generate_buildrequires -t
+[source.vendored-sources]
+directory = "vendor"
+EOF
 
 
 %conf

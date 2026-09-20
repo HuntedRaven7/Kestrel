@@ -11,6 +11,7 @@ Summary:        Just a command runner
 License:        CC0-1.0
 URL:            https://crates.io/crates/just
 Source:         %{crates_source}
+Source2:        rust-just-vendor-%{version}.tar.gz
 # Automatically generated patch to strip dependencies and normalize metadata
 Patch:          just-fix-metadata-auto.diff
 # Manually created patch for downstream crate metadata changes
@@ -109,12 +110,23 @@ use the "default" feature of the "%{crate}" crate.
 
 %prep
 %autosetup -n %{crate}-%{version} -p1
+
+# Extract vendored dependencies
+tar -xf %{SOURCE2}
+
 %cargo_prep
 
-%generate_buildrequires
-%cargo_generate_buildrequires
+# Configure cargo to use vendored sources
+cat >> .cargo/config.toml <<'EOF'
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+EOF
 
 %build
+export CARGO_NET_OFFLINE=true
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

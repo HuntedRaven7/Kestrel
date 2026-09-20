@@ -12,7 +12,8 @@ Summary:        Adwaita icon theme
 
 License:        LGPL-3.0-only OR CC-BY-SA-3.0
 URL:            https://gitlab.gnome.org/GNOME/adwaita-icon-theme
-Source0:        https://download.gnome.org/sources/%{name}/51/%{name}-51.0.tar.xz
+# Match upstream-sources.json (51.beta tarball / extract dir).
+Source0:        %{name}-51.beta.tar.xz
 
 BuildArch:      noarch
 
@@ -40,7 +41,7 @@ The %{name}-devel package contains the pkgconfig file for
 developing applications that use %{name}.
 
 %prep
-%autosetup -p1 -n adwaita-icon-theme-51.0
+%autosetup -p1 -n adwaita-icon-theme-51.beta
 
 %build
 %meson
