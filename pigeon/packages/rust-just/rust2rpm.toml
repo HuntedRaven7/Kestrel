@@ -1,0 +1,54 @@
+[package]
+summary = "Just a command runner"
+description = "just is a handy way to save and run project-specific commands."
+extra-files = [
+    "%doc examples",
+    "%{_mandir}/man1/just.1*",
+    "%{bash_completions_dir}/just",
+    "%{fish_completions_dir}/just.fish",
+    "%{zsh_completions_dir}/_just"
+]
+cargo-toml-patch-comments = [
+    "Relax 'clap_mangen' dependency from 0.3.0 to >=0.2,<0.4",
+    "Relax 'snafu' dependency from 0.9.0 to >=0.8,<0.10",
+    "Unpin 'clap_complete'",
+]
+bin-package-extra = """
+# needed for --choose flag
+Recommends:     fzf
+"""
+
+[[package.extra-patches]]
+comments = ["Exclude unwanted files"]
+file = "just-exclude-unwanted-files.patch"
+number = 2
+
+[scripts.build]
+post = [
+    "# Generate man page",
+    "target/rpm/just --man > target/rpm/just.1",
+]
+
+[scripts.check]
+pre = [
+    "# Required for directories::runtime_dir",
+    "export XDG_RUNTIME_DIR=$(mktemp -d)",
+]
+
+[scripts.install]
+post = [
+    "install -D -m644 -pv target/rpm/just.1    %{buildroot}%{_mandir}/man1/just.1",
+    "install -D -m644 -pv completions/just.bash %{buildroot}%{bash_completions_dir}/just",
+    "install -D -m644 -pv completions/just.fish %{buildroot}%{fish_completions_dir}/just.fish",
+    "install -D -m644 -pv completions/just.zsh  %{buildroot}%{zsh_completions_dir}/_just"
+]
+
+[tests]
+comments = [
+    "completions::bash test script does not work outside of git checkout",
+    "completions::tests::scripts requires pinned version of clap_complete",
+]
+skip = [
+    "completions::bash",
+    "completions::tests::scripts",
+]

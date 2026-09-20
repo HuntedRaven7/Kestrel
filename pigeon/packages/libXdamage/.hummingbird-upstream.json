@@ -1,0 +1,8 @@
+{
+  "package": "libXdamage",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/libXdamage.git",
+  "commit": "6f078f67c11c0e9b4f4f683968758ae0004bdfa2",
+  "tree": "6722050c75d0ae8c94569dee9ec3f342feb89bfa",
+  "imported_at": "2026-08-30T15:47:16.927345+00:00"
+}

@@ -1,0 +1,8 @@
+{
+  "package": "xdg-terminal-exec",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/xdg-terminal-exec.git",
+  "commit": "28350209953766bbe59c6961b94145d9e29e2dfa",
+  "tree": "8945f3f466fab8998125f8f4dfd030e50b95c98b",
+  "imported_at": "2026-08-29T06:03:09.635408+00:00"
+}

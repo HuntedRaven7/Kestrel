@@ -1,0 +1,18 @@
+--- just-1.37.0/Cargo.toml	1970-01-01T00:00:01+00:00
++++ just-1.37.0/Cargo.toml	2024-11-21T03:45:05.414625+00:00
+@@ -21,6 +21,15 @@
+     "/etc",
+     "!/etc/completion-registration-script.bash",
+     "/www",
++    "/Vagrantfile",
++    "/bin",
++    "/completions",
++    "/contrib",
++    "/examples",
++    "/flake.*",
++    "/justfile",
++    "/skills",
++    "/snapcraft.yaml",
+ ]
+ autolib = false
+ autobins = false

@@ -1,0 +1,39 @@
+diff -pruN mozc-2.29.5111.102.orig/unix/ibus/key_event_handler.cc mozc-2.29.5111.102/unix/ibus/key_event_handler.cc
+--- mozc-2.29.5111.102.orig/unix/ibus/key_event_handler.cc	2023-06-15 19:21:31.000000000 +0900
++++ mozc-2.29.5111.102/unix/ibus/key_event_handler.cc	2024-10-07 16:35:07.647395900 +0900
+@@ -61,6 +61,18 @@ bool KeyEventHandler::GetKeyEvent(uint k
+   DCHECK(key);
+   key->Clear();
+ 
++  // Ignore key events with modifiers, except for the below;
++  // - Alt (Mod1) - Mozc uses Alt for shortcuts
++  // - NumLock (Mod2) - NumLock shouldn't impact shortcuts
++  // This is needed for handling shortcuts such as Super (Mod4) + Space,
++  // IBus's default for switching input methods.
++  // https://github.com/google/mozc/issues/853
++  constexpr uint kExtraModMask =
++      IBUS_MOD3_MASK | IBUS_MOD4_MASK | IBUS_MOD5_MASK;
++  if (modifiers & kExtraModMask) {
++    return false;
++  }
++
+   if (!key_translator_->Translate(keyval, keycode, modifiers, preedit_method,
+                                   layout_is_jp, key)) {
+     LOG(ERROR) << "Translate failed";
+diff -pruN mozc-2.29.5111.102.orig/unix/ibus/key_event_handler_test.cc mozc-2.29.5111.102/unix/ibus/key_event_handler_test.cc
+--- mozc-2.29.5111.102.orig/unix/ibus/key_event_handler_test.cc	2023-06-15 19:21:31.000000000 +0900
++++ mozc-2.29.5111.102/unix/ibus/key_event_handler_test.cc	2024-10-07 16:35:07.647395900 +0900
+@@ -180,6 +180,13 @@ TEST_F(KeyEventHandlerTest, GetKeyEvent)
+     EXPECT_NO_MODIFIERS_PRESSED();
+   }
+ 
++  { // Ignore Super (Mod4)
++    key.Clear();
++    EXPECT_FALSE(handler_->GetKeyEvent(IBUS_space, kDummyKeycode,
++                                       IBUS_MOD4_MASK, config::Config::ROMAN,
++                                       true, &key));
++  }
++
+   // This test fails in current implementation.
+   // TODO(hsumita): Enables it.
+   /*

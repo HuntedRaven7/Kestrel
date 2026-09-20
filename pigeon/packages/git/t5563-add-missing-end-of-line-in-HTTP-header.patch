@@ -1,0 +1,74 @@
+From 17f4b01da7a4d67d6c22d37904bdbbbddd81b9ac Mon Sep 17 00:00:00 2001
+From: Jeff King <peff@peff.net>
+Date: Thu, 18 Dec 2025 07:18:19 -0500
+Subject: [PATCH] t5563: add missing end-of-line in HTTP header
+
+In t5563, we test how various oddly-formatted WWW-Authenticate headers
+are passed through curl to git's credential subsystem (and ultimately
+out to credential helpers). One test, "access using basic auth with
+wwwauth header mixed line-endings" does something odd. It does not mix
+line endings at all (which must be CRLF according to the RFC anyway),
+but omits the line ending entirely for the final header!
+
+This means that the server produces an incomplete response. We send our
+final header, and then the newline which is meant to mark the end of
+headers (and the start of the body) becomes the line ending for that
+header. And there is no header/body separator in the output at all.
+
+Looking at strace, this is what the client reads:
+
+  recvfrom(9, "WWW-Authenticate: FooBar param1=\"value1\"\r\n \r\n\tparam2=\"value2\"\r\nWWW-Authenticate: Basic realm=\"example.com\"", 16384, 0, NULL, NULL) = 106
+  recvfrom(9, "\n", 16384, 0, NULL, NULL) = 1
+  recvfrom(9, "", 16384, 0, NULL, NULL) = 0
+
+The headers themselves are produced from the custom-auth.challenge file
+we write in the test (which is missing the final CRLF), and then the
+header/body separator comes from our lib-httpd/nph-custom-auth.sh CGI.
+(Ignore for a moment that it is producing a bare newline, which I think
+is a bug; it should be a CRLF but curl is happy with either).
+
+Older versions of curl seemed to be OK with the truncated output, but
+the upcoming 8.18.0 release seems to get confused. Specifically, since
+67ae101666 (http: unfold response headers earlier, 2025-12-12) our
+request to the server fails with insufficient credentials. I traced far
+enough to see that curl does relay the header back to us, which we then
+pass to a credential helper, which gives us the correct
+username/password combination. But on our followup request, curl refuses
+to send the Authorization header (and so gets an HTTP 401 again).
+
+The change in curl's behavior is a bit unexpected, but since we are
+sending it garbage, it is hard to complain too much. Let's add the
+missing CRLF to the header. I _think_ this was just an oversight and not
+the intent of the test. And that the "mixed line-endings" really meant
+"mixed continuations", since we differ from the previous test in
+continuing with both space and tab. So I've likewise updated the test
+title to match that assumption.
+
+Signed-off-by: Jeff King <peff@peff.net>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+---
+ t/t5563-simple-http-auth.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/t/t5563-simple-http-auth.sh b/t/t5563-simple-http-auth.sh
+index 317f33af5a7e60..c1febbae9d778b 100755
+--- a/t/t5563-simple-http-auth.sh
++++ b/t/t5563-simple-http-auth.sh
+@@ -469,7 +469,7 @@ test_expect_success 'access using basic auth with wwwauth header empty continuat
+ 	EOF
+ '
+ 
+-test_expect_success 'access using basic auth with wwwauth header mixed line-endings' '
++test_expect_success 'access using basic auth with wwwauth header mixed continuations' '
+ 	test_when_finished "per_test_cleanup" &&
+ 
+ 	set_credential_reply get <<-EOF &&
+@@ -490,7 +490,7 @@ test_expect_success 'access using basic auth with wwwauth header mixed line-endi
+ 	printf "id=default response=WWW-Authenticate: FooBar param1=\"value1\"\r\n" >>"$CHALLENGE" &&
+ 	printf "id=default response= \r\n" >>"$CHALLENGE" &&
+ 	printf "id=default response=\tparam2=\"value2\"\r\n" >>"$CHALLENGE" &&
+-	printf "id=default response=WWW-Authenticate: Basic realm=\"example.com\"" >>"$CHALLENGE" &&
++	printf "id=default response=WWW-Authenticate: Basic realm=\"example.com\"\r\n" >>"$CHALLENGE" &&
+ 
+ 	test_config_global credential.helper test-helper &&
+ 	git ls-remote "$HTTPD_URL/custom_auth/repo.git" &&

@@ -1,0 +1,8 @@
+{
+  "package": "zenity",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/zenity.git",
+  "commit": "13bc59d292489041d982e9c9bba8152ca0e30959",
+  "tree": "c7da2a271339b4aaf4891a8af92b1a2bacd70cde",
+  "imported_at": "2026-08-29T06:03:10.379742+00:00"
+}

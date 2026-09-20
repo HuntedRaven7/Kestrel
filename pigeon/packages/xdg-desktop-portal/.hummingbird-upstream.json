@@ -1,0 +1,8 @@
+{
+  "package": "xdg-desktop-portal",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/xdg-desktop-portal.git",
+  "commit": "6b590750660ec517f09519262903d1dc1489c6e1",
+  "tree": "7d8a9f247d1e496e857b722be3d1a9d33142de20",
+  "imported_at": "2026-08-30T12:39:06.113263+00:00"
+}

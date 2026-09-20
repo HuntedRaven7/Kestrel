@@ -1,0 +1,74 @@
+From 2c6fc31e04b32d5a8523cfe69e4495f188e86ec3 Mon Sep 17 00:00:00 2001
+From: Jeff King <peff@peff.net>
+Date: Thu, 18 Dec 2025 07:13:47 -0500
+Subject: [PATCH] t5551: handle trailing slashes in expected cookies output
+
+We check in t5551 that curl updates the expected list of cookies after
+making a request. We do this by telling it to read and write cookies
+from a particular text file, and then checking that after curl runs, the
+file has the expected content.
+
+However, in the upcoming curl 8.18.0, the output file has changed
+slightly: curl will canonicalize the paths it writes, due to commit
+a093c93994 (cookie: only keep and use the canonical cleaned up path,
+2025-12-07). In particular, it strips trailing slashes from the paths we
+see in the cookies.txt file.
+
+This doesn't matter to Git, as the cookie handling is all internal to
+curl. But our test is overly brittle and breaks as a result.
+
+We can fix it by matching either format. We'll expect the new format
+(without trailing slashes) and strip the slashes from curl's output
+before comparing. That lets us pass with both old and new versions (I
+tested against curl's 8_17_0 and rc-8_18_0-2 tags, which are
+respectively before and after the curl change).
+
+In theory it might be nice to try to future-proof this test more by
+looking only for the bits we care about, rather than a byte-wise
+comparison of the whole file. But after removing comments and blank
+lines (which we already do), we care about most of what's there. So it's
+not clear to me what a more liberal test would look like. Given that the
+format doesn't change all that often, it's probably OK to stop here and
+see if it ever breaks again.
+
+Signed-off-by: Jeff King <peff@peff.net>
+Signed-off-by: Junio C Hamano <gitster@pobox.com>
+---
+ t/t5551-http-fetch-smart.sh | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/t/t5551-http-fetch-smart.sh b/t/t5551-http-fetch-smart.sh
+index b0d4ea78015a25..73cf5315800fa4 100755
+--- a/t/t5551-http-fetch-smart.sh
++++ b/t/t5551-http-fetch-smart.sh
+@@ -333,12 +333,12 @@ test_expect_success 'dumb clone via http-backend respects namespace' '
+ 
+ test_expect_success 'cookies stored in http.cookiefile when http.savecookies set' '
+ 	cat >cookies.txt <<-\EOF &&
+-	127.0.0.1	FALSE	/smart_cookies/	FALSE	0	othername	othervalue
++	127.0.0.1	FALSE	/smart_cookies	FALSE	0	othername	othervalue
+ 	EOF
+ 	sort >expect_cookies.txt <<-\EOF &&
+-	127.0.0.1	FALSE	/smart_cookies/	FALSE	0	othername	othervalue
+-	127.0.0.1	FALSE	/smart_cookies/repo.git/	FALSE	0	name	value
+-	127.0.0.1	FALSE	/smart_cookies/repo.git/info/	FALSE	0	name	value
++	127.0.0.1	FALSE	/smart_cookies	FALSE	0	othername	othervalue
++	127.0.0.1	FALSE	/smart_cookies/repo.git	FALSE	0	name	value
++	127.0.0.1	FALSE	/smart_cookies/repo.git/info	FALSE	0	name	value
+ 	EOF
+ 	git config http.cookiefile cookies.txt &&
+ 	git config http.savecookies true &&
+@@ -351,8 +351,11 @@ test_expect_success 'cookies stored in http.cookiefile when http.savecookies set
+ 		tag -m "foo" cookie-tag &&
+ 	git fetch $HTTPD_URL/smart_cookies/repo.git cookie-tag &&
+ 
+-	grep "^[^#]" cookies.txt | sort >cookies_stripped.txt &&
+-	test_cmp expect_cookies.txt cookies_stripped.txt
++	# Strip trailing slashes from cookie paths to handle output from both
++	# old curl ("/smart_cookies/") and new ("/smart_cookies").
++	HT="	" &&
++	grep "^[^#]" cookies.txt | sed "s,/$HT,$HT," | sort >cookies_clean.txt &&
++	test_cmp expect_cookies.txt cookies_clean.txt
+ '
+ 
+ test_expect_success 'transfer.hiderefs works over smart-http' '

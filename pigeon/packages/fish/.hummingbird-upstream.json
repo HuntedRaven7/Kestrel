@@ -1,0 +1,8 @@
+{
+  "package": "fish",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/fish.git",
+  "commit": "f5929c88a5deb58a17f3962cf2e1b1b528c411bf",
+  "tree": "0d919e51c44934e32adca6aa33a9271a4173321e",
+  "imported_at": "2026-08-29T06:02:27.183858+00:00"
+}

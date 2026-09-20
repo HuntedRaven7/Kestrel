@@ -1,0 +1,8 @@
+{
+  "package": "isomd5sum",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/isomd5sum.git",
+  "commit": "2081f84581dd65ceb7f7d2ba87fe86151e90cc05",
+  "tree": "2760808e57446fdb39c611dd7f4f5fd12adbb6f3",
+  "imported_at": "2026-08-29T06:02:46.485703+00:00"
+}

@@ -1,0 +1,25 @@
+From fa4d12296de749eafb06f8dfb7e53a7ce8699876 Mon Sep 17 00:00:00 2001
+From: Dominique Martinet <asmadeus@codewreck.org>
+Date: Sun, 7 Dec 2025 11:57:55 +0000
+Subject: [PATCH 1/2] Cargo.toml: features: remove test_proto from defaults
+
+---
+ Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 9213b3a94500..4d5fb42494b9 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -20,7 +20,7 @@ path = "src/test_proto.rs"
+ required-features = ["test_proto"]
+ 
+ [features]
+-default = ["video", "dmabuf", "lz4", "zstd", "gbmfallback", "test_proto"]
++default = ["video", "dmabuf", "lz4", "zstd", "gbmfallback"]
+ video = ["dep:waypipe-ffmpeg-wrapper", "dep:waypipe-shaders", "dmabuf"]
+ dmabuf = ["dep:ash"]
+ lz4 = ["dep:waypipe-lz4-wrapper"]
+-- 
+2.52.0
+

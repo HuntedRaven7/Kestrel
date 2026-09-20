@@ -79,12 +79,6 @@ srpm pkg:
     if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('vendored') else 1)"; then \
       python3 pigeon/tools/fetch_vendored.py --package "$PKG"; \
     fi
-    if [ "$PKG" = bootc ]; then \
-      VER=$(python3 -c "import json; print(json.load(open('pigeon/config/upstream-sources.json'))['packages']['bootc']['version'])"); \
-      curl -fsSL --retry 3 \
-        -o "pigeon/packages/bootc/bootc-${VER}-vendor.tar.zstd" \
-        "https://github.com/bootc-dev/bootc/releases/download/v${VER}/bootc-${VER}-vendor.tar.zstd"; \
-    fi
     python3 pigeon/tools/audit_sources.py --fix --package "$PKG"
     python3 pigeon/tools/source_pipeline.py fetch "$PKG" \
       --output work/srpm --stage-into pigeon/packages

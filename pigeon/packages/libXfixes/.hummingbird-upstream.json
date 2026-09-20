@@ -1,0 +1,8 @@
+{
+  "package": "libXfixes",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/libXfixes.git",
+  "commit": "88ddb80cc358e3ba5a255e5c5e9c20ba473d9cb0",
+  "tree": "69e3decf8fbcbfd3b7f5b7a69f73312f70cccdc4",
+  "imported_at": "2026-08-30T15:47:16.242450+00:00"
+}

@@ -1,0 +1,8 @@
+{
+  "package": "waypipe",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/waypipe.git",
+  "commit": "e8d34c4bbab2bf68eac2e1fcdc05463acf85bd28",
+  "tree": "d28357519275cf06e3fa2662f209dbb373098862",
+  "imported_at": "2026-08-29T06:03:07.729488+00:00"
+}

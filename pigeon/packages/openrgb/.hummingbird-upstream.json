@@ -1,0 +1,8 @@
+{
+  "package": "openrgb",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/openrgb.git",
+  "commit": "6514207d0f75da201d10a971fadde7dae8695158",
+  "tree": "81db349a8a351b2b6c39cd05d1538350147fc513",
+  "imported_at": "2026-08-29T06:03:01.480197+00:00"
+}

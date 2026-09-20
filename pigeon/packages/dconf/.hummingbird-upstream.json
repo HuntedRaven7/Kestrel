@@ -1,0 +1,8 @@
+{
+  "package": "dconf",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/dconf.git",
+  "commit": "412dfe72f0f1141af3564a9aefc0d7e7f3a7c7ab",
+  "tree": "e6360f95c11131f7762a410392f063bccc12f6ff",
+  "imported_at": "2026-08-30T15:46:55.507688+00:00"
+}

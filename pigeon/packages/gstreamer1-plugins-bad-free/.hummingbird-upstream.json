@@ -1,0 +1,8 @@
+{
+  "package": "gstreamer1-plugins-bad-free",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/gstreamer1-plugins-bad-free.git",
+  "commit": "98894d33a0c1ae95846ba5a596f0fae1a816eed6",
+  "tree": "9c54120042dc202270fb5851fa5180d385acf2b6",
+  "imported_at": "2026-08-30T15:47:07.375336+00:00"
+}

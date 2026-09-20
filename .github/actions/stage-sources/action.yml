@@ -18,8 +18,8 @@ runs:
       run: |
         # source_pipeline.py only stages the primary Source0 archive, but
         # rpmbuild needs every Source/Patch present: Go vendor trees
-        # (runc/containerd/tailscale via Koji SRPM, bootc via release
-        # tarball) and any dist-git sidecar audit --fix can fetch.
+        # (runc/containerd/tailscale via Koji SRPM) and any dist-git
+        # sidecar audit --fix can fetch.
         # For vendored packages, fetch_vendored.py must run BEFORE
         # source_pipeline.py fetch since the latter validates the source
         # tarball is present.
@@ -27,12 +27,6 @@ runs:
         if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('vendored') else 1)"; then
           echo "Fetching vendored sources for $PKG"
           python3 pigeon/tools/fetch_vendored.py --package "$PKG"
-        fi
-        if [ "$PKG" = bootc ]; then
-          VER=$(python3 -c "import json; print(json.load(open('pigeon/config/upstream-sources.json'))['packages']['bootc']['version'])")
-          curl -fsSL --retry 3 \
-            -o "pigeon/packages/bootc/bootc-${VER}-vendor.tar.zstd" \
-            "https://github.com/bootc-dev/bootc/releases/download/v${VER}/bootc-${VER}-vendor.tar.zstd"
         fi
         python3 pigeon/tools/audit_sources.py --fix --package "$PKG"
 

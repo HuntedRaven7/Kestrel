@@ -1,0 +1,8 @@
+{
+  "package": "rust-just",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/rust-just.git",
+  "commit": "b489418a789b48ca92a46303752e581607442254",
+  "tree": "a94e599cfa44f9501cb785ef6be1a8fec42bf3b7",
+  "imported_at": "2026-08-29T06:03:05.041301+00:00"
+}

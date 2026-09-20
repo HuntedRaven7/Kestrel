@@ -1,0 +1,8 @@
+{
+  "package": "libXcursor",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/libXcursor.git",
+  "commit": "db0dae551eafd1909458e7f26b0b1e1883934a65",
+  "tree": "410e3b700a98566ea0351ba67a175284acbcfb5e",
+  "imported_at": "2026-08-30T15:47:17.210844+00:00"
+}
