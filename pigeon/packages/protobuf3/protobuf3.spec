@@ -117,6 +117,8 @@ BuildRequires:  emacs
 BuildRequires:  zlib-devel
 BuildRequires:  python3-setuptools
 BuildRequires:  python3dist(setuptools)
+
+%if %{with mingw}
 BuildRequires:  mingw32-filesystem
 BuildRequires:  mingw32-gcc-c++
 BuildRequires:  mingw32-zlib
