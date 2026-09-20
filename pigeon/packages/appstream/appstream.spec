@@ -113,6 +113,8 @@ Requires: %{name}-devel%{?_isa} = %{version}-%{release}
 # gi-docgen leaves .#* atomic-write temp files under html/api that
 # /usr/bin/add-det chokes on (IO error, aborts the build)
 find %{buildroot}%{_docdir} -name '.#*' -delete 2>/dev/null || true
+# Empty gtk-doc skeleton dirs (real docs ship under docdir via gi-docgen)
+rm -rf %{buildroot}%{_datadir}/gtk-doc
 
 %find_lang appstream
 
@@ -151,7 +153,6 @@ touch %{buildroot}/var/cache/swcatalog/cache.watch
 %{_datadir}/vala/vapi/appstream.deps
 %{_datadir}/vala/vapi/appstream.vapi
 %{_docdir}/appstream/html/
-%{_datadir}/gtk-doc/html/appstream/
 
 %files compose
 %license COPYING
@@ -167,9 +168,6 @@ touch %{buildroot}/var/cache/swcatalog/cache.watch
 %{_libdir}/libappstream-compose.so
 %{_libdir}/pkgconfig/appstream-compose.pc
 %{_datadir}/gir-1.0/AppStreamCompose-1.0.gir
-%dir %{_datadir}/gtk-doc/
-%dir %{_datadir}/gtk-doc/html/
-%{_datadir}/gtk-doc/html/appstream-compose
 
 %files qt
 %{_libdir}/libAppStreamQt.so.3
