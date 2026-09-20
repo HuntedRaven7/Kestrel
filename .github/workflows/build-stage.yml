@@ -13,6 +13,10 @@ on:
       GHCR_TOKEN:
         required: true
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-26.04
@@ -37,6 +41,21 @@ jobs:
         # fast and quay.io prunes old manifests within days, so a digest
         # pin rots into "manifest unknown" pull failures (exit 125).
         run: podman pull quay.io/fedora/fedora:44
+
+      - name: Compute dnf cache key
+        id: week
+        run: |
+          echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore shared dnf cache
+        # Seeded weekly by seed-dnf-cache.yml (single writer). A miss or
+        # corrupt entry just means a cold builddep; never fatal.
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: work/dnf-cache
+          key: pigeon-dnf-f44-${{ steps.week.outputs.week }}
+          restore-keys: |
+            pigeon-dnf-f44-
 
       - name: Stage vendored and secondary sources
         # source_pipeline.py only stages the primary Source0 archive, but
@@ -93,19 +112,121 @@ jobs:
           merge-multiple: true
         continue-on-error: true
 
+      - name: Resolve build root for cache key
+        # A cache key includes the root dnf actually resolved. Resolve it
+        # before asking GHCR so a hit cannot cross a build-root boundary.
+        # This is cheap beside an RPM compile; a hit skips it entirely.
+        # Best-effort: an empty key disables caching, never the build.
+        id: package_cache
+        run: |
+          mkdir -p work/cache
+          # Shared dnf cache: the resolve step below and the build step
+          # each run a fresh container, so without this bind-mount every
+          # job would download its full builddep set twice.
+          mkdir -p work/dnf-cache
+          BUILDROOT_DIGEST=$(podman inspect quay.io/fedora/fedora:44 --format '{{.Digest}}' 2>/dev/null || true)
+          if [ -z "$BUILDROOT_DIGEST" ]; then
+            echo "could not resolve buildroot digest, caching disabled"
+            echo "key=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mkdir -p work/prior
+          if ! podman run --rm \
+            -v "$PWD:/repo:Z" \
+            -v "$PWD/work/prior:/prior:Z" \
+            -v "$PWD/work/cache:/cache:Z" \
+            -v "$PWD/work/dnf-cache:/var/cache/libdnf5:Z" \
+            -e PACKAGE="${{ matrix.package }}" \
+            quay.io/fedora/fedora:44 \
+            bash -exc '
+              dnf install -qy dnf-plugins-core createrepo_c
+              # Retain downloaded RPMs in the shared cache mount so the
+              # build step below reuses them instead of re-downloading.
+              printf "\nkeepcache=1\n" >> /etc/dnf/dnf.conf
+              printf "[hummingbird]\nname=Hummingbird public\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\nenabled=1\ngpgcheck=0\nexclude=ruby* rubygem*\n" \
+                > /etc/yum.repos.d/hummingbird.repo
+              if [ -n "$(find /prior -name "*.rpm" | head -1)" ]; then
+                createrepo_c /prior
+                printf "[pigeon-prior]\nname=pigeon-prior\nbaseurl=file:///prior\nenabled=1\ngpgcheck=0\n" \
+                  > /etc/yum.repos.d/pigeon-prior.repo
+              fi
+              SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
+              cp "$SPEC" /tmp/pkg.spec
+              dnf builddep -y --skip-unavailable /tmp/pkg.spec 2>&1 || \
+                echo "WARNING: builddep failed for $PACKAGE, continuing with available deps"
+              dnf install -qy rpm-build meson ninja-build gcc gcc-c++ make pkgconfig \
+                python3 2>&1 || true
+              rpm -qa --qf "%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n" | sort -u > /cache/root
+            ' > work/cache/resolve.log 2>&1; then
+            echo "build root resolution failed, caching disabled"
+            echo "key=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          KEY=$(python3 pigeon/tools/package_cache_key.py "${{ matrix.package }}" \
+            --buildroot-digest "$BUILDROOT_DIGEST" \
+            --disttag .hum1.pigeon \
+            --resolved-root work/cache/root) || KEY=""
+          if [ -n "$KEY" ]; then echo "cache key: $KEY"; fi
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+
+      - name: Restore package RPM cache
+        id: package_cache_restore
+        if: steps.package_cache.outputs.key != ''
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          KEY: ${{ steps.package_cache.outputs.key }}
+        run: |
+          set -euo pipefail
+          image="ghcr.io/huntedraven7/pigeon-cache:$KEY"
+          if ! echo "$GHCR_TOKEN" | podman login ghcr.io -u "$GITHUB_ACTOR" --password-stdin; then
+            echo "::warning title=package cache unavailable::could not authenticate to GHCR"
+            echo "hit=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if podman pull "$image"; then
+            container=$(podman create "$image" /bin/true)
+            mkdir -p work/result
+            podman cp "$container:/rpms/." work/result/
+            podman rm "$container"
+            if [ -n "$(find work/result -name '*.rpm' -print -quit)" ]; then
+              echo "hit=true" >> "$GITHUB_OUTPUT"
+              echo "cache hit: $KEY"
+            else
+              # A stored entry with no RPMs must never ship: drop it and
+              # fall through to a real build rather than failing the job.
+              echo "::warning title=package cache entry empty::rebuilding $KEY from source"
+              rm -rf work/result
+              echo "hit=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "hit=false" >> "$GITHUB_OUTPUT"
+            echo "cache miss: $KEY"
+          fi
+
+      - name: Use cached RPMs
+        if: steps.package_cache_restore.outputs.hit == 'true'
+        run: |
+          mkdir -p work/out
+          cp work/result/*.rpm work/out/
+          echo "reusing $(ls work/out/*.rpm | wc -l) cached RPMs for ${{ matrix.package }}"
+
       - name: Build in Fedora container
+        if: steps.package_cache_restore.outputs.hit != 'true'
         run: |
           # Bind-mount sources must exist even when empty (stage 0 has no priors).
-          mkdir -p work/prior work/out
+          mkdir -p work/prior work/out work/dnf-cache
           podman run --rm \
             -v "$PWD:/repo:Z" \
             -v "$PWD/work/src:/src:Z" \
             -v "$PWD/work/prior:/prior:Z" \
             -v "$PWD/work/out:/out:Z" \
+            -v "$PWD/work/dnf-cache:/var/cache/libdnf5:Z" \
             -e PACKAGE="${{ matrix.package }}" \
             quay.io/fedora/fedora:44 \
             bash -exc '
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
+              # Same shared cache mount as the resolve step (see above).
+              printf "\nkeepcache=1\n" >> /etc/dnf/dnf.conf
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
               # the live yum repo is the pulp-content endpoint below.
               # gpgcheck=0: no signing key is published for it (revisit).
@@ -165,3 +286,39 @@ jobs:
           name: stage-${{ inputs.stage }}-${{ matrix.package }}
           path: ~/stages/${{ inputs.stage }}/${{ matrix.package }}/
           retention-days: 7
+
+      - name: Publish package RPM cache
+        if: success() && steps.package_cache.outputs.key != '' && steps.package_cache_restore.outputs.hit != 'true'
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          KEY: ${{ steps.package_cache.outputs.key }}
+          PACKAGE: ${{ matrix.package }}
+        run: |
+          set -euo pipefail
+          test -n "$KEY"
+          mkdir -p work/result
+          cp work/out/*.rpm work/result/ 2>/dev/null || true
+          # Refuse to publish an empty entry: a hit ships whatever is
+          # stored, so an empty cache would silently drop the package.
+          if [ -z "$(find work/result -name '*.rpm' -print -quit)" ]; then
+            echo "::error::no RPMs built for $PACKAGE, refusing to publish an empty cache entry"
+            exit 1
+          fi
+          image="ghcr.io/huntedraven7/pigeon-cache:$KEY"
+          NEVR=$(rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}' work/result/*.src.rpm 2>/dev/null | head -1 || true)
+          if [ -z "$NEVR" ]; then
+            NEVR=$(rpm -qp --qf '%{NAME}-%{VERSION}-%{RELEASE}' work/result/*.rpm 2>/dev/null | head -1 || true)
+          fi
+          printf 'FROM scratch\nCOPY work/result /rpms\n' > Containerfile.package-cache
+          if ! echo "$GHCR_TOKEN" | podman login ghcr.io -u "$GITHUB_ACTOR" --password-stdin; then
+            echo "::warning title=package cache unavailable::could not authenticate to GHCR"
+            exit 0
+          fi
+          podman build \
+            --label org.opencontainers.image.title="$PACKAGE" \
+            --label org.opencontainers.image.version="$NEVR" \
+            --label org.opencontainers.image.revision="$GITHUB_SHA" \
+            --label org.kestrel.pigeon.disttag=".hum1.pigeon" \
+            --tag "$image" --file Containerfile.package-cache . \
+            && podman push "$image" \
+            || echo "::warning title=package cache publish failed::the build artifact remains valid; a later run will rebuild this package"
