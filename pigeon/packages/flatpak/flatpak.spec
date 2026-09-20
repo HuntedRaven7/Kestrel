@@ -85,6 +85,12 @@ applications on Linux.
 
 %package devel
 Summary:        Development files for %{name}
+# -devel must require the main package: it owns the D-Bus interface XMLs
+# (e.g. org.freedesktop.portal.Flatpak.xml) that flatpak.pc's
+# interfaces_dir points at. xdg-desktop-portal's meson.build does
+# files(interfaces_dir / 'org.freedesktop.portal.Flatpak.xml') and failed
+# at configure time when only -devel was pulled in by pkgconfig(flatpak).
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 %description devel
 %{summary}.
 

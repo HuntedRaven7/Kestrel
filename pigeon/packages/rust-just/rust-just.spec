@@ -114,16 +114,11 @@ use the "default" feature of the "%{crate}" crate.
 # Extract vendored dependencies
 tar -xf %{SOURCE2}
 
-%cargo_prep
-
-# Configure cargo to use vendored sources
-cat >> .cargo/config.toml <<'EOF'
-[source.crates-io]
-replace-with = "vendored-sources"
-
-[source.vendored-sources]
-directory = "vendor"
-EOF
+# -v vendor makes %cargo_prep write [source.vendored-sources] itself and
+# redirect crates-io to it. Do not re-declare those tables in a heredoc:
+# the macro already wrote them and cargo fails to parse the config with
+# "duplicate key" (this broke the stage-2 rebuild).
+%cargo_prep -v vendor
 
 %build
 export CARGO_NET_OFFLINE=true
