@@ -40,3 +40,45 @@ def test_embedded_bash_parses():
         finally:
             Path(f.name).unlink()
         assert proc.returncode == 0, f"{label}: {proc.stderr.strip()[:300]}"
+
+
+def _rebuild_pigeon():
+    return yaml.safe_load((WORKFLOWS / "rebuild-pigeon.yml").read_text())
+
+
+def _build_stages(data):
+    """Stage numbers dispatched to build-stage.yml, e.g. {'0',...}."""
+    stages = set()
+    for job in data["jobs"].values():
+        if not isinstance(job, dict) or "build-stage" not in str(job.get("uses", "")):
+            continue
+        stages.add(str(job["with"]["stage"]).strip('"'))
+    return stages
+
+
+def test_precedence_waits_for_all_stages():
+    # Every rebuildN wave must finish before the precedence gate downloads
+    # stage-* artifacts; otherwise publish runs on an incomplete set.
+    data = _rebuild_pigeon()
+    rebuilds = sorted(j for j in data["jobs"] if j.startswith("rebuild"))
+    assert rebuilds, "no rebuild jobs found"
+    needs = data["jobs"]["precedence"]["needs"]
+    for job in rebuilds:
+        assert job in needs, (
+            f"precedence does not wait for {job}: "
+            f"its artifacts may miss the publish")
+
+
+def test_publish_collects_all_stages():
+    # The repository assembly loop must copy every built stage dir,
+    # or built RPMs never reach the GHCR image.
+    data = _rebuild_pigeon()
+    stages = _build_stages(data)
+    assert stages, "no build-stage dispatches found"
+    publish = data["jobs"]["publish"]
+    runs = [s.get("run", "") for s in publish.get("steps", []) or []]
+    assembly = next(r for r in runs if "stage-$stage" in r)
+    for stage in sorted(stages):
+        assert stage in assembly, (
+            f"publish assembly drops stage {stage}: "
+            f"built RPMs never reach GHCR")
