@@ -5,6 +5,7 @@ work/
 *.srpm
 *.log
 __pycache__/
+utah-packages/
 .pytest_cache/
 pigeon/reports/
 pigeon/packages/*/*.tar.*
