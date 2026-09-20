@@ -235,7 +235,7 @@
     "dracut": {
       "version": "112",
       "url_template": "https://github.com/dracut-ng/dracut/archive/refs/tags/{version}.tar.gz",
-      "sha512": "37a3f15db68ab7a9a9ad3ba5fee36559d20692cba74234737d559c453568dbde632c6c0f197c3e531d62ba6ff632af21b52da614182327d00ca088b820b53c9",
+      "sha512": "37a3f15db68ab7a9a9ad3ba5fee36559d20692cba714234737d559c453568dbde632c6c0f197c3e531d62ba6ff632af21b52da614182327d00ca088b820b53c9",
       "stage": 3,
       "note": "Fedora dist-git import. Initramfs generator. Upstream moved to dracut-ng org.",
       "renovate": {
