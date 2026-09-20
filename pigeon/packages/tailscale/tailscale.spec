@@ -1050,9 +1050,9 @@ Provides:       bundled(golang(sigs.k8s.io/json)) = v0.0.0~20241014173422~cfa47c
 # it explicitly here. (Do NOT name the go prep macro in this comment, not
 # even escaped: rpm expands macros inside comments, and it would inject
 # its auto-unpack scriptlet here and break the build.)
-%setup -q -T -D -n %{name}-%{version}
-tar -xzf %{_sourcedir}/tailscale-%{version}.tar.gz --strip-components=1 2>/dev/null || \
-tar -xzf %{_sourcedir}/v%{version}.tar.gz --strip-components=1
+%setup -q -c -T -n %{name}-%{version}
+tar -xzf %{_sourcedir}/v%{version}.tar.gz --strip-components=1 2>/dev/null || \
+tar -xzf %{_sourcedir}/tailscale-%{version}.tar.gz --strip-components=1
 %if %{with vendor}
 # Kestrel: unpack the committed vendor tree into the source root.
 tar -xJf %{SOURCE20}
