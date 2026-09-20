@@ -88,8 +88,8 @@ jobs:
       - name: Alias staged source under spec Source0 names
         # Fedora specs reference lookaside-renamed tarballs while upstream
         # URLs serve tag-named files (libblockdev-3.5.0.tar.gz vs 3.5.0.tar.gz).
-        # The packit lane bridges this positionally; raw rpmbuild needs the
-        # spec basename present, so link it to the verified staged archive.
+        # Raw rpmbuild needs the spec basename present, so link it to the
+        # verified staged archive.
         run: |
           if [ -n "$(ls work/src 2>/dev/null)" ]; then
             SPEC=$(ls pigeon/packages/${{ matrix.package }}/*.spec | head -1)
