@@ -333,13 +333,74 @@ def test_fetch_stages_declared_extras(tmp_path, monkeypatch):
     assert report["extra_sources"][0]["ok"] is True
 
 
-def test_fetch_warns_on_extra_mismatch(tmp_path, monkeypatch, capsys):
+def test_fetch_fails_on_required_extra_mismatch(tmp_path, monkeypatch, capsys):
     _extras_setup(tmp_path, monkeypatch, b"main", b"side", "0" * 128)
-    assert sp.cmd_fetch("multi", None) == 0
+    assert sp.cmd_fetch("multi", None) == 1
     out = capsys.readouterr().out
     assert "digest mismatch" in out
-    assert "WARN: extra sidecar.tar.gz" in out
+    assert "FAIL: extra sidecar.tar.gz" in out
+    assert "FAIL: required extra_sources failed" in out
+
+
+def test_fetch_warns_on_sidecar_extra_mismatch(tmp_path, monkeypatch, capsys):
+    import gzip
+    main_arc = tmp_path / "main-2.tar.gz"
+    main_arc.write_bytes(gzip.compress(b"main"))
+    side = tmp_path / "side.sha256sum"
+    side.write_text("deadbeef  main-2.tar.gz\n")
+    pkg = {
+        "version": "2",
+        "url_template": f"file://{tmp_path}/main-{{version}}.tar.gz",
+        "sha512": hashlib.sha512(gzip.compress(b"main")).hexdigest(),
+        "filename": "main-2.tar.gz",
+        "extra_sources": [{
+            "filename": "side.sha256sum",
+            "url_template": f"file://{tmp_path}/side.sha256sum",
+            "sha512": "0" * 128,
+        }],
+    }
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": {"multi": pkg}}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    monkeypatch.setattr(sp, "REPORTS", tmp_path / "reports")
+    monkeypatch.setattr(sp, "ROOT", tmp_path)
+    (tmp_path / "pigeon" / "packages" / "multi").mkdir(parents=True)
+    assert sp.cmd_fetch("multi", None) == 0
+    out = capsys.readouterr().out
+    assert "WARN: extra side.sha256sum" in out
     assert "OK: multi@2 verified" in out
+
+
+def test_fetch_stages_vendored_extra(tmp_path, monkeypatch):
+    import gzip
+    main_arc = tmp_path / "main-2.tar.gz"
+    main_arc.write_bytes(gzip.compress(b"main"))
+    pkg_dir = tmp_path / "pigeon" / "packages" / "multi"
+    pkg_dir.mkdir(parents=True)
+    vendor = pkg_dir / "vendor.tar.gz"
+    vendor.write_bytes(gzip.compress(b"vendor-bytes"))
+    pkg = {
+        "version": "2",
+        "url_template": f"file://{tmp_path}/main-{{version}}.tar.gz",
+        "sha512": hashlib.sha512(gzip.compress(b"main")).hexdigest(),
+        "filename": "main-2.tar.gz",
+        "extra_sources": [{
+            "filename": "vendor.tar.gz",
+            "vendored": True,
+            "sha512": hashlib.sha512(gzip.compress(b"vendor-bytes")).hexdigest(),
+        }],
+    }
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": {"multi": pkg}}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    monkeypatch.setattr(sp, "REPORTS", tmp_path / "reports")
+    monkeypatch.setattr(sp, "ROOT", tmp_path)
+    out = tmp_path / "out"
+    assert sp.cmd_fetch("multi", str(out)) == 0
+    assert (out / "vendor.tar.gz").is_file()
+    report = json.loads((tmp_path / "reports" / "multi.json").read_text())
+    assert report["extra_sources"][0]["ok"] is True
+    assert report["extra_sources"][0].get("vendored") is True
 
 
 def test_record_locks_extras(tmp_path, monkeypatch):
