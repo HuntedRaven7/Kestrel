@@ -28,14 +28,14 @@ permissions:
 jobs:
   kernel-cache:
     name: Build kernel cache image (for nvidia/gaming flavors)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 120
     if: ${{ github.event.inputs.flavor != 'main' }}
     outputs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -67,7 +67,7 @@ jobs:
   build:
     name: Build Warbler (${{ matrix.flavor }})
     needs: [kernel-cache]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -82,7 +82,7 @@ jobs:
       sbom_hash: ${{ steps.hash.outputs.hash }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -124,9 +124,9 @@ jobs:
 
       - name: Install cosign
         if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
-        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
         with:
-          cosign-release: 'v2.4.0'
+          cosign-release: 'v3.1.3'
 
       - name: Cosign sign
         if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
@@ -143,7 +143,7 @@ jobs:
 
       - name: Upload SBOM
         if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: warbler-${{ matrix.flavor }}-sbom
           path: ~/warbler-${{ matrix.flavor }}-sbom.spdx.json
@@ -169,7 +169,7 @@ jobs:
       actions: read
       id-token: write
       attestations: write
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@07e64b653f10a80b6510f4568f685f8b7b9ea830 # v1.9.0
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@f7dd8c54c2067bafc12ca7a55595d5ee9b75204a # v2.1.0
     with:
       base64-subjects: |
         ${{ format('{{"ghcr.io/huntedraven7/warbler:{0}-testing":"{1}"}}', matrix.flavor, needs.build.outputs.sbom_hash) }}
@@ -178,7 +178,7 @@ jobs:
   trivy-scan:
     name: Trivy scan (${{ matrix.flavor }})
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
     strategy:
       fail-fast: false
@@ -196,19 +196,19 @@ jobs:
           ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@3ea06614dafe36dec890db3446326e0d40ce53d4 # v3
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
         with:
           sarif_file: 'trivy-results.sarif'
 
   iso:
     name: Build ISO (${{ github.event.inputs.flavor }})
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 120
     if: ${{ github.event.inputs.iso == true }}
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -252,7 +252,7 @@ jobs:
         id: iso
 
       - name: Upload ISO artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: iso-warbler-${{ github.event.inputs.flavor }}
           path: ${{ steps.iso.outputs.iso_path }}
@@ -266,7 +266,7 @@ jobs:
   promote:
     name: Promote to stable
     needs: [build, trivy-scan]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event.inputs.push == true && github.ref == 'refs/heads/main' }}
     steps:
       - name: Promote testing -> stable
