@@ -37,6 +37,32 @@ runs:
         python3 pigeon/tools/source_pipeline.py fetch "${{ inputs.package }}" \
           --output work/src --stage-into pigeon/packages
 
+    - name: Stage committed vendored extras into work/src
+      shell: bash
+      run: |
+        # Belt-and-suspenders: vendored extras live in the recipe dir (git),
+        # but rpmbuild reads SOURCES from work/src first. Copy any lock entry
+        # marked vendored so SourceN is present even if fetch skipped them.
+        PKG="${{ inputs.package }}"
+        python3 - <<PY
+        import json, shutil
+        from pathlib import Path
+        pkg = "$PKG"
+        entry = json.load(open("pigeon/config/upstream-sources.json"))["packages"][pkg]
+        recipe = Path("pigeon/packages") / pkg
+        out = Path("work/src")
+        out.mkdir(parents=True, exist_ok=True)
+        for extra in entry.get("extra_sources") or []:
+            if not extra.get("vendored"):
+                continue
+            name = extra.get("filename") or ""
+            src = recipe / name
+            if not src.is_file():
+                raise SystemExit(f"missing vendored extra: {src}")
+            shutil.copy(src, out / name)
+            print(f"staged vendored extra {name}")
+        PY
+
     - name: Copy or generate local package sources
       shell: bash
       run: |
