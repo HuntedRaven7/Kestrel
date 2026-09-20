@@ -125,62 +125,14 @@ jobs:
     name: Build SRPMs (fail-fast)
     # Spec + source errors surface here in ~1 min per package instead of
     # hiding behind serial stage builds and 10-minute compiles. Every
-    # rebuild wave waits on this job.
+    # rebuild wave waits on this job. The SRPM build itself lives in the
+    # reusable srpm.yml workflow so the wave can run independently (e.g.
+    # from packit-srpm-pilot) without dragging the rebuild matrix with it.
     needs: [prepare]
     if: ${{ needs.prepare.outputs.changed != '[]' }}
-    runs-on: ubuntu-26.04
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        package: ${{ fromJson(needs.prepare.outputs.changed) }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-
-      - name: Install podman
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq podman
-
-      - name: Pull Fedora 44 build container
-        run: podman pull quay.io/fedora/fedora:44
-
-      - name: Stage all sources for this package
-        uses: ./.github/actions/stage-sources
-        with:
-          package: ${{ matrix.package }}
-
-      - name: Build SRPM in Fedora container
-        run: |
-          mkdir -p work/srpm
-          podman run --rm \
-            -v "$PWD:/repo:Z" \
-            -v "$PWD/work/src:/src:Z" \
-            -v "$PWD/work/srpm:/out:Z" \
-            -e PACKAGE="${{ matrix.package }}" \
-            quay.io/fedora/fedora:44 \
-            bash -exc '
-              dnf install -qy rpm-build
-              export RPMBUILD=/root/rpmbuild
-              mkdir -p "$RPMBUILD"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-              SPEC=$(ls /repo/pigeon/packages/$PACKAGE/*.spec | head -1)
-              cp /src/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
-              cp /repo/pigeon/packages/$PACKAGE/* "$RPMBUILD/SOURCES/" 2>/dev/null || true
-              cp "$SPEC" "$RPMBUILD/SPECS/$(basename $SPEC)"
-              rpmbuild -bs "$RPMBUILD/SPECS/$(basename $SPEC)" \
-                --define "_topdir $RPMBUILD"
-              cp "$RPMBUILD"/SRPMS/*.src.rpm /out/
-            '
-
-      - name: Upload SRPM artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: srpm-${{ matrix.package }}
-          path: work/srpm/
-          retention-days: 7
+    uses: ./.github/workflows/srpm.yml
+    with:
+      packages: ${{ needs.prepare.outputs.changed }}
 
   rebuild0:
     name: Build Stage 0
