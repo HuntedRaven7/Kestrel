@@ -844,7 +844,7 @@
       "filename": "macros.kf5"
     },
     "kubeflex": {
-      "version": "0.5.0",
+      "version": "0.9.3",
       "url_template": "https://github.com/kubestellar/kubeflex/archive/refs/tags/v{version}.tar.gz",
       "sha512": "5b6199f2d3fc868d4303b793422ec6488abc1ced0e75038c99c3364673eb7ffebdc1d19dddc43568234ead69eb4f03a5b5517952746c18bee699d43f23902f0c",
       "stage": 4,
@@ -856,7 +856,7 @@
       "filename": "v0.5.0.tar.gz"
     },
     "kubestellar": {
-      "version": "0.25.0",
+      "version": "0.30.0",
       "url_template": "https://github.com/kubestellar/kubestellar/archive/refs/tags/v{version}.tar.gz",
       "sha512": "ae29c911be8a5f7b4f8f070fc1301bfb9444842eb9889abd89ebd1386d8f8c6e3bb85c815639f88ec4f61757af5140e67d4c914d8a46a1e0252dbbb7d76bf2b6",
       "stage": 4,
@@ -868,7 +868,7 @@
       "filename": "v0.25.0.tar.gz"
     },
     "kubestellar-console": {
-      "version": "0.3.34",
+      "version": "0.3.42",
       "url_template": "https://github.com/kubestellar/console/archive/refs/tags/v{version}.tar.gz",
       "sha512": "1866fa9dffa12199191a5dfbd7e846471ac51abe43f4b30ff4a02af9e96af33384a60544e0a2b5627dda562320eaa5fa1154956304d211dec833476bd785484d",
       "stage": 4,
