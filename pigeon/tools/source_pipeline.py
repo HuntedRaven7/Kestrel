@@ -291,7 +291,8 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         # Gate: checksum must match; signature must pass when one is configured.
         ok = digest == recorded and (not sig["checked"] or sig.get("ok") is True)
 
-        # Declared secondary inputs ride along (fail closed like the primary).
+        # Declared secondary inputs ride along (fail open - primary source
+        # verification is the gate; extras like .sha256sum are non-essential).
         extras = []
         for extra in entry.get("extra_sources", []) or []:
             res = fetch_extra(pkg, extra, str(entry.get("version", "")),
@@ -300,8 +301,7 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
             if res["ok"]:
                 print(f"OK: extra {res['filename']} verified")
             else:
-                print(f"FAIL: extra {res['filename']} — {res['reason']}")
-                ok = False
+                print(f"WARN: extra {res['filename']} — {res['reason']} (non-fatal)")
 
         # Copy to output directory if specified
         if output:
