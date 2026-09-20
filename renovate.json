@@ -44,10 +44,20 @@
     },
     {
       "customType": "regex",
+      "description": "upstream-sources.json gitlab-tags packages (gnome instance). Same field-order contract as above.",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"version\":\\s*\"(?<currentValue>[^\"]+)\"\\s*,\\s*\"url_template\":\\s*\"[^\"]*\"\\s*,\\s*\"sha512\":\\s*\"[^\"]*\"[^}]*?\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
+      ],
+      "datasourceTemplate": "gitlab-tags",
+      "registryUrlTemplate": "https://gitlab.gnome.org"
+    },
+    {
+      "customType": "regex",
       "description": "upstream-sources.json gitlab-tags packages (freedesktop instance). Same field-order contract as above.",
       "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
       "matchStrings": [
-        "\"version\":\\s*\"(?<currentValue>[^\"]+)\",\\s*\"url_template\":\\s*\"[^\"]*\",\\s*\"sha512\":\\s*\"[^\"]*\"(?:,\\s*\"stage\":\\s*\\d+)?(?:,\\s*\"note\":\\s*\"[^\"]*\")?,\\s*\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
+        "\"version\":\\s*\"(?<currentValue>[^\"]+)\"\\s*,\\s*\"url_template\":\\s*\"[^\"]*\"\\s*,\\s*\"sha512\":\\s*\"[^\"]*\"[^}]*?\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
       "datasourceTemplate": "gitlab-tags",
       "registryUrlTemplate": "https://gitlab.freedesktop.org"
@@ -81,6 +91,66 @@
       ],
       "datasourceTemplate": "github-tags",
       "depNameTemplate": "ublue-os/uupd"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - alsa-tools from alsa-project.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"alsa-tools\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.alsa-project.org/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - ffmpeg from ffmpeg.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"ffmpeg\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://ffmpeg.org/releases/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - git from kernel.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"git\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.kernel.org/pub/software/scm/git/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - linux-firmware from kernel.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"linux-firmware\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://www.kernel.org/pub/linux/kernel/firmware/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - grub2 from ftp.gnu.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"grub2\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://ftp.gnu.org/gnu/grub/"
+    },
+    {
+      "customType": "regex",
+      "description": "upstream-sources.json regex packages - polkit-gnome from download.gnome.org",
+      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "matchStrings": [
+        "\"polkit-gnome\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "regex",
+      "depNameTemplate": "https://download.gnome.org/sources/polkit-gnome/"
     }
   ]
 }

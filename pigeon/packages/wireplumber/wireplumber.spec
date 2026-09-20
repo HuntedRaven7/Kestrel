@@ -69,6 +69,9 @@ mkdir -p %{buildroot}%{_sysconfdir}/wireplumber/{bluetooth.lua.d,common,main.lua
 # Create missing empty system config dirs for other packages to drop files in
 mkdir -p %{buildroot}%{_datadir}/wireplumber/wireplumber.conf.d
 
+# Generate bash completion for wpctl
+%{buildroot}%{_bindir}/wpctl --bash-completion > %{buildroot}%{_datadir}/bash-completion/completions/wpctl 2>/dev/null || :
+
 %find_lang %{name}
 
 %posttrans
