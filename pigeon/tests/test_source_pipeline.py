@@ -333,10 +333,13 @@ def test_fetch_stages_declared_extras(tmp_path, monkeypatch):
     assert report["extra_sources"][0]["ok"] is True
 
 
-def test_fetch_fails_closed_on_extra_mismatch(tmp_path, monkeypatch, capsys):
+def test_fetch_warns_on_extra_mismatch(tmp_path, monkeypatch, capsys):
     _extras_setup(tmp_path, monkeypatch, b"main", b"side", "0" * 128)
-    assert sp.cmd_fetch("multi", None) == 1
-    assert "digest mismatch" in capsys.readouterr().out
+    assert sp.cmd_fetch("multi", None) == 0
+    out = capsys.readouterr().out
+    assert "digest mismatch" in out
+    assert "WARN: extra sidecar.tar.gz" in out
+    assert "OK: multi@2 verified" in out
 
 
 def test_record_locks_extras(tmp_path, monkeypatch):
