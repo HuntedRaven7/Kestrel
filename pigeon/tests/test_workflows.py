@@ -149,3 +149,45 @@ def test_shared_dnf_cache_has_a_single_weekly_writer():
                  seed["jobs"]["seed"]["steps"]]
     assert any(u.startswith("actions/cache/save@") for u in seed_uses), (
         "seed job does not save the shared dnf cache")
+
+
+def _rebuild_pigeon_jobs():
+    data = yaml.safe_load((WORKFLOWS / "rebuild-pigeon.yml").read_text())
+    return data["jobs"]
+
+
+def test_srpm_wave_gates_all_rebuilds():
+    # The SRPM wave must finish before any binary wave starts: spec and
+    # source errors fail here in ~1 min instead of hiding behind serial
+    # stages and 10-minute compiles.
+    jobs = _rebuild_pigeon_jobs()
+    assert "srpm" in jobs, "no SRPM wave in rebuild-pigeon"
+    assert "srpm" in jobs["rebuild0"].get("needs", []), (
+        "rebuild0 does not wait for the SRPM wave (transitively gates all)")
+
+
+def test_srpm_wave_builds_and_uploads_per_package_srpms():
+    jobs = _rebuild_pigeon_jobs()
+    srpm = jobs["srpm"]
+    steps = srpm.get("steps", []) or []
+    by_name = {s.get("name", ""): s for s in steps}
+    assert "Stage all sources for this package" in by_name, (
+        "SRPM wave must stage sources through the shared action")
+    assert "./.github/actions/stage-sources" in str(
+        by_name["Stage all sources for this package"].get("uses", ""))
+    build = by_name["Build SRPM in Fedora container"]
+    assert "rpmbuild -bs" in build.get("run", ""), (
+        "SRPM wave must run rpmbuild -bs")
+    upload = by_name["Upload SRPM artifact"]
+    assert upload.get("with", {}).get("name", "").startswith("srpm-"), (
+        "SRPM artifacts must be named srpm-<package>")
+
+
+def test_build_stage_shares_source_staging_with_srpm_wave():
+    # One source-staging implementation (composite action), used by both
+    # lanes — never two copies drifting apart.
+    data = _build_stage()
+    steps = data["jobs"]["build"]["steps"]
+    assert any(s.get("uses", "") == "./.github/actions/stage-sources"
+               for s in steps), (
+        "build-stage does not use the shared stage-sources action")
