@@ -167,9 +167,9 @@ Complete and free FFmpeg build
   --enable-libvpx \
   --enable-libwebp \
   --enable-libmp3lame \
-  --enable-libspeex \
-  --enable-libx264 \
-  --enable-libx265
+  --enable-libspeex
+# NOTE: no --enable-libx264/--enable-libx265: x264/x265 are RPMFusion-only
+# and absent from our buildroots (configure hard-fails without them).
 
 %make_build
 
