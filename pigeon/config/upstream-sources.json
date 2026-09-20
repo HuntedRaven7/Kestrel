@@ -336,20 +336,15 @@
     },
     "tailscale": {
       "version": "1.98.8",
-      "url_template": "https://github.com/tailscale/tailscale/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "8ae3a8885336f2a0886f6b9461196c6c5eb8ec115aadfe6f2f378cb6ba46323cc7d6db7d910a0abcf646d012718e85c0cbd7bb24858338a69516a8bfc86041f8",
+      "url_template": "https://pkgs.tailscale.com/stable/tailscale_{version}_amd64.tgz",
+      "sha512": "1b25df28eadf4b63c93c09aa31063ee7112f2bd7b2819e326e3614bf8a9aa62923ffaef3178c8eaf43d61d9326cd0f2fac0f5768c383ec65b72ab2e800884c7c",
       "stage": 2,
-      "note": "Fedora dist-git import. WireGuard-based VPN.",
+      "note": "WireGuard-based VPN. Uses official static release binaries.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "tailscale/tailscale"
       },
-      "filename": "v1.98.8.tar.gz",
-      "srpm": "rpmbuild",
-      "vendored": true,
-      "vendor_url": "https://kojipkgs.fedoraproject.org//packages/tailscale/1.98.8/1.fc44/src/tailscale-1.98.8-1.fc44.src.rpm",
-      "vendor_filename": "tailscale-1.98.8-vendor.tar.xz",
-      "source_filename": "v1.98.8.tar.gz"
+      "filename": "tailscale_1.98.8_amd64.tgz"
     },
     "wireguard-tools": {
       "version": "1.0.20260223",
@@ -856,16 +851,16 @@
       "filename": "fuse-2.9.9.tar.gz"
     },
     "ffmpeg": {
-      "version": "7.1",
-      "url_template": "https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz",
-      "sha512": "7282fff068452bf154b2bf814e7f20d44ed4d961687dffd841bd77b88f26d9eee2cf4cf02e9a60b48b50e77a0c34731580d9e7c0945e3bc14c8ace840d920cde",
+      "version": "9.0.1",
+      "url_template": "https://ffmpeg.org/releases/ffmpeg-{version}.tar.xz",
+      "sha512": "be8cdfca64886f2ec5cd2359f8db6a998ee759d105b10ade9b2a7b640356ad56ab0ff50218fce7b6312462f15f98d90ac9d197a3b02a23771754d2714fec628d",
       "stage": 2,
       "note": "Digital VCR and streaming server.",
       "renovate": {
         "datasource": "regex",
         "depName": "https://ffmpeg.org/releases/"
       },
-      "filename": "ffmpeg-7.1.tar.xz",
+      "filename": "ffmpeg-9.0.1.tar.xz",
       "srpm": "rpmbuild"
     },
     "git": {

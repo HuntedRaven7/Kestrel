@@ -1,0 +1,8 @@
+{
+  "package": "pipewire",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/pipewire.git",
+  "commit": "23429a70e8e3e4b2a2fcda2e1652622d63b5686c",
+  "tree": "8e1df5fa2b56729b92135df4aef95bb9ba4aa589",
+  "imported_at": "2026-08-30T12:39:04.329804+00:00"
+}
