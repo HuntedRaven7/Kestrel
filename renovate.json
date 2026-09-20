@@ -36,7 +36,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json github-tags packages. Field order is load-bearing (version, url_template, sha512, stage?, note?, renovate{datasource, depName}); test_renovate_managers.py enforces full coverage.",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"version\":\\s*\"(?<currentValue>[^\"]+)\",\\s*\"url_template\":\\s*\"[^\"]*\",\\s*\"sha512\":\\s*\"[^\"]*\"(?:,\\s*\"stage\":\\s*\\d+)?(?:,\\s*\"note\":\\s*\"[^\"]*\")?,\\s*\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"github-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
@@ -45,7 +47,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json gitlab-tags packages hosted on gitlab.gnome.org (or fetched from download.gnome.org). Same field-order contract as above; the url host selects this manager so each entry matches exactly one gitlab instance.",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"version\":\\s*\"(?<currentValue>[^\"]+)\"\\s*,\\s*\"url_template\":\\s*\"[^\"]*(?:gitlab\\.gnome\\.org|download\\.gnome\\.org)[^\"]*\"\\s*,\\s*\"sha512\":\\s*\"[^\"]*\"[^}]*?\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
@@ -55,7 +59,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json gitlab-tags packages hosted on gitlab.freedesktop.org. Same field-order contract as above; the url host selects this manager so each entry matches exactly one gitlab instance.",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"version\":\\s*\"(?<currentValue>[^\"]+)\"\\s*,\\s*\"url_template\":\\s*\"[^\"]*gitlab\\.freedesktop\\.org[^\"]*\"\\s*,\\s*\"sha512\":\\s*\"[^\"]*\"[^}]*?\"renovate\":\\s*\\{\\s*\"datasource\":\\s*\"gitlab-tags\"\\s*,\\s*\"depName\":\\s*\"(?<depName>[^\"]+)\""
       ],
@@ -65,7 +71,10 @@
     {
       "customType": "regex",
       "description": "Containerfile BASE_IMAGE digest pin",
-      "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
+      "managerFilePatterns": [
+        "/warbler/Containerfile$/",
+        "/woodpecker/Containerfile$/"
+      ],
       "matchStrings": [
         "ARG BASE_IMAGE=quay\\.io/hummingbird-community/bootc-os@(?<currentDigest>sha256:[a-f0-9]+)"
       ],
@@ -75,7 +84,10 @@
     {
       "customType": "regex",
       "description": "Containerfile PIGEON_IMAGE_SHA digest pin (active once pigeon publishes)",
-      "fileMatch": ["warbler/Containerfile$", "woodpecker/Containerfile$"],
+      "managerFilePatterns": [
+        "/warbler/Containerfile$/",
+        "/woodpecker/Containerfile$/"
+      ],
       "matchStrings": [
         "ARG PIGEON_IMAGE_SHA=(?<currentDigest>sha256:[a-f0-9]+)"
       ],
@@ -85,7 +97,9 @@
     {
       "customType": "regex",
       "description": "config/flavors.json uupd version",
-      "fileMatch": ["config/flavors\\.json$"],
+      "managerFilePatterns": [
+        "/config/flavors\\.json$/"
+      ],
       "matchStrings": [
         "\"uupd_version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -95,7 +109,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - alsa-tools from alsa-project.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"alsa-tools\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -105,7 +121,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - ffmpeg from ffmpeg.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"ffmpeg\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -115,7 +133,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - git from kernel.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"git\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -125,7 +145,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - linux-firmware from kernel.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"linux-firmware\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -135,7 +157,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - grub2 from ftp.gnu.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"grub2\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
@@ -145,7 +169,9 @@
     {
       "customType": "regex",
       "description": "upstream-sources.json regex packages - polkit-gnome from download.gnome.org",
-      "fileMatch": ["pigeon/config/upstream-sources\\.json$"],
+      "managerFilePatterns": [
+        "/pigeon/config/upstream-sources\\.json$/"
+      ],
       "matchStrings": [
         "\"polkit-gnome\":\\s*\\{[^}]*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
       ],
