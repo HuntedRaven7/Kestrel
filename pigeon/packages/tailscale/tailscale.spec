@@ -1047,8 +1047,9 @@ Provides:       bundled(golang(sigs.k8s.io/json)) = v0.0.0~20241014173422~cfa47c
 %prep
 # Kestrel: Source0/1 are service files (not archives) and the main tarball
 # arrives unnamed in SOURCES via source_pipeline/fetch_vendored, so unpack
-# it explicitly here: %goprep assumes Source0 is the archive and chokes
-# on the .service file.
+# it explicitly here. (Do NOT name the go prep macro in this comment, not
+# even escaped: rpm expands macros inside comments, and it would inject
+# its auto-unpack scriptlet here and break the build.)
 %setup -q -T -D -n %{name}-%{version}
 tar -xzf %{_sourcedir}/tailscale-%{version}.tar.gz --strip-components=1 2>/dev/null || \
 tar -xzf %{_sourcedir}/v%{version}.tar.gz --strip-components=1

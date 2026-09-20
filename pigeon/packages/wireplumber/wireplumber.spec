@@ -42,6 +42,14 @@ Recommends:     %{name}%{?_isa} = %{version}-%{release}
 This package contains the runtime libraries for any application that wishes
 to interface with WirePlumber.
 
+%package devel
+Summary:        Development files for WirePlumber
+Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
+
+%description devel
+This package contains libraries and header files for developing
+applications that use WirePlumber.
+
 %description
 WirePlumber is a modular session/policy manager for PipeWire and a
 GObject-based high-level library that wraps PipeWire's API, providing
@@ -97,6 +105,7 @@ mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
 %{_datadir}/bash-completion/completions/wpctl
 %{_userunitdir}/wireplumber.service
 %{_userunitdir}/wireplumber@.service
+%doc %{_datadir}/doc/wireplumber/
 
 %files libs -f %{name}.lang
 %license LICENSE
@@ -104,6 +113,13 @@ mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
 %{_libdir}/wireplumber-0.5/libwireplumber-*.so
 %{_libdir}/libwireplumber-*.so.*
 %{_libdir}/girepository-1.0/Wp-0.5.typelib
+
+%files devel
+%license LICENSE
+%{_includedir}/wireplumber-0.5/
+%{_libdir}/libwireplumber-0.5.so
+%{_libdir}/pkgconfig/wireplumber-0.5.pc
+%{_datadir}/gir-1.0/Wp-0.5.gir
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 0.5.8-1.hum1.pigeon
