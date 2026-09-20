@@ -232,7 +232,7 @@
       "filename": "double-conversion-3.4.0.tar.gz"
     },
     "dracut": {
-      "version": "111",
+      "version": "112",
       "url_template": "https://github.com/dracut-ng/dracut/archive/refs/tags/{version}.tar.gz",
       "sha512": "4c8a3e1e82bfc1dbe155241564bc93bedc2b321566002ccc643697b50173b8e564d03b1bbff4f49602e0cb7abbee21dfb14aadc453ac9703a846c160d070b4bc",
       "stage": 3,
@@ -1617,7 +1617,7 @@
       "filename": "ntfs-3g_ntfsprogs-2026.7.7.tgz"
     },
     "nvme-cli": {
-      "version": "2.16",
+      "version": "3.1",
       "url_template": "https://github.com/linux-nvme/nvme-cli/archive/refs/tags/v{version}.tar.gz",
       "sha512": "507018ff41832574bef5b88ea6a17336b9792c54f8e5c619d041bce23124e1d6d5e5e824407f46d4f1b4d6899125885eb14289f3399e61c7e7a59a603f1635e2",
       "stage": 3,
@@ -1869,7 +1869,7 @@
       "filename": "librest-0.10.2.tar.xz"
     },
     "rofi": {
-      "version": "1.7.9.1",
+      "version": "2.0.0",
       "url_template": "https://github.com/davatorium/rofi/archive/refs/tags/{version}.tar.gz",
       "sha512": "054903721f78baae19fa52e568d4eb29918275e28b54a5a2515a4c6b51a29353fac8511a59314b9a1a839e028a7ecb5c232ef8cd72f8056d625fc6e22cd2acf0",
       "stage": 4,
