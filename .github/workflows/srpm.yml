@@ -1,7 +1,6 @@
 name: srpm (reusable wave)
 
 # Builds one SRPM per package and uploads it as a per-package artifact.
-#
 # Split out of rebuild-pigeon.yml so the SRPM wave can be triggered
 # independently (e.g. from a packit-srpm-pilot run, or a manual spec/source
 # validation pass) without pulling the whole rebuild matrix with it. The
