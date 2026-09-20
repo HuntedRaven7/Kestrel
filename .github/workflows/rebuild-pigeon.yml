@@ -128,7 +128,9 @@ jobs:
     # rebuild wave waits on this job. The SRPM build itself lives in the
     # reusable srpm.yml workflow so the wave can run independently (e.g.
     # from packit-srpm-pilot) without dragging the rebuild matrix with it.
-    needs: [prepare]
+    # Mandatory after preflight: the BuildRequires advisory check gates the
+    # SRPM wave so broken specs never reach rpmbuild -bs.
+    needs: [prepare, preflight]
     if: ${{ needs.prepare.outputs.changed != '[]' }}
     uses: ./.github/workflows/srpm.yml
     with:
