@@ -298,11 +298,11 @@
     },
     "iio-sensor-proxy": {
       "version": "3.9",
-      "url_template": "https://gitlab.gnome.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.bz2",
+      "url_template": "https://gitlab.freedesktop.org/hadess/iio-sensor-proxy/-/archive/{version}/iio-sensor-proxy-{version}.tar.bz2",
       "sha512": "397f8a6cf6757d18e6a1d1744abf88617636566a302c189e13d3079ccbed470899d1963378eb50483c585b3aabbe67691cfe5580b030337781c7e3dbf3f69695",
       "stage": 3,
       "vendored": true,
-      "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in. Source must be fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
+      "note": "Upstream tags live on gitlab.freedesktop.org (the old GNOME GitLab URL gated anonymous downloads behind sign-in). Source stays vendored: fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
       "renovate": {
         "datasource": "gitlab-tags",
         "depName": "hadess/iio-sensor-proxy"

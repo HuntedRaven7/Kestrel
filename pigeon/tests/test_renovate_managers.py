@@ -42,25 +42,52 @@ def test_github_manager_covers_all_github_entries():
     assert got == want, f"unmatched: {sorted(want - got)[:5]}"
 
 
-def test_gitlab_manager_covers_all_gitlab_entries():
-    # Check freedesktop.org gitlab manager
-    m_freedesktop = _by_description("gitlab-tags packages (freedesktop instance)")
+def _gitlab_pairs(fragment):
+    m = _by_description(fragment)
     raw = (ROOT / "pigeon" / "config" / "upstream-sources.json").read_text()
-    got_freedesktop = {(dep, ver) for ver, dep in _compile(m_freedesktop["matchStrings"][0]).findall(raw)}
-    
-    # Check gnome.org gitlab manager
-    m_gnome = _by_description("gitlab-tags packages (gnome instance)")
-    got_gnome = {(dep, ver) for ver, dep in _compile(m_gnome["matchStrings"][0]).findall(raw)}
-    
-    got = got_freedesktop | got_gnome
+    return {(dep, ver)
+            for ver, dep in _compile(m["matchStrings"][0]).findall(raw)}
+
+
+def _gitlab_want(host_markers):
+    """(depName, version) for gitlab entries whose url_template mentions
+    one of the given hosts."""
+    data = json.loads(
+        (ROOT / "pigeon" / "config" / "upstream-sources.json").read_text()
+    )["packages"]
     want = set()
-    data = json.loads(raw)["packages"]
     for entry in data.values():
         r = entry.get("renovate", {})
-        if r.get("datasource") == "gitlab-tags":
+        if r.get("datasource") == "gitlab-tags" and any(
+                h in entry.get("url_template", "") for h in host_markers):
             want.add((r["depName"], entry["version"]))
-    assert want, "no gitlab-tags entries found (test bug?)"
-    assert got == want, f"unmatched: {sorted(want - got)[:5]}"
+    assert want, "no matching gitlab entries found (test bug?)"
+    return want
+
+
+def test_gitlab_managers_split_by_host_without_overlap():
+    # Each entry must match EXACTLY ONE gitlab instance: double extraction
+    # makes Renovate query the wrong host and warn "no-result" (this
+    # happened: identical patterns matched all 10 entries twice).
+    got_gnome = _gitlab_pairs("hosted on gitlab.gnome.org")
+    got_fdo = _gitlab_pairs("hosted on gitlab.freedesktop.org")
+    assert not (got_gnome & got_fdo), (
+        f"double-matched (would warn on wrong host): {sorted(got_gnome & got_fdo)}")
+    want_gnome = _gitlab_want(["gitlab.gnome.org", "download.gnome.org"])
+    want_fdo = _gitlab_want(["gitlab.freedesktop.org"])
+    assert got_gnome == want_gnome, f"gnome unmatched: {sorted(want_gnome - got_gnome)}"
+    assert got_fdo == want_fdo, f"freedesktop unmatched: {sorted(want_fdo - got_fdo)}"
+    # Union must cover every gitlab entry: a novel host fails loudly here
+    # instead of silently never updating.
+    data = json.loads(
+        (ROOT / "pigeon" / "config" / "upstream-sources.json").read_text()
+    )["packages"]
+    all_gitlab = {(e["renovate"]["depName"], e["version"])
+                  for e in data.values()
+                  if e.get("renovate", {}).get("datasource") == "gitlab-tags"}
+    assert got_gnome | got_fdo == all_gitlab, (
+        f"gitlab entries matched by no manager: "
+        f"{sorted(all_gitlab - got_gnome - got_fdo)}")
 
 
 def test_uupd_manager_matches_flavors():
