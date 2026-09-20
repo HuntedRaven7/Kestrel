@@ -5,7 +5,7 @@ URL:            https://www.wireguard.com/
 Summary:        Fast, modern, secure VPN tunnel
 License:        GPL-2.0-only
 
-Source0:        https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-%{version}.tar.xz
+Source0:        https://github.com/WireGuard/wireguard-tools/archive/refs/tags/v%{version}.tar.gz
 
 %{?systemd_requires}
 BuildRequires: make
@@ -24,7 +24,7 @@ many different circumstances. It runs over UDP.
 This package provides the wg binary for controlling WireGuard.
 
 %prep
-%autosetup -p1
+%autosetup -n wireguard-tools-%{version} -p1
 
 %build
 %set_build_flags
