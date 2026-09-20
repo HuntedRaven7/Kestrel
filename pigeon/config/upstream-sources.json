@@ -798,11 +798,7 @@
       "filename": "intel-media-26.2.4-free.tar.gz",
       "sha512": "bee1f5c133917d01dfd46356c56ec62b4757da25db3003ef09c4c2ea7c903eb5cc2da58b21a8bdfe4433207d411279311490aacfa8845fb9df67e26608fd1096",
       "stage": 3,
-      "note": "Fedora dist-git import. Free variant with non-free shaders stripped.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "intel/media-driver"
-      }
+      "note": "Fedora dist-git import. Free variant with non-free shaders stripped."
     },
     "intel-mediasdk": {
       "version": "23.2.2",
@@ -1972,11 +1968,7 @@
       "filename": "runc-1.5.1.tar.gz",
       "vendored": true,
       "stage": 2,
-      "note": "Fedora dist-git import. Go vendor tarball from Koji SRPM.",
-      "renovate": {
-        "datasource": "github-tags",
-        "depName": "opencontainers/runc"
-      }
+      "note": "Fedora dist-git import. Go vendor tarball from Koji SRPM."
     },
     "rust-just": {
       "version": "1.57.0",
