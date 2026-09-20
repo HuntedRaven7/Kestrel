@@ -85,6 +85,7 @@ BuildRequires:	zinnia-devel
 %endif
 BuildRequires:	clang ninja-build
 BuildRequires:	gyp >= 0.1-0.4.840svn
+BuildRequires:	which
 BuildRequires:	ibus-devel >= 1.5.4
 BuildRequires:	emacs
 %if 0%{?fedora} < 36

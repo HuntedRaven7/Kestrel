@@ -325,6 +325,11 @@
           "filename": "rust-pcre2-0.2.9-utf32.tar.gz",
           "url_template": "https://github.com/fish-shell/rust-pcre2/archive/0.2.9-utf32/rust-pcre2-0.2.9-utf32.tar.gz",
           "sha512": "d00577beee02edf3f35c4371e9a7fb35a2ed9225cd5bc4e539b6a2cd1f31f2a3c55a91832f3310afdeb004e4c59f24aa06c72c2e31ce1827d349b058a7a91a3c"
+        },
+        {
+          "filename": "fish-vendor-4.6.0.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/fish/fish-vendor-4.6.0.tar.gz/sha512/8101c7d67500012ef6171aebbd49f3cb4ecd6c9916f7205e5d988990a991fbb8a16d8f72bcdb875dfc10b17df28439e28c7493f7abef036eeb7cb43a03e2e4c6/fish-vendor-4.6.0.tar.gz",
+          "sha512": "8101c7d67500012ef6171aebbd49f3cb4ecd6c9916f7205e5d988990a991fbb8a16d8f72bcdb875dfc10b17df28439e28c7493f7abef036eeb7cb43a03e2e4c6"
         }
       ]
     },
@@ -644,6 +649,7 @@
     },
     "gtk4": {
       "version": "4.23.3",
+      "stage": 3,
       "url_template": "https://download.gnome.org/sources/gtk/4.23/gtk-{version}.tar.xz",
       "sha512": "68667688d1f818f5c50a545e7960fcac9ed244d27468a7086cfbce3fb0caefa4a97a69ea45ae7e271a0b4d2d46a105d2f3cd4edec2cb61af939c3027e51501f9",
       "filename": "gtk-4.23.3.tar.xz"
@@ -1974,7 +1980,14 @@
       "version": "1.57.0",
       "url_template": "https://crates.io/api/v1/crates/just/{version}/download#/just-{version}.crate",
       "sha512": "6ce10edbc41b3d23dc12dd2cbf27e4fcf84902cce26404a5da520549981a906feb7e11c17f2e1f4c4b2ed111b7cab8431a39b8d57db5175dedcb983d752a71fd",
-      "filename": "just-1.57.0.crate"
+      "filename": "just-1.57.0.crate",
+      "extra_sources": [
+        {
+          "filename": "rust-just-vendor-1.57.0.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/rust-just/rust-just-vendor-1.57.0.tar.gz/sha512/69ac54842355ce9f427c9e92dc90ef8b9ad9ad735677284b2751631193f111a727f7b197ceccb296c158a15bac6263ad7177c26e2e434ec017f116a4af6d15c9/rust-just-vendor-1.57.0.tar.gz",
+          "sha512": "69ac54842355ce9f427c9e92dc90ef8b9ad9ad735677284b2751631193f111a727f7b197ceccb296c158a15bac6263ad7177c26e2e434ec017f116a4af6d15c9"
+        }
+      ]
     },
     "samba": {
       "version": "4.25.0rc1",
@@ -2270,7 +2283,14 @@
       "version": "0.11.2",
       "url_template": "https://gitlab.freedesktop.org/mstoeckl/waypipe/-/archive/v{version}/waypipe-v{version}.tar.gz",
       "sha512": "e1b475f6c4b41cdc15ac1765a6a0dbb865f1bdc384d7f7393660e39baf38a375a501d7ec7493a82cd8aaeef9faba67422164e26d56f19737949f8578495ca5f1",
-      "filename": "waypipe-v0.11.2.tar.gz"
+      "filename": "waypipe-v0.11.2.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "waypipe-vendor-0.11.2.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/waypipe/waypipe-vendor-0.11.2.tar.gz/sha512/fbb4511c0f80f26c80335ce1ef6a196e80e13dae16f5b89f4796959e165871a0e6d486950503546157e06849faebce8d267d5431fc4a0e0759bc89c982a11cff/waypipe-vendor-0.11.2.tar.gz",
+          "sha512": "fbb4511c0f80f26c80335ce1ef6a196e80e13dae16f5b89f4796959e165871a0e6d486950503546157e06849faebce8d267d5431fc4a0e0759bc89c982a11cff"
+        }
+      ]
     },
     "webkitgtk": {
       "version": "2.53.91",
