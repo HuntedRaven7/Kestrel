@@ -196,6 +196,7 @@ systemctl --user daemon-reload >/dev/null 2>&1 || :
 
 %files devel
 %{_datadir}/gir-1.0/Flatpak-1.0.gir
+%{_datadir}/gtk-doc/
 %{_docdir}/flatpak/
 %{_libdir}/pkgconfig/flatpak.pc
 %{_libdir}/libflatpak.so

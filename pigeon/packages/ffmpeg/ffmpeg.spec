@@ -159,6 +159,7 @@ Complete and free FFmpeg build
   --enable-nonfree \
   --enable-shared \
   --disable-static \
+  --enable-pic \
   --enable-libass \
   --enable-libfreetype \
   --enable-libvorbis \
