@@ -552,14 +552,20 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
             return {"ok": False, "filename": filename, "reason": reason}
     digest = sha512_of(dest)
     ok = digest == recorded
-    if ok:
-        if output:
-            Path(output).mkdir(parents=True, exist_ok=True)
-            shutil.copy(dest, Path(output) / filename)
-        if stage_into:
-            pkg_dir = ROOT / stage_into / pkg
-            if pkg_dir.exists():
-                shutil.copy(dest, pkg_dir / filename)
+    # Stage regardless of the verdict: a sidecar is non-fatal for the GATE
+    # (cmd_fetch warns instead of failing), but rpmbuild still hard-fails with
+    # "Bad file" when a spec's SourceN basename is absent from SOURCES. If we
+    # only staged on `ok`, a tolerated sidecar would vanish and the SRPM build
+    # would die later with a confusing error. Staging a mismatch is safe: the
+    # digest already failed verification, so this is a warning path, and
+    # check_archive() above still guards archive-shaped extras.
+    if output:
+        Path(output).mkdir(parents=True, exist_ok=True)
+        shutil.copy(dest, Path(output) / filename)
+    if stage_into:
+        pkg_dir = ROOT / stage_into / pkg
+        if pkg_dir.exists():
+            shutil.copy(dest, pkg_dir / filename)
     return {"ok": ok, "filename": filename, "url": url,
             "sha512": digest, "expected": recorded,
             "reason": None if ok else "digest mismatch"}

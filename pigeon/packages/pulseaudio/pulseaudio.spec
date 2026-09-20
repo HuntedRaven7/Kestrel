@@ -43,6 +43,11 @@ URL:            http://www.freedesktop.org/wiki/Software/PulseAudio
 Source0:        pulseaudio-%{version}-%{gitrel}-g%{shortcommit}.tar.xz
 %else
 Source0:        http://freedesktop.org/software/pulseaudio/releases/pulseaudio-%{version}.tar.xz
+# Kestrel: keep upstream's Source1. It is never read via %SOURCE1, but
+# rpmbuild -bs hard-fails with "Bad file" when any declared source is absent
+# from SOURCES/, so it MUST be staged. It is registered as an extra_source in
+# pigeon/config/upstream-sources.json and hash-verified there.
+# Do not remove without dropping this Source1 line too.
 Source1:        http://freedesktop.org/software/pulseaudio/releases/pulseaudio-%{version}.tar.xz.sha256sum
 %endif
 

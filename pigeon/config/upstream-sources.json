@@ -579,7 +579,19 @@
       "version": "2.12",
       "url_template": "https://ftp.gnu.org/gnu/grub/grub-{version}.tar.xz",
       "sha512": "761c060a4c3da9c0e810b0ea967e3ebc66baa4ddd682a503ae3d30a83707626bccaf49359304a16b3a26fc4435fe6bea1ee90be910c84de3c2b5485a31a15be3",
-      "filename": "grub-2.12.tar.xz"
+      "filename": "grub-2.12.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "gnulib-9f48fb992a3d7e96610c4ce8be969cff2d61a01b.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/grub2/gnulib-9f48fb992a3d7e96610c4ce8be969cff2d61a01b.tar.gz/sha512/6887dede2d4a403422ea045329ee9bd7ca4c1561bcaf39e805e1d1ce8f4c050a65ce286e7d8362fb8e815b5fab0b405730a3f93194e343e2aedcf9b4411a285e/gnulib-9f48fb992a3d7e96610c4ce8be969cff2d61a01b.tar.gz",
+          "sha512": "6887dede2d4a403422ea045329ee9bd7ca4c1561bcaf39e805e1d1ce8f4c050a65ce286e7d8362fb8e815b5fab0b405730a3f93194e343e2aedcf9b4411a285e"
+        },
+        {
+          "filename": "theme.tar.bz2",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/grub2/theme.tar.bz2/sha512/0f6f914d5f801509403094b28b8cfe5169cb56ae9bdd808ae21a6780a8236b434161a068351508dd78729c25ee2fed066c124c1eef9e15102750b409b4576a5c/theme.tar.bz2",
+          "sha512": "0f6f914d5f801509403094b28b8cfe5169cb56ae9bdd808ae21a6780a8236b434161a068351508dd78729c25ee2fed066c124c1eef9e15102750b409b4576a5c"
+        }
+      ]
     },
     "gsettings-desktop-schemas": {
       "version": "51.beta",
@@ -846,7 +858,19 @@
       "version": "0.11.2",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/jpegxl/jpegxl-{version}.tar.gz/sha512/a7e1f7d060b358f4382e84367d66aa2850aef3b4524a0fdfe3f22dd258fb9e35dda7540f859d8bf4c32f31c61a7a03db677f4490a9f472cd25869a9d00797336/jpegxl-{version}.tar.gz",
       "sha512": "a7e1f7d060b358f4382e84367d66aa2850aef3b4524a0fdfe3f22dd258fb9e35dda7540f859d8bf4c32f31c61a7a03db677f4490a9f472cd25869a9d00797336",
-      "filename": "jpegxl-0.11.2.tar.gz"
+      "filename": "jpegxl-0.11.2.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "third_party-0.11.2.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/jpegxl/third_party-{version}.tar.gz/sha512/d6baa0186f52d51cb4f1d8d0d8eb96a403f1ddeed5a6f11207efba9a0c9ec0c0fcd21ee5c9c29144269ab5420ee1445d4047d4e435248c7b8314bc7d37acb8f6/third_party-{version}.tar.gz",
+          "sha512": "d6baa0186f52d51cb4f1d8d0d8eb96a403f1ddeed5a6f11207efba9a0c9ec0c0fcd21ee5c9c29144269ab5420ee1445d4047d4e435248c7b8314bc7d37acb8f6"
+        },
+        {
+          "filename": "testdata-0.11.2.tar.gz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/jpegxl/testdata-{version}.tar.gz/sha512/8c6a98e0f52a499a3d8623af7b7602b861c1ae5e93a26b2e4c5368e122b80d38b4f6548482d2b2f116db46d4e6a502dbed7d3824b87fbe50cfdf8bc0264cb959/testdata-{version}.tar.gz",
+          "sha512": "8c6a98e0f52a499a3d8623af7b7602b861c1ae5e93a26b2e4c5368e122b80d38b4f6548482d2b2f116db46d4e6a502dbed7d3824b87fbe50cfdf8bc0264cb959"
+        }
+      ]
     },
     "json-glib": {
       "version": "1.10.8",

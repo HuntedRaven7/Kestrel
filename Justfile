@@ -4,6 +4,7 @@ check:
     python3 pigeon/tools/factory_contract.py
     python3 pigeon/tools/validate.py
     python3 pigeon/tools/sync_versions.py --check
+    python3 pigeon/tools/audit_sources.py --spec-sources
 
 sync-versions:
     python3 pigeon/tools/sync_versions.py
