@@ -2384,6 +2384,7 @@
     },
     "xdg-desktop-portal-gnome": {
       "version": "51.alpha",
+      "spec_version": "51~alpha",
       "url_template": "https://download.gnome.org/sources/xdg-desktop-portal-gnome/51/xdg-desktop-portal-gnome-{version}.tar.xz",
       "sha512": "3efb510c4cb84eaffd16385938e84e176654fd04077763f2a4f58ccc8c051786cfc1c5c96d1527d8af95e4d09f9bc1290727ba15da543bf00ed75b3fe84f56f6",
       "filename": "xdg-desktop-portal-gnome-51.alpha.tar.xz"
