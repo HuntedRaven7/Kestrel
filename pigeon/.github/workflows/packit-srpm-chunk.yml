@@ -6,6 +6,12 @@
 # green discover step above it, which is exactly the failure the discover guard
 # was written to prevent and could not see. The caller hands this workflow one
 # chunk at a time; per-package parallelism is unchanged.
+#
+# The source-staging step is shared with rebuild-pigeon via the stage-sources
+# composite action, but the build command here is deliberately `packit srpm`
+# rather than `rpmbuild -bs`: the pilot's whole point is to prove Packit works
+# end-to-end against these recipes. Delegating to srpm.yml would test the
+# rpmbuild path a second time and never exercise Packit at all.
 name: Packit SRPM chunk
 
 on:
