@@ -4,7 +4,7 @@
 # source_pipeline.py before any build).
 
 Name:           wireplumber
-Version:        0.5.8
+Version:        0.5.14
 Release:        1%{?dist}
 Summary:        A modular session/policy manager for PipeWire
 

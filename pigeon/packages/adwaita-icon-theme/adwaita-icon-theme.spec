@@ -6,7 +6,7 @@
 %global adwlegacy_ver 46.2
 
 Name:           adwaita-icon-theme
-Version:        51
+Version:        51~beta
 Release:        1.hum1.pigeon
 Summary:        Adwaita icon theme
 

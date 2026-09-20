@@ -1,5 +1,5 @@
 Name:           libwacom
-Version:        2.20.0
+Version:        2.19.0
 Release:        1%{?dist}
 Summary:        Tablet Information Client Library
 Requires:       %{name}-data
