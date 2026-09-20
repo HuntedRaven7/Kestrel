@@ -17,6 +17,12 @@ Rules (PLAN.md §3.2):
   - Downloads that are not archives (HTML bot-walls) are refused, never locked.
   - Every run writes pigeon/reports/<pkg>.json; failed verification leaves the
     previous source unchanged (we never write a digest on failure).
+  - Secondary inputs ("extra_sources": [{filename, url_template, sha512}])
+    are fetched + verified exactly like the primary and staged alongside it,
+    so large binaries (e.g. git-submodule tarballs) never need committing
+    to git. The staged filename is decoupled from the URL basename on
+    purpose (commit-pinned upstream URLs served under stable recipe names).
+    Prefer immutable (commit/tag-pinned) extra URLs over floating branches.
 """
 from __future__ import annotations
 
@@ -77,6 +83,14 @@ def check_source(pkg: str) -> bool:
     if not recorded or recorded.startswith("TODO"):
         print(f"REFUSE: no recorded digest for {pkg} — run `record {pkg}` first")
         return False
+    for i, extra in enumerate(entry.get("extra_sources", []) or []):
+        xsha = extra.get("sha512", "")
+        if not extra.get("filename") or not extra.get("url_template"):
+            print(f"REFUSE: {pkg} extra_sources[{i}] missing filename/url_template")
+            return False
+        if not xsha or str(xsha).startswith("TODO"):
+            print(f"REFUSE: no recorded digest for {pkg} extra {extra.get('filename')} — run `record {pkg}` first")
+            return False
     print(f"OK: {pkg} is ready for fetch ({entry.get('version')})")
     return True
 
@@ -119,6 +133,18 @@ def validate_upstream_sources(data: dict) -> list[str]:
         sha = entry.get("sha512", "")
         if not sha or sha.startswith("TODO"):
             errors.append(f"{name}: missing or placeholder sha512")
+        # Check declared secondary inputs (staged alongside the primary so
+        # large binaries never need committing to git).
+        for i, extra in enumerate(entry.get("extra_sources", []) or []):
+            where = f"{name}: extra_sources[{i}]"
+            if not extra.get("filename"):
+                errors.append(f"{where}: missing filename")
+            xurl = extra.get("url_template", "")
+            if not xurl or str(xurl).startswith("TODO"):
+                errors.append(f"{where}: missing or placeholder url_template")
+            xsha = extra.get("sha512", "")
+            if not xsha or str(xsha).startswith("TODO"):
+                errors.append(f"{where}: missing or placeholder sha512")
     return errors
 
 
@@ -264,27 +290,40 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
         sig = verify_signature(entry, archive, workdir)
         # Gate: checksum must match; signature must pass when one is configured.
         ok = digest == recorded and (not sig["checked"] or sig.get("ok") is True)
-        
+
+        # Declared secondary inputs ride along (fail closed like the primary).
+        extras = []
+        for extra in entry.get("extra_sources", []) or []:
+            res = fetch_extra(pkg, extra, str(entry.get("version", "")),
+                              workdir, output, stage_into)
+            extras.append(res)
+            if res["ok"]:
+                print(f"OK: extra {res['filename']} verified")
+            else:
+                print(f"FAIL: extra {res['filename']} — {res['reason']}")
+                ok = False
+
         # Copy to output directory if specified
         if output:
             Path(output).mkdir(parents=True, exist_ok=True)
             shutil.copy(archive, Path(output) / archive.name)
-        
+
         # Also copy to package directory for packit Source0 lookup
         if stage_into:
             pkg_dir = ROOT / stage_into / pkg
             if pkg_dir.exists():
                 shutil.copy(archive, pkg_dir / archive.name)
-        
+
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
-            "sha512": digest, "expected": recorded, "signature": sig, "ok": ok,
+            "sha512": digest, "expected": recorded, "signature": sig,
+            "extra_sources": extras, "ok": ok,
         })
         if not ok:
             print(f"FAIL: verification failed for {pkg} (digest match: {digest == recorded})")
             return 1
         print(f"OK: {pkg}@{entry.get('version')} verified ({archive.name})")
-        
+
         if verify_staged:
             # Verify the staged source exists in the package directory
             staged_path = ROOT / "pigeon" / "packages" / pkg / archive.name
@@ -297,7 +336,16 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
                 print(f"FAIL: staged source digest mismatch")
                 return 1
             print(f"OK: staged source verified at {staged_path}")
-        
+            for extra in entry.get("extra_sources", []) or []:
+                xstaged = ROOT / "pigeon" / "packages" / pkg / extra.get("filename", "")
+                if not xstaged.is_file():
+                    print(f"FAIL: staged extra not found at {xstaged}")
+                    return 1
+                if sha512_of(xstaged) != extra.get("sha512", ""):
+                    print(f"FAIL: staged extra digest mismatch at {xstaged}")
+                    return 1
+                print(f"OK: staged extra verified at {xstaged}")
+
         return 0
 
 
@@ -348,6 +396,16 @@ def cmd_record(pkg: str, output: str | None) -> int:
         if sig["checked"] and not sig.get("ok"):
             print(f"FAIL: signature check failed for {pkg}: {sig.get('reason')}")
             return 1
+        # Lock declared secondary inputs alongside the primary.
+        extra_results = []
+        for extra in entry.get("extra_sources", []) or []:
+            res = record_extra(pkg, extra, str(entry.get("version", "")), workdir)
+            extra_results.append(res)
+            if not res["ok"]:
+                print(f"FAIL: extra {res['filename']} — {res['reason']}")
+                return 1
+            extra["sha512"] = res["sha512"]
+            print(f"OK: recorded extra {res['filename']} sha512={res['sha512'][:16]}…")
         if output:
             out = Path(output)
             out.mkdir(parents=True, exist_ok=True)
@@ -362,6 +420,7 @@ def cmd_record(pkg: str, output: str | None) -> int:
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,
             "sha512": digest, "signature": sig, "ok": True, "recorded": True,
+            "extra_sources": extra_results,
         })
         print(f"OK: recorded {pkg}@{entry.get('version')} sha512={digest[:16]}…")
         return 0
@@ -405,6 +464,67 @@ def cmd_fetch_vendored(pkg: str, entry: dict, recorded: str, output: str | None)
         return 1
     print(f"OK: verified vendored source for {pkg} ({staged.name})")
     return 0
+
+
+def render_extra_url(extra: dict, version: str) -> str:
+    return extra["url_template"].replace("{version}", str(version))
+
+
+def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
+                output: str | None, stage_into: str | None) -> dict:
+    """Download + verify one declared secondary input. Returns a result dict
+    with ok/filename/sha512 (and reason when not ok). Stages by the declared
+    filename, which is intentionally decoupled from the URL basename."""
+    filename = extra.get("filename", "")
+    url = render_extra_url(extra, version)
+    recorded = extra.get("sha512", "")
+    if not filename or not extra.get("url_template"):
+        return {"ok": False, "filename": filename,
+                "reason": "missing filename/url_template"}
+    if not recorded or str(recorded).startswith("TODO"):
+        return {"ok": False, "filename": filename,
+                "reason": f"no recorded digest — run `record {pkg}` first"}
+    dest = workdir / filename
+    try:
+        download(url, dest)
+    except Exception as exc:  # noqa: BLE001 — report, don't traceback
+        return {"ok": False, "filename": filename,
+                "reason": f"download failed: {exc}"}
+    if reason := check_archive(dest):
+        return {"ok": False, "filename": filename, "reason": reason}
+    digest = sha512_of(dest)
+    ok = digest == recorded
+    if ok:
+        if output:
+            Path(output).mkdir(parents=True, exist_ok=True)
+            shutil.copy(dest, Path(output) / filename)
+        if stage_into:
+            pkg_dir = ROOT / stage_into / pkg
+            if pkg_dir.exists():
+                shutil.copy(dest, pkg_dir / filename)
+    return {"ok": ok, "filename": filename, "url": url,
+            "sha512": digest, "expected": recorded,
+            "reason": None if ok else "digest mismatch"}
+
+
+def record_extra(pkg: str, extra: dict, version: str, workdir: Path) -> dict:
+    """Download one secondary input and lock its digest. Returns a result
+    dict; on success the caller writes digest back to the lock entry."""
+    filename = extra.get("filename", "")
+    url = render_extra_url(extra, version) if extra.get("url_template") else ""
+    if not filename or not url:
+        return {"ok": False, "filename": filename,
+                "reason": "missing filename/url_template"}
+    dest = workdir / filename
+    try:
+        download(url, dest)
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "filename": filename,
+                "reason": f"download failed: {exc}"}
+    if reason := check_archive(dest):
+        return {"ok": False, "filename": filename, "reason": reason}
+    digest = sha512_of(dest)
+    return {"ok": True, "filename": filename, "url": url, "sha512": digest}
 
 
 def cmd_report(pkg: str) -> int:

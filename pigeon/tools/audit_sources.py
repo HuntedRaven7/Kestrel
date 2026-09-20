@@ -19,10 +19,13 @@ Rules:
   - Remote (http/ftp) values are warnings only, EXCEPT rpm URL#file
     fragments (e.g. openpgpkey keys), which are fetched into the recipe
     dir so hermetic builds don't need network.
-  - *-vendor.tar.bz2 (Go) is reported, not fetched: it must be GENERATED
-    with go-vendor-tools (network + Go toolchain), a CI-lane job.
-  - --fix downloads from dist-git rawhide (plain files) or the lookaside
-    cache (archives + .sig files, via the dist-git `sources` hash file).
+- *-vendor.tar.bz2 (Go) is reported, not fetched: it must be GENERATED
+  with go-vendor-tools (network + Go toolchain), a CI-lane job.
+- Names declared in the lock's extra_sources are staged by
+  source_pipeline.py fetch (build-time, hash-verified): skipped here so
+  large binaries never need committing to git.
+- --fix downloads from dist-git rawhide (plain files) or the lookaside
+  cache (archives + .sig files, via the dist-git `sources` hash file).
 """
 from __future__ import annotations
 
@@ -159,6 +162,23 @@ def staged_names() -> dict:
     return out
 
 
+def declared_extras() -> dict:
+    """Declared secondary inputs per package (what fetch stages alongside
+    the primary so large binaries never need committing to git)."""
+    import json
+
+    out: dict[str, set[str]] = {}
+    try:
+        data = json.loads((ROOT / "pigeon" / "config" / "upstream-sources.json").read_text())
+        for pkg, e in data["packages"].items():
+            names = {x.get("filename", "") for x in e.get("extra_sources", []) or []}
+            if names - {""}:
+                out[pkg] = names - {""}
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def srpm_methods() -> dict:
     """SRPM lane per package: `packit` (default) or `rpmbuild`.
 
@@ -183,6 +203,7 @@ def srpm_methods() -> dict:
 def audit(fix: bool = False, only: str | None = None) -> int:
     missing, warnings = {}, []
     staged = staged_names()
+    extras = declared_extras()
     methods = srpm_methods()
     dirs = [PKGS / only] if only else sorted(PKGS.iterdir())
     for pkgdir in dirs:
@@ -197,8 +218,11 @@ def audit(fix: bool = False, only: str | None = None) -> int:
             val = expand(raw, macros)
             # Our staged verified archive satisfies any reference to it,
             # whatever SourceN position the spec uses (e.g. libinput's
-            # snapshot-conditional double Source0).
+            # snapshot-conditional double Source0). Declared secondary
+            # inputs (extra_sources) are staged by the same fetch step.
             if val.rsplit("/", 1)[-1] == staged.get(pkgdir.name):
+                continue
+            if val.rsplit("/", 1)[-1] in extras.get(pkgdir.name, ()):
                 continue
             if "vendor.tar" in val:
                 if (pkgdir / val.rsplit("/", 1)[-1]).is_file():
@@ -270,10 +294,15 @@ def audit(fix: bool = False, only: str | None = None) -> int:
             missing.setdefault(pkgdir.name, []).append(val)
             if fix:
                 try_fetch(pkgdir, val, val, missing)
-        # top-dir check against a staged archive, when present
+        # top-dir check against a staged archive, when present.
+        # Declared secondary inputs (extra_sources) unpack elsewhere
+        # (e.g. meson subprojects), so only the primary is compared.
+        extra_names = extras.get(pkgdir.name, ())
         if topdir:
             for arc in pkgdir.glob("*.tar.*"):
                 if arc.name.endswith((".sig", ".asc")):
+                    continue
+                if arc.name in extra_names:
                     continue
                 try:
                     with tarfile.open(arc) as tf:

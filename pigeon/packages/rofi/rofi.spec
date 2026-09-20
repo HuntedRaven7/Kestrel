@@ -47,21 +47,11 @@ Rofi launcher for the Warbler desktop (drun + window modes).
 
 %prep
 %autosetup -n rofi-%{version} -p1
-# Populate submodule subprojects
-# Source1/Source2 are not fetched by source_pipeline.py (only one source per package).
-# Download them here if not already present in SOURCES.
-for src in libgwater libnkutils; do
-  if [ ! -f "%{SOURCE1}" ] && [ ! -f "libgwater-master.tar.gz" ]; then
-    curl -fsSL -o libgwater-master.tar.gz https://github.com/sardemff7/libgwater/archive/master.tar.gz
-    cp libgwater-master.tar.gz "$(dirname %{SOURCE1})/libgwater-master.tar.gz"
-  fi
-  if [ ! -f "%{SOURCE2}" ] && [ ! -f "libnkutils-master.tar.gz" ]; then
-    curl -fsSL -o libnkutils-master.tar.gz https://github.com/sardemff7/libnkutils/archive/master.tar.gz
-    cp libnkutils-master.tar.gz "$(dirname %{SOURCE2})/libnkutils-master.tar.gz"
-  fi
-done
-tar -xzf libgwater-master.tar.gz -C subprojects/libgwater --strip-components=1
-tar -xzf libnkutils-master.tar.gz -C subprojects/libnkutils --strip-components=1
+# Populate submodule subprojects. Source1/Source2 are declared as
+# extra_sources in upstream-sources.json and staged by source_pipeline.py
+# fetch (hash-verified, commit-pinned) — no network access here.
+tar -xzf %{SOURCE1} -C subprojects/libgwater --strip-components=1
+tar -xzf %{SOURCE2} -C subprojects/libnkutils --strip-components=1
 
 %build
 %meson -Dcheck=disabled
