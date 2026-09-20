@@ -164,23 +164,33 @@ def test_srpm_wave_gates_all_rebuilds():
     assert "srpm" in jobs, "no SRPM wave in rebuild-pigeon"
     assert "srpm" in jobs["rebuild0"].get("needs", []), (
         "rebuild0 does not wait for the SRPM wave (transitively gates all)")
+    # The wave is a reusable workflow call, not an inline job: it delegates
+    # to srpm.yml so the same build can run from packit-srpm-pilot.
+    assert jobs["srpm"].get("uses", "").endswith("srpm.yml"), (
+        "rebuild-pigeon srpm job must delegate to the reusable srpm.yml workflow")
 
 
 def test_srpm_wave_builds_and_uploads_per_package_srpms():
-    jobs = _rebuild_pigeon_jobs()
-    srpm = jobs["srpm"]
+    # The per-package steps live in the reusable srpm.yml workflow, not inline
+    # in rebuild-pigeon.yml. Both halves must stay present.
+    import yaml as _yaml
+    srpm_wf = _yaml.safe_load((WORKFLOWS / "srpm.yml").read_text())
+    srpm = srpm_wf["jobs"]["srpm"]
     steps = srpm.get("steps", []) or []
-    by_name = {s.get("name", ""): s for s in steps}
+    by_name = {s.get("name", "") for s in steps}
     assert "Stage all sources for this package" in by_name, (
         "SRPM wave must stage sources through the shared action")
-    assert "./.github/actions/stage-sources" in str(
-        by_name["Stage all sources for this package"].get("uses", ""))
-    build = by_name["Build SRPM in Fedora container"]
-    assert "rpmbuild -bs" in build.get("run", ""), (
+    assert "Build SRPM in Fedora container" in by_name, (
         "SRPM wave must run rpmbuild -bs")
-    upload = by_name["Upload SRPM artifact"]
-    assert upload.get("with", {}).get("name", "").startswith("srpm-"), (
-        "SRPM artifacts must be named srpm-<package>")
+    assert "Upload SRPM artifact" in by_name, (
+        "SRPM wave must upload per-package SRPMs")
+    # The reusable workflow takes the package list as an input and fans out
+    # over it, so rebuild-pigeon can delegate without inlining the matrix.
+    # NOTE: bare `on:` parses as boolean True under YAML 1.1.
+    on_wf = srpm_wf.get("on", srpm_wf.get(True, {}))
+    assert "packages" in on_wf["workflow_call"]["inputs"]
+    assert "srpm-${{ matrix.package }}" in str(
+        srpm_wf["jobs"]["srpm"]["steps"][-1].get("with", {}))
 
 
 def test_build_stage_shares_source_staging_with_srpm_wave():
