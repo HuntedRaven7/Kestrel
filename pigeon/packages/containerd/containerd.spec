@@ -7,7 +7,7 @@
 
 # https://github.com/containerd/containerd
 %global goipath         github.com/containerd/containerd/v2
-Version:                2.3.5
+Version:                2.3.4
 %{lua:
     local version0 = rpm.expand("%{version}"):gsub("~", "-")
     rpm.define("tag " .. "v" .. version0)
