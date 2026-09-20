@@ -4,6 +4,7 @@ work/
 *.rpm
 *.srpm
 *.log
+*.crate
 __pycache__/
 utah-packages/
 .pytest_cache/
