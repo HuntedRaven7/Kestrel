@@ -55,7 +55,7 @@ jobs:
           lock = json.loads(
               open("pigeon/config/upstream-sources.json").read())["packages"]
 
-          # Group by the lock `stage` field (0-2 today); optional manual
+          # Group by the lock `stage` field (0-4 today); optional manual
           # single-stage filter. Membership is data-driven so deleted or
           # not-yet-written recipes can never desync this workflow.
           stage_filter = "${{ github.event.inputs.stage }}"
@@ -179,7 +179,7 @@ jobs:
   precedence:
     name: Precedence check
     runs-on: ubuntu-26.04
-    needs: [prepare, rebuild0, rebuild1, rebuild2]
+    needs: [prepare, rebuild0, rebuild1, rebuild2, rebuild3, rebuild4]
     if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
     steps:
       - name: Checkout
@@ -256,7 +256,8 @@ jobs:
         if: ${{ steps.artifacts.outputs.exists == 'true' }}
         run: |
           mkdir -p ~/repository
-          for stage in 0 1 2; do
+          # Must match every stage dispatched above (test_publish_collects_all_stages).
+          for stage in 0 1 2 3 4; do
             if [ -d ~/stages/stage-$stage ]; then
               cp -r ~/stages/stage-$stage/* ~/repository/ 2>/dev/null || true
             fi
