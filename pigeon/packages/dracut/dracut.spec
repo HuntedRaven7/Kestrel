@@ -7,7 +7,7 @@
 %global __requires_exclude pkg-config
 
 Name: dracut
-Version: 111
+Version: 112
 Release: 4%{?dist}
 
 Summary: Initramfs generator using udev
