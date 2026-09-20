@@ -37,6 +37,19 @@ runs:
         python3 pigeon/tools/source_pipeline.py fetch "${{ inputs.package }}" \
           --output work/src --stage-into pigeon/packages
 
+    - name: Copy local package sources
+      shell: bash
+      run: |
+        # For local packages (source generated locally), copy the source file to work/src
+        PKG="${{ inputs.package }}"
+        if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('local') else 1)"; then
+          FILE=$(python3 -c "import json; d=json.load(open('pigeon/config/upstream-sources.json')); print(d['packages']['$PKG'].get('filename', ''))")
+          if [ -n "$FILE" ] && [ -f "pigeon/packages/$PKG/$FILE" ]; then
+            cp "pigeon/packages/$PKG/$FILE" work/src/
+            echo "Copied local source $FILE to work/src"
+          fi
+        fi
+
     - name: Alias staged source under spec Source0 names
       shell: bash
       run: |
