@@ -5,7 +5,7 @@
 # Mango via XWayland.
 
 Name:           rofi
-Version:        1.7.9.1
+Version:        2.0.0
 Release:        1.hum1.pigeon
 Summary:        Window switcher, run dialog, and dmenu replacement
 License:        MIT
