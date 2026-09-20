@@ -75,7 +75,7 @@
     },
     "aribb24": {
       "version": "1.0.3^20160216git5e9be27",
-      "url_template": "https://github.com/nkoriyama/aribb24/archive/refs/tags/5e9be27.tar.gz",
+      "url_template": "https://github.com/nkoriyama/aribb24/archive/5e9be27.tar.gz",
       "sha512": "9dd0be0759482d10839c5cb9fe116b2e1aadb784f77e9206b5444e88e5f8d21ddabe79721bf343c41b8fc96c6e733873bc03930bd5bfeedd90d62f3617d75bfd",
       "filename": "5e9be27.tar.gz"
     },
@@ -235,7 +235,7 @@
     "dracut": {
       "version": "112",
       "url_template": "https://github.com/dracut-ng/dracut/archive/refs/tags/{version}.tar.gz",
-      "sha512": "4c8a3e1e82bfc1dbe155241564bc93bedc2b321566002ccc643697b50173b8e564d03b1bbff4f49602e0cb7abbee21dfb14aadc453ac9703a846c160d070b4bc",
+      "sha512": "37a3f15db68ab7a9a9ad3ba5fee36559d20692cba74234737d559c453568dbde632c6c0f197c3e531d62ba6ff632af21b52da614182327d00ca088b820b53c9",
       "stage": 3,
       "note": "Fedora dist-git import. Initramfs generator. Upstream moved to dracut-ng org.",
       "renovate": {
@@ -302,7 +302,24 @@
       "version": "4.6.0",
       "url_template": "https://github.com/fish-shell/fish-shell/releases/download/{version}/fish-{version}.tar.xz",
       "sha512": "2acc6453f102b570f0f2765739a020f63051b7ee2a7f49d086459287c9e5a8658294b0081904b4897315195c6510a7e53794da9937f6f64aa53c65eb448d68b5",
-      "filename": "fish-4.6.0.tar.xz"
+      "filename": "fish-4.6.0.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "fish-4.6.0.tar.xz.asc",
+          "url_template": "https://github.com/fish-shell/fish-shell/releases/download/4.6.0/fish-4.6.0.tar.xz.asc",
+          "sha512": "ba2327992397577a9d315bb49622f4272e49c627d56ba0de47a89bb13462a2f1204e74f702679e688fedac058e7268beb65611be50505909cd27870d135f10a2"
+        },
+        {
+          "filename": "krobelus.gpg",
+          "url_template": "https://github.com/krobelus.gpg",
+          "sha512": "ed1188ae5234586c02125931a59361cb605c51e6d3b07657d11f6a5dddc7b9deae21c1e0cb73f8c89ff3f69e07e3df01c3e185dbca4f9f3e1597ac0c7de5492b"
+        },
+        {
+          "filename": "rust-pcre2-0.2.9-utf32.tar.gz",
+          "url_template": "https://github.com/fish-shell/rust-pcre2/archive/0.2.9-utf32/rust-pcre2-0.2.9-utf32.tar.gz",
+          "sha512": "d00577beee02edf3f35c4371e9a7fb35a2ed9225cd5bc4e539b6a2cd1f31f2a3c55a91832f3310afdeb004e4c59f24aa06c72c2e31ce1827d349b058a7a91a3c"
+        }
+      ]
     },
     "flac": {
       "version": "1.5.0",
@@ -1568,7 +1585,19 @@
       "version": "2.29.5111.102",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/mozc/mozc-{version}.tar.xz/sha512/6a9c6abdc600e4e1c7fd9432419fb058adcf6bca45c27749f122e62ad520c8c1e2ce83ff55dd6b7975517924fb1c71d3a6e3a96a661703da627df372c2f5f700/mozc-{version}.tar.xz",
       "sha512": "6a9c6abdc600e4e1c7fd9432419fb058adcf6bca45c27749f122e62ad520c8c1e2ce83ff55dd6b7975517924fb1c71d3a6e3a96a661703da627df372c2f5f700",
-      "filename": "mozc-2.29.5111.102.tar.xz"
+      "filename": "mozc-2.29.5111.102.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "ken_all.zip",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/mozc/ken_all.zip/sha512/7f4112b38dbc3e4b0e01a03a0eeb59eb9062e90c53a9644748529c0330f9225c9185969aab6556b6aa456b738f11de799b15e55cc537c63e7e0f59d43301d875/ken_all.zip",
+          "sha512": "7f4112b38dbc3e4b0e01a03a0eeb59eb9062e90c53a9644748529c0330f9225c9185969aab6556b6aa456b738f11de799b15e55cc537c63e7e0f59d43301d875"
+        },
+        {
+          "filename": "jigyosyo.zip",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/mozc/jigyosyo.zip/sha512/28481b5c922097dd8d1eeaed3417f16580345e9666f4c3a04c806dff88a970ae8f5b07a10d82768da43d0472bd047c1bdb68cb38f91868d7ec1993b1a0e16538/jigyosyo.zip",
+          "sha512": "28481b5c922097dd8d1eeaed3417f16580345e9666f4c3a04c806dff88a970ae8f5b07a10d82768da43d0472bd047c1bdb68cb38f91868d7ec1993b1a0e16538"
+        }
+      ]
     },
     "mozjs140": {
       "version": "140.13.0",
@@ -1879,7 +1908,7 @@
     "rofi": {
       "version": "2.0.0",
       "url_template": "https://github.com/davatorium/rofi/archive/refs/tags/{version}.tar.gz",
-      "sha512": "054903721f78baae19fa52e568d4eb29918275e28b54a5a2515a4c6b51a29353fac8511a59314b9a1a839e028a7ecb5c232ef8cd72f8056d625fc6e22cd2acf0",
+      "sha512": "6565f92cc6b2672b354fccd52a8cf02e83f2645810a8002a0e4444e8fa3c2c53b0e81db6df99ae35735eba3b1e4f2dccd47601a4cffd09a5730191f144df77e6",
       "stage": 4,
       "note": "Stock rofi (X11 via XWayland under Mango). Evaluate rofi-wayland fork later as separate package.",
       "renovate": {

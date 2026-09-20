@@ -3,7 +3,7 @@
 Kestrel is a monorepo for Fedora Hummingbird bootc images. `pigeon/`
 builds RPMs and publishes `ghcr.io/huntedraven7/pigeon` (OCI repo image).
 `warbler/` (desktop: Mango + Quickshell + SDDM autologin) and `woodpecker/`
-(server) consume it via `COPY --from=` pinned by digest. See `PLAN.md`.
+(server) consume it via `COPY --from=` pinned by digest.
 
 Skills live in `.agents/skills/` and are discovered by Pi and GitHub Copilot.
 Load only the skill matching the task; do not read every skill.
@@ -32,7 +32,7 @@ Load only the skill matching the task; do not read every skill.
 ## Sources of truth
 
 1. Read the file being changed and its callers before editing.
-2. `PLAN.md` for locked decisions (GHCR owner, `.hum1.pigeon` suffix, Renovate-owned lock versions).
+2. (GHCR owner, `.hum1.pigeon` suffix, Renovate-owned lock versions).
 3. Workflows, `Justfile`, and `tools/` output are current truth; prose that disagrees is stale.
 4. Verify external syntax against current official docs before changing Containerfile, Renovate, cosign, or bootc usage.
 
