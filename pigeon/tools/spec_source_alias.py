@@ -28,7 +28,7 @@ from audit_sources import expand, parse_spec  # noqa: E402
 
 
 def alias_source0(spec: Path, sources: Path, staged: Path,
-                   recipe_dir: Path | None = None) -> list[str]:
+                    recipe_dir: Path | None = None) -> list[str]:
     """Create missing Source0-basename links. Returns list of created names."""
     macros, checks, _topdir = parse_spec(spec)
     # Fedora idiom `%{!?version_no_tilde: %define ...}`: default to Version
@@ -47,7 +47,12 @@ def alias_source0(spec: Path, sources: Path, staged: Path,
             first_tags.append(raw)
     created = []
     for raw in first_tags:
-        base = expand(raw, macros).rsplit("/", 1)[-1]
+        expanded = expand(raw, macros)
+        # Handle URL fragments like #/filename.tar.gz
+        if "#/" in expanded:
+            base = expanded.split("#/")[-1]
+        else:
+            base = expanded.rsplit("/", 1)[-1]
         if "%{" in base or not base:
             print(f"  skip unresolvable Source0: {raw}")
             continue

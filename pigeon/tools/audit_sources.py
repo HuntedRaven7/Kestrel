@@ -109,12 +109,15 @@ def expand(val: str, macros: dict) -> str:
     prev = None
     while prev != val:
         prev = val
+        # Handle both %{macro} and %macro (word boundary after)
         val = re.sub(r"%\{(\w+)\}", sub, val)
+        val = re.sub(r"%(\w+)(?![\w{])", lambda m: macros.get(m.group(1), m.group(0)), val)
     for name in macros:
         val = val.replace(f"%{name}", macros[name])
     def cmd_sub(m):
         cmd = m.group(1)
         cmd = re.sub(r"%\{(\w+)\}", sub, cmd)
+        cmd = re.sub(r"%(\w+)(?![\w{])", lambda m: macros.get(m.group(1), m.group(0)), cmd)
         try:
             result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=10)
             return result.stdout.strip()
