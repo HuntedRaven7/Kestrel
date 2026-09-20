@@ -23,6 +23,7 @@ BuildRequires:  gcc
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  blueprint-compiler
 
 %description
 Ghostty terminal emulator — default terminal of the Warbler desktop.

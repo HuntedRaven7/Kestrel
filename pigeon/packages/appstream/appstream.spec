@@ -128,6 +128,7 @@ touch %{buildroot}/var/cache/swcatalog/cache.watch
 %{_metainfodir}/org.freedesktop.appstream.cli.*.xml
 # put in -devel? -- rex
 %{_datadir}/gettext/its/metainfo.*
+%{_datadir}/installed-tests/appstream/
 %ghost /var/cache/swcatalog/cache.watch
 %dir /var/cache/swcatalog/
 %dir /var/cache/swcatalog/icons/
@@ -146,6 +147,7 @@ touch %{buildroot}/var/cache/swcatalog/cache.watch
 %{_datadir}/vala/vapi/appstream.deps
 %{_datadir}/vala/vapi/appstream.vapi
 %{_docdir}/appstream/html/
+%{_datadir}/gtk-doc/html/appstream/
 
 %files compose
 %license COPYING

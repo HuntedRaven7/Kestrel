@@ -289,6 +289,10 @@
       "stage": 3,
       "vendored": true,
       "note": "Upstream (GNOME GitLab) gates anonymous archive downloads behind sign-in. Source must be fetched from Fedora dist-git or Koji in CI. Fedora dist-git: https://src.fedoraproject.org/rpms/iio-sensor-proxy",
+      "renovate": {
+        "datasource": "gitlab-tags",
+        "depName": "hadess/iio-sensor-proxy"
+      },
       "filename": "iio-sensor-proxy-3.9.tar.bz2",
       "srpm": "rpmbuild"
     },
@@ -458,6 +462,10 @@
       "stage": 3,
       "srpm": "rpmbuild",
       "note": "Fedora dist-git import. Bootloader. No GitHub mirror exists; bumps are manual (security-sensitive). SRPM via plain rpmbuild: packit's parser cannot evaluate the system-macros.d %ifs (with_legacy_arch et al.); real rpmbuild gets them from efi-srpm-macros (a BuildRequires).",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://ftp.gnu.org/gnu/grub/"
+      },
       "filename": "grub-2.12.tar.xz"
     },
     "smartmontools": {
@@ -670,6 +678,10 @@
       "sha512": "eae2504959bca6f2b53dbad1b743fc0414b82897e62623af80ee74c4080a10d6b07a4c90151ee1264891f27373321b8697ac8a747cba5254c765b4cd9161bd42",
       "stage": 2,
       "note": "GNOME polkit authentication agent. Replaces xfce-polkit. No GitHub repo (GNOME FTP only); bumps are manual.",
+      "renovate": {
+        "datasource": "regex",
+        "depName": "https://download.gnome.org/sources/polkit-gnome/"
+      },
       "filename": "polkit-gnome-0.105.tar.xz"
     },
     "cpptrace": {

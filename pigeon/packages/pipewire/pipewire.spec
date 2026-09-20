@@ -88,7 +88,7 @@ BuildRequires:  sbc-devel
 BuildRequires:  systemd
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  vala
-%if (0%{?fedora} && 0%{?fedora} < 44) || (0%{?rhel} && 0%{?rhel} < 11)
+%if (0%{?fedora} && 0%{?fedora} <= 44) || (0%{?rhel} && 0%{?rhel} < 11)
 BuildRequires:  webrtc-audio-processing-devel
 %else
 BuildRequires:  webrtc-audio-processing2-devel
