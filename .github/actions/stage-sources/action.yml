@@ -37,16 +37,30 @@ runs:
         python3 pigeon/tools/source_pipeline.py fetch "${{ inputs.package }}" \
           --output work/src --stage-into pigeon/packages
 
-    - name: Copy local package sources
+    - name: Copy or generate local package sources
       shell: bash
       run: |
         # For local packages (source generated locally), copy the source file to work/src
+        # or generate it if a generator script (strip.py) exists.
         PKG="${{ inputs.package }}"
         if python3 -c "import json,sys; sys.exit(0 if json.load(open('pigeon/config/upstream-sources.json'))['packages']['$PKG'].get('local') else 1)"; then
           FILE=$(python3 -c "import json; d=json.load(open('pigeon/config/upstream-sources.json')); print(d['packages']['$PKG'].get('filename', ''))")
-          if [ -n "$FILE" ] && [ -f "pigeon/packages/$PKG/$FILE" ]; then
-            cp "pigeon/packages/$PKG/$FILE" work/src/
+          RECIPE_DIR="pigeon/packages/$PKG"
+          if [ -n "$FILE" ] && [ -f "$RECIPE_DIR/$FILE" ]; then
+            cp "$RECIPE_DIR/$FILE" work/src/
             echo "Copied local source $FILE to work/src"
+          elif [ -f "$RECIPE_DIR/strip.py" ]; then
+            echo "Generating local source for $PKG using strip.py..."
+            (cd "$RECIPE_DIR" && python3 strip.py)
+            if [ -f "$FILE" ]; then
+              cp "$FILE" work/src/
+              echo "Generated and copied $FILE to work/src"
+            else
+              echo "ERROR: strip.py did not produce $FILE"
+              exit 1
+            fi
+          else
+            echo "WARNING: local package $PKG has no source file and no strip.py generator"
           fi
         fi
 
