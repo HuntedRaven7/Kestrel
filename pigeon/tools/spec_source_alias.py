@@ -3,9 +3,8 @@
 
 Fedora specs reference lookaside-renamed tarballs (e.g.
 `libblockdev-3.5.0.tar.gz`) while upstream URLs serve tag-named files
-(e.g. `3.5.0.tar.gz`). The packit SRPM lane bridges this via the
-create_archive positional Source0 override; raw rpmbuild (the build-stage
-lane) needs the spec's basename present in SOURCES.
+(e.g. `3.5.0.tar.gz`). Raw rpmbuild (the build-stage lane) needs the
+spec's basename present in SOURCES.
 
 Usage:
   spec_source_alias.py --spec SPEC --sources DIR --staged FILE

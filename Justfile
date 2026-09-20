@@ -3,6 +3,10 @@
 check:
     python3 pigeon/tools/factory_contract.py
     python3 pigeon/tools/validate.py
+    python3 pigeon/tools/sync_versions.py --check
+
+sync-versions:
+    python3 pigeon/tools/sync_versions.py
 
 test:
     python3 -m pytest pigeon/tests -q
@@ -66,7 +70,7 @@ import pkg:
     echo "TODO: import Fedora dist-git rawhide branch for {{ pkg }} into pigeon/packages/{{ pkg }}/ (PR, with .hummingbird-upstream.json)"
 
 bump-check:
-    echo "TODO: report Renovate + Packit open bump PRs"
+    echo "TODO: report Renovate open bump PRs"
 
 sync-bluefin-toml:
     curl -fsSL https://raw.githubusercontent.com/projectbluefin/bluefin-cli/main/base.toml -o warbler/packages/bluefin.toml
