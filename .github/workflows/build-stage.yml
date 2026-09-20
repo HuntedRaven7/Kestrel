@@ -105,6 +105,10 @@ jobs:
         id: package_cache
         run: |
           mkdir -p work/cache
+          # Shared dnf cache: the resolve step below and the build step
+          # each run a fresh container, so without this bind-mount every
+          # job would download its full builddep set twice.
+          mkdir -p work/dnf-cache
           BUILDROOT_DIGEST=$(podman inspect quay.io/fedora/fedora:44 --format '{{.Digest}}' 2>/dev/null || true)
           if [ -z "$BUILDROOT_DIGEST" ]; then
             echo "could not resolve buildroot digest, caching disabled"
@@ -116,10 +120,14 @@ jobs:
             -v "$PWD:/repo:Z" \
             -v "$PWD/work/prior:/prior:Z" \
             -v "$PWD/work/cache:/cache:Z" \
+            -v "$PWD/work/dnf-cache:/var/cache/libdnf5:Z" \
             -e PACKAGE="${{ matrix.package }}" \
             quay.io/fedora/fedora:44 \
             bash -exc '
               dnf install -qy dnf-plugins-core createrepo_c
+              # Retain downloaded RPMs in the shared cache mount so the
+              # build step below reuses them instead of re-downloading.
+              printf "\nkeepcache=1\n" >> /etc/dnf/dnf.conf
               printf "[hummingbird]\nname=Hummingbird public\nbaseurl=https://koji-s3-cache.hummingbird-project.io/packages.redhat.com/api/pulp-content/public-hummingbird/x86_64/\nenabled=1\ngpgcheck=0\nexclude=ruby* rubygem*\n" \
                 > /etc/yum.repos.d/hummingbird.repo
               if [ -n "$(find /prior -name "*.rpm" | head -1)" ]; then
@@ -191,16 +199,19 @@ jobs:
         if: steps.package_cache_restore.outputs.hit != 'true'
         run: |
           # Bind-mount sources must exist even when empty (stage 0 has no priors).
-          mkdir -p work/prior work/out
+          mkdir -p work/prior work/out work/dnf-cache
           podman run --rm \
             -v "$PWD:/repo:Z" \
             -v "$PWD/work/src:/src:Z" \
             -v "$PWD/work/prior:/prior:Z" \
             -v "$PWD/work/out:/out:Z" \
+            -v "$PWD/work/dnf-cache:/var/cache/libdnf5:Z" \
             -e PACKAGE="${{ matrix.package }}" \
             quay.io/fedora/fedora:44 \
             bash -exc '
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
+              # Same shared cache mount as the resolve step (see above).
+              printf "\nkeepcache=1\n" >> /etc/dnf/dnf.conf
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
               # the live yum repo is the pulp-content endpoint below.
               # gpgcheck=0: no signing key is published for it (revisit).
