@@ -24,6 +24,7 @@ License:        GPL-3.0-or-later AND (Apache-2.0 OR MIT) AND ISC AND MIT
 URL:            https://gitlab.freedesktop.org/mstoeckl/waypipe
 Source0:        https://gitlab.freedesktop.org/mstoeckl/waypipe/-/archive/v%{version}/%{name}-v%{version}.tar.gz
 Source1:        waypipe.1
+Source2:        waypipe-vendor-%{version}.tar.gz
 Patch1:         0001-Cargo.toml-features-remove-test_proto-from-defaults.patch
 %if 0%{?rhel}
 Patch2:         0002-Cargo.toml-features-remove-video-from-defaults-for-r.patch
@@ -61,12 +62,23 @@ BuildRequires:  pkgconfig(wayland-server)
 
 %prep
 %autosetup -n waypipe-v%{version} -p1
+
+# Extract vendored dependencies
+tar -xf %{SOURCE2}
+
 %cargo_prep
 
-%generate_buildrequires
-%cargo_generate_buildrequires -f %{test_features}
+# Configure cargo to use vendored sources
+cat >> .cargo/config.toml <<'EOF'
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+EOF
 
 %build
+export CARGO_NET_OFFLINE=true
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies

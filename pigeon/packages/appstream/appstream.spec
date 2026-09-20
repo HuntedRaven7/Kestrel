@@ -14,7 +14,9 @@ Release: 1.hum1.pigeon
 
 License: GPL-2.0-or-later AND LGPL-2.1-or-later
 URL:     https://github.com/ximion/appstream
-Source0: https://github.com/ximion/appstream/archive/refs/tags/v%{version}.tar.gz
+# Match upstream-sources.json filename (Fedora lookaside AppStream-*.tar.xz).
+# GitHub v%{version}.tar.gz aliases the same bytes but extracts as AppStream-*.
+Source0: AppStream-%{version}.tar.xz
 
 BuildRequires: cmake
 BuildRequires: docbook5-style-xsl
@@ -94,7 +96,7 @@ Requires: %{name}-devel%{?_isa} = %{version}-%{release}
 %{summary}.
 
 %prep
-%autosetup -n appstream-%{version}
+%autosetup -n AppStream-%{version}
 
 %build
 %meson \
