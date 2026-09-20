@@ -76,6 +76,7 @@ BuildRequires:  pkgconfig(glib-2.0) >= 2.46.0
 BuildRequires:  pkgconfig(gobject-2.0)
 BuildRequires:  pkgconfig(gio-unix-2.0)
 BuildRequires:  pkgconfig(gstreamer-1.0)
+BuildRequires:  pkgconfig(lc3)
 BuildRequires:  pkgconfig(gio-unix-2.0) >= 2.46.0
 BuildRequires:  pkgconfig(libsystemd)
 BuildRequires:  pkgconfig(libudev)
@@ -180,43 +181,26 @@ PipeWire utilities.
 %autosetup -n pipewire-1.6.8 -p1
 
 %build
+# NOTE: 0.3-era -Dpipewire-{alsa,jack,pulse,vulkan} and -Dsystemd options no
+# longer exist upstream (each errors the configure); the daemons build by
+# default when their deps are present, systemd user service made explicit.
 %meson \
-  -Dsystemd=true \
-  -Dpipewire-alsa=%{?with_alsa:enabled} \
-  -Dpipewire-jack=%{?with_jack:enabled} \
-  -Dpipewire-pulse=%{?with_pulse:enabled} \
-  -Dpipewire-vulkan=%{?with_vulkan:enabled} \
-  -Dvalgrind=disabled \
+  -Dsystemd-user-service=enabled \
   -Dbluez5=%{?with_bluez:enabled} \
   -Dbluez5-codec-ldac=disabled \
   -Dbluez5-codec-lc3plus=disabled \
   -Dbluez5-codec-aptx=disabled \
-  -Dbluez5-codec-aptxhd=disabled \
   -Dbluez5-codec-ldac-dec=disabled \
   -Dbluez5-codec-lc3=enabled \
-  -Dffmpeg=enabled \
+  -Dffmpeg=disabled \
   -Dlibcamera=disabled \
-  -Donnx=disabled \
+  -Donnxruntime=disabled \
   -Droc=disabled \
   -Dv4l2=disabled \
-  -Drocm=disabled \
   -Dsession-managers=[] \
-  -Dlibcamera-plugin=disabled \
-  -Dv4l2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dffado-plugin=disabled \
-  -Dlibmysofa-plugin=disabled \
-  -Dlv2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dpipewire-jackserver-plugin=disabled \
-  -Dlibcamera-plugin=disabled \
-  -Dv4l2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dffado-plugin=disabled \
-  -Dlibmysofa-plugin=disabled \
-  -Dlv2-plugin=disabled \
-  -Droc-plugin=disabled \
-  -Dpipewire-jackserver-plugin=disabled
+  -Djack=disabled \
+  -Dlibmysofa=disabled \
+  -Dlv2=disabled
 %meson_build
 
 %install
