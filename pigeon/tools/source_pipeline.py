@@ -13,7 +13,7 @@ Rules (PLAN.md §3.2):
   - Vendored packages ("vendored": true, e.g. bot-walled upstreams) -> the
     bytes live in git; fetch/record hash the committed file, never download.
   - fetch refuses when no digest is recorded yet; use `record` for first vendor.
-  - record fills the sha512 field (used for first fetch + Renovate/Packit bumps).
+  - record fills the sha512 field (used for first fetch + Renovate bumps).
   - Downloads that are not archives (HTML bot-walls) are refused, never locked.
   - Every run writes pigeon/reports/<pkg>.json; failed verification leaves the
     previous source unchanged (we never write a digest on failure).
@@ -308,7 +308,7 @@ def cmd_fetch(pkg: str, output: str | None, stage_into: str | None = None, verif
             Path(output).mkdir(parents=True, exist_ok=True)
             shutil.copy(archive, Path(output) / archive.name)
 
-        # Also copy to package directory for packit Source0 lookup
+        # Also copy to package directory for the build's Source0 lookup
         if stage_into:
             pkg_dir = ROOT / stage_into / pkg
             if pkg_dir.exists():
@@ -410,12 +410,12 @@ def cmd_record(pkg: str, output: str | None) -> int:
             out = Path(output)
             out.mkdir(parents=True, exist_ok=True)
             shutil.copy(archive, out / archive.name)
-        # Also copy to package directory for packit Source0 lookup
+        # Also copy to package directory for the build's Source0 lookup
         pkg_dir = ROOT / "pigeon" / "packages" / pkg
         if pkg_dir.exists():
             shutil.copy(archive, pkg_dir / archive.name)
         entry["sha512"] = digest
-        entry["filename"] = archive.name  # keep staged name in sync; packit_source0.py reads it
+        entry["filename"] = archive.name  # keep staged name in sync with the lock
         SOURCES.write_text(json.dumps(data, indent=2) + "\n")
         write_report(pkg, {
             "package": pkg, "version": entry.get("version"), "url": url,

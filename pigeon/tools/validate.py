@@ -1,7 +1,9 @@
-"""Validate factory config: provenance + source-lock + packit coverage (stub).
+"""Validate factory config: provenance + source-lock + version sync.
 
-Full gates in PLAN.md §3.4. Fails if any recipe dir lacks a source entry,
-or any source entry lacks a .packit.yaml packages entry and vice versa.
+Fails if any recipe dir lacks a source entry, if any source entry's
+filename no longer matches its rendered URL basename, or if any spec
+Version: disagrees with the lock (the lock is the single source of
+truth; `just sync-versions` repairs drift).
 """
 from __future__ import annotations
 
@@ -9,10 +11,8 @@ import json
 import sys
 from pathlib import Path
 
-try:
-    import yaml  # type: ignore
-except ImportError:  # PyYAML may be absent locally; CI installs it
-    yaml = None  # type: ignore
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from sync_versions import drift_for  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -27,7 +27,7 @@ def main() -> int:
         if r not in configured:
             errors.append(f"recipe without source entry: {r}")
     # Every non-local entry needs a filename matching the rendered URL
-    # basename (what fetch --stage-into stages; what packit_source0.py reads).
+    # basename (what fetch --stage-into stages for the build).
     for name in sorted(configured):
         entry = sources["packages"][name]
         if entry.get("local"):
@@ -38,20 +38,12 @@ def main() -> int:
             errors.append(
                 f"stale filename for {name}: {entry.get('filename')!r} != {expected!r}"
             )
-    # .packit.yaml coverage (only if recipes exist and yaml parses).
-    # rpmbuild/local packages are intentionally excluded from .packit.yaml.
-    packit = ROOT / ".packit.yaml"
-    if yaml is not None and packit.exists():
-        pkgs = (yaml.safe_load(packit.read_text()) or {}).get("packages", {})
-        for r in sorted(recipes):
-            entry = sources["packages"].get(r, {})
-            if entry.get("srpm") == "rpmbuild" or entry.get("local"):
-                continue
-            if r not in pkgs:
-                errors.append(f"recipe without packit entry: {r}")
-        for p in sorted(pkgs):
-            if p not in configured:
-                errors.append(f"packit entry without source entry: {p}")
+    # Every spec Version: must match the lock (single source of truth).
+    for name, spec_ver, lock_ver in drift_for(ROOT / "pigeon" / "packages", sources):
+        errors.append(
+            f"version drift for {name}: spec {spec_ver!r} != lock {lock_ver!r} "
+            f"(run `just sync-versions`)"
+        )
     if errors:
         print("\n".join(errors))
         return 1
