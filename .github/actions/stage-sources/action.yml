@@ -52,8 +52,8 @@ runs:
           elif [ -f "$RECIPE_DIR/strip.py" ]; then
             echo "Generating local source for $PKG using strip.py..."
             (cd "$RECIPE_DIR" && python3 strip.py)
-            if [ -f "$FILE" ]; then
-              cp "$FILE" work/src/
+            if [ -f "$RECIPE_DIR/$FILE" ]; then
+              cp "$RECIPE_DIR/$FILE" work/src/
               echo "Generated and copied $FILE to work/src"
             else
               echo "ERROR: strip.py did not produce $FILE"
