@@ -65,12 +65,6 @@ install -m 0644 -vp man/man8/*.8        %{buildroot}%{_mandir}/man8/.
 install -m 0755 -vd                     %{buildroot}/%{bash_completions_dir}
 install -m 0644 -vp contrib/completions/bash/%{name} %{buildroot}/%{bash_completions_dir}
 
-%check
-# %go_vendor_license_check -c %{S:2}  # disabled due to test failures in CI
-%if %{with check}
-# %gocheck2 -t libcontainer/integration -t libcontainer/nsenter
-%endif
-
 %files -f %{go_vendor_license_filelist}
 %doc docs CHANGELOG.md CONTRIBUTING.md EMERITUS.md MAINTAINERS_GUIDE.md
 %doc PRINCIPLES.md README.md RELEASES.md SECURITY.md

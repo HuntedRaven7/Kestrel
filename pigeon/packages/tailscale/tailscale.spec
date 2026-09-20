@@ -33,7 +33,7 @@ Source1:        tailscale-systray-user.service
 Source10:       create-vendor-tarball.sh
 # Kestrel: pre-generated Go vendor tree (hermetic builds cannot fetch
 # modules). Regenerate on version bumps: go mod tidy && go mod vendor,
-# tar -cJf tailscale-%{version}-vendor.tar.xz vendor
+# tar -cJf tailscale-%%{version}-vendor.tar.xz vendor
 Source20:       tailscale-%{version}-vendor.tar.xz
 
 # Fedora-specific patch to handle pre-installed user unit (unversioned
