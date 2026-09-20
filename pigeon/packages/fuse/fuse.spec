@@ -69,10 +69,19 @@ make %{?_smp_mflags}
 # Set setgid bit on fusermount (required for FUSE mounting)
 chmod u+s %{buildroot}/%{_sbindir}/fusermount 2>/dev/null || true
 
+# Drop the dead SysV init script (systemd era) and static libs
+# (Fedora -devel ships shared objects only)
+rm -f %{buildroot}%{_sysconfdir}/init.d/fuse
+rm -f %{buildroot}%{_libdir}/*.a
+
 %files
 %license COPYING
 %{_bindir}/*
 %{_sbindir}/*
+%config %{_sysconfdir}/udev/rules.d/99-fuse.rules
+%{_mandir}/man1/fusermount.1*
+%{_mandir}/man1/ulockmgr_server.1*
+%{_mandir}/man8/mount.fuse.8*
 
 %files libs
 %license COPYING
@@ -82,8 +91,11 @@ chmod u+s %{buildroot}/%{_sbindir}/fusermount 2>/dev/null || true
 %files devel
 %license COPYING
 %{_libdir}/libfuse.so
+%{_libdir}/libulockmgr.so
 %{_libdir}/pkgconfig/fuse.pc
 %{_includedir}/fuse.h
+%{_includedir}/ulockmgr.h
+%{_includedir}/fuse/
 
 %changelog
 * Fri Sep 18 2026 Kestrel <kestrel@localhost> - 2.9.9-26.hum1.pigeon

@@ -43,7 +43,10 @@ This package contains installed tests for %{name}.
 %autosetup -n flatpak-xdg-utils-1.0.6
 
 %build
-%meson -Dinstalled_tests=true
+# installed_tests defaults to false upstream; enabling it installs test
+# binaries (test-email/test-open/test-spawn) that this recipe does not
+# package — keep it off.
+%meson
 %meson_build
 
 %install

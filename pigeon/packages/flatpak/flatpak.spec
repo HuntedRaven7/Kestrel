@@ -106,7 +106,7 @@ Requires:       flatpak = %{version}-%{release}
   -Dselinux_module=disabled \
   -Dsystem_bubblewrap=/usr/bin/bwrap \
   -Dsystem_dbus_proxy=/usr/bin/xdg-dbus-proxy \
-  -Dinstalled_tests=true \
+  -Dinstalled_tests=false \
   -Dtmpfilesdir=%{_tmpfilesdir} \
   -Dwayland_security_context=enabled
 %meson_build
@@ -114,6 +114,14 @@ Requires:       flatpak = %{version}-%{release}
 %install
 %meson_install
 %find_lang flatpak
+
+# Directories the build system does not create but %files expects
+install -d %{buildroot}%{_datadir}/%{name}/preinstall.d
+install -d %{buildroot}%{_datadir}/%{name}/remotes.d
+install -d %{buildroot}%{_localstatedir}/lib/flatpak
+install -d %{buildroot}%{_sysconfdir}/%{name}/installations.d
+install -d %{buildroot}%{_sysconfdir}/%{name}/preinstall.d
+install -d %{buildroot}%{_sysconfdir}/flatpak/remotes.d
 
 %if 0%{?fedora}
 install -D -p -m 0644 -t %{buildroot}%{_unitdir} %{SOURCE1}
@@ -134,35 +142,27 @@ systemctl --user daemon-reload >/dev/null 2>&1 || :
 systemctl --user daemon-reload >/dev/null 2>&1 || :
 
 %files -f flatpak.lang
-%license LICENSE
+%license COPYING
 %doc NEWS README.md
 %{_bindir}/flatpak
 %{_bindir}/flatpak-bisect
 %{_bindir}/flatpak-coredumpctl
 %{_libdir}/libflatpak*.so.*
-%{_libdir}/flatpak/
-%{_libexecdir}/flatpak/
+%{_libdir}/girepository-1.0/Flatpak-1.0.typelib
 %{_libexecdir}/flatpak-oci-authenticator
 %{_libexecdir}/flatpak-portal
 %{_libexecdir}/flatpak-system-helper
 %{_libexecdir}/flatpak-validate-icon
 %{_libexecdir}/revokefs-fuse
-%{_libdir}/gio/modules/libgvfsflatpak.so
-%{_libdir}/girepository-1.0/Flatpak-1.0.typelib
 %{_datadir}/bash-completion
 %{_datadir}/dbus-1/interfaces/org.freedesktop.portal.Flatpak.xml
 %{_datadir}/dbus-1/interfaces/org.freedesktop.Flatpak.Authenticator.xml
 %{_datadir}/dbus-1/services/org.flatpak.Authenticator.Oci.service
-%{_datadir}/dbus-1/services/org.freedesktop.Flatpak.service
-%{_datadir}/dbus-1/services/org.freedesktop.FlatpakDevelopment.service
-%{_datadir}/dbus-1/services/org.freedesktop.FlatpakUser.service
-%{_datadir}/dbus-1/services/org.freedesktop.FlatpakSystem.service
-%{_datadir}/dbus-1/services/org.freedesktop.FlatpakSystemHelper.service
+%{_datadir}/dbus-1/services/org.freedesktop.portal.Flatpak.service
 %{_datadir}/dbus-1/system.d/org.freedesktop.Flatpak.SystemHelper.conf
 %{_datadir}/dbus-1/system-services/org.freedesktop.Flatpak.SystemHelper.service
 %{_datadir}/polkit-1/actions/org.freedesktop.Flatpak.policy
 %{_datadir}/polkit-1/rules.d/org.freedesktop.Flatpak.rules
-%{_datadir}/glib-2.0/schemas/org.gnome.Flatpak.gschema.xml
 %{_datadir}/flatpak/
 %{_datadir}/fish/
 %{_datadir}/zsh/site-functions
@@ -173,15 +173,26 @@ systemctl --user daemon-reload >/dev/null 2>&1 || :
 %{_sysconfdir}/flatpak/remotes.d
 %{_sysconfdir}/profile.d/flatpak.csh
 %{_sysconfdir}/profile.d/flatpak.sh
-%{_mandir}/man1/flatpak.1*
-%{_mandir}/man5/flatpakref.5*
-%{_mandir}/man5/flatpakrepo.5*
+%{_mandir}/man1/flatpak*.1*
+%{_mandir}/man5/flatpak*.5*
 %{_sysusersdir}/flatpak.conf
 %{_tmpfilesdir}/flatpak.conf
+%{_unitdir}/flatpak-system-helper.service
+%{_userunitdir}/flatpak-oci-authenticator.service
+%{_userunitdir}/flatpak-portal.service
+%{_systemd_system_env_generator_dir}/60-flatpak-system-only
+%{_systemd_user_env_generator_dir}/60-flatpak
 
 %if 0%{?fedora}
 %{_unitdir}/flatpak-add-fedora-repos.service
 %endif
+
+%files session-helper
+%license COPYING
+%{_datadir}/dbus-1/interfaces/org.freedesktop.Flatpak.xml
+%{_datadir}/dbus-1/services/org.freedesktop.Flatpak.service
+%{_libexecdir}/flatpak-session-helper
+%{_userunitdir}/flatpak-session-helper.service
 
 %files devel
 %{_datadir}/gir-1.0/Flatpak-1.0.gir
