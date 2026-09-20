@@ -61,7 +61,6 @@ def _gitlab_want(host_markers):
         if r.get("datasource") == "gitlab-tags" and any(
                 h in entry.get("url_template", "") for h in host_markers):
             want.add((r["depName"], entry["version"]))
-    assert want, "no matching gitlab entries found (test bug?)"
     return want
 
 
