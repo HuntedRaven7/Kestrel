@@ -45,7 +45,7 @@ Source1:        pipewire.sysusers
 BuildRequires:  alsa-lib-devel
 BuildRequires:  avahi-devel
 %if 0%{?with_bluez}
-BuildRequires:  bluez-devel
+BuildRequires:  bluez-libs-devel
 %endif
 BuildRequires:  docbook-dtds
 BuildRequires:  docbook-style-xsl
@@ -189,9 +189,9 @@ PipeWire utilities.
   -Dvalgrind=disabled \
   -Dbluez5=%{?with_bluez:enabled} \
   -Dbluez5-codec-ldac=disabled \
-  -Dbluez5-codec-lc3plus=%{?with_lc3plus:enabled} \
-  -Dbluez5-codec-aptx=%{?with_freeaptx:enabled} \
-  -Dbluez5-codec-aptxhd=%{?with_freeaptx:enabled} \
+  -Dbluez5-codec-lc3plus=disabled \
+  -Dbluez5-codec-aptx=disabled \
+  -Dbluez5-codec-aptxhd=disabled \
   -Dbluez5-codec-ldac-dec=disabled \
   -Dbluez5-codec-lc3=enabled \
   -Dffmpeg=enabled \

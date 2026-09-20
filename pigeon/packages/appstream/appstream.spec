@@ -110,6 +110,10 @@ Requires: %{name}-devel%{?_isa} = %{version}-%{release}
 %install
 %meson_install
 
+# gi-docgen leaves .#* atomic-write temp files under html/api that
+# /usr/bin/add-det chokes on (IO error, aborts the build)
+find %{buildroot}%{_docdir} -name '.#*' -delete 2>/dev/null || true
+
 %find_lang appstream
 
 mkdir -p %{buildroot}/var/cache/swcatalog/{icons,gv,xml}

@@ -111,7 +111,7 @@ BuildRequires: libva-devel
 BuildRequires: libvorbis-devel
 BuildRequires: opus-devel
 BuildRequires: speex-devel
-BuildRequires: theora-devel
+BuildRequires: libtheora-devel
 BuildRequires: lame-devel
 BuildRequires: libvpx-devel
 BuildRequires: libwebp-devel

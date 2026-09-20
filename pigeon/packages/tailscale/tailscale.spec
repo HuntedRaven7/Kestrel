@@ -1045,7 +1045,13 @@ Provides:       bundled(golang(sigs.k8s.io/json)) = v0.0.0~20241014173422~cfa47c
 
 
 %prep
-%goprep %{?with_vendor:-k}
+# Kestrel: Source0/1 are service files (not archives) and the main tarball
+# arrives unnamed in SOURCES via source_pipeline/fetch_vendored, so unpack
+# it explicitly here: %goprep assumes Source0 is the archive and chokes
+# on the .service file.
+%setup -q -T -D -n %{name}-%{version}
+tar -xzf %{_sourcedir}/tailscale-%{version}.tar.gz --strip-components=1 2>/dev/null || \
+tar -xzf %{_sourcedir}/v%{version}.tar.gz --strip-components=1
 %if %{with vendor}
 # Kestrel: unpack the committed vendor tree into the source root.
 tar -xJf %{SOURCE20}
