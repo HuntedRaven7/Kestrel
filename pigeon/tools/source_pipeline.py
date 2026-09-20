@@ -490,9 +490,11 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
     except Exception as exc:  # noqa: BLE001 — report, don't traceback
         return {"ok": False, "filename": filename,
                 "reason": f"download failed: {exc}"}
-    # Signature files (.sig, .asc, .gpg, .sign) are not archives — skip
-    # the archive magic check so GPG signatures are accepted.
-    if not filename.endswith((".sig", ".asc", ".gpg", ".sign")):
+    # Signature files (.sig, .asc, .gpg, .sign) and checksum files
+    # (.sha256sum, .sha512sum, .md5sum) are not archives — skip
+    # the archive magic check so they are accepted.
+    if not filename.endswith((".sig", ".asc", ".gpg", ".sign",
+                               ".sha256sum", ".sha512sum", ".md5sum")):
         if reason := check_archive(dest):
             return {"ok": False, "filename": filename, "reason": reason}
     digest = sha512_of(dest)
