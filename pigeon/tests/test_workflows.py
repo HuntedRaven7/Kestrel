@@ -115,3 +115,17 @@ def test_cache_hit_materialises_as_the_ordinary_stage_artifact():
     use_cached = by_name["Use cached RPMs"]
     assert "work/out" in use_cached.get("run", ""), (
         "cache hits must land in work/out like fresh builds")
+
+
+def test_resolve_and_build_share_the_dnf_cache():
+    # Both container runs must mount the same libdnf5 cache dir (and ask
+    # dnf to retain RPMs), or every job downloads its builddep set twice.
+    data = _build_stage()
+    steps = data["jobs"]["build"]["steps"]
+    by_name = {s.get("name", ""): s for s in steps}
+    for step in ("Resolve build root for cache key", "Build in Fedora container"):
+        run = by_name[step].get("run", "")
+        assert "work/dnf-cache:/var/cache/libdnf5" in run, (
+            f"{step} is missing the shared dnf cache mount")
+        assert "keepcache=1" in run, (
+            f"{step} does not retain RPMs in the shared cache")
