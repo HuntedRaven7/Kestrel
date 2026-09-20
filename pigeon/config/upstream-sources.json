@@ -75,9 +75,9 @@
     },
     "aribb24": {
       "version": "1.0.3^20160216git5e9be27",
-      "url_template": "https://github.com/nkoriyama/aribb24/archive/5e9be27.tar.gz",
+      "url_template": "https://github.com/nkoriyama/aribb24/archive/5e9be272f96e00f15a2f3c5f8ba7e124862aec38.tar.gz",
       "sha512": "9dd0be0759482d10839c5cb9fe116b2e1aadb784f77e9206b5444e88e5f8d21ddabe79721bf343c41b8fc96c6e733873bc03930bd5bfeedd90d62f3617d75bfd",
-      "filename": "5e9be27.tar.gz"
+      "filename": "5e9be272f96e00f15a2f3c5f8ba7e124862aec38.tar.gz"
     },
     "at-spi2-core": {
       "version": "2.61.1",
@@ -284,7 +284,14 @@
       "version": "9.0.1",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/ffmpeg/ffmpeg-{version}.tar.xz/sha512/be8cdfca64886f2ec5cd2359f8db6a998ee759d105b10ade9b2a7b640356ad56ab0ff50218fce7b6312462f15f98d90ac9d197a3b02a23771754d2714fec628d/ffmpeg-{version}.tar.xz",
       "sha512": "be8cdfca64886f2ec5cd2359f8db6a998ee759d105b10ade9b2a7b640356ad56ab0ff50218fce7b6312462f15f98d90ac9d197a3b02a23771754d2714fec628d",
-      "filename": "ffmpeg-9.0.1.tar.xz"
+      "filename": "ffmpeg-9.0.1.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "ffmpeg-9.0.1.tar.xz.asc",
+          "url_template": "https://ffmpeg.org/releases/ffmpeg-{version}.tar.xz.asc",
+          "sha512": "b076445e542acbdfa91bf1a2ee0d9e8057a2ce452c39e830765637bb0a665249357097022573acb96ebd675224dfec7945338ae317c3ad807a3d08759e056be0"
+        }
+      ]
     },
     "firewalld": {
       "version": "2.5.2",
@@ -788,7 +795,14 @@
     "intel-media-driver-free": {
       "version": "26.2.4",
       "local": true,
-      "note": "Source is generated."
+      "filename": "intel-media-26.2.4-free.tar.gz",
+      "sha512": "bee1f5c133917d01dfd46356c56ec62b4757da25db3003ef09c4c2ea7c903eb5cc2da58b21a8bdfe4433207d411279311490aacfa8845fb9df67e26608fd1096",
+      "stage": 3,
+      "note": "Fedora dist-git import. Free variant with non-free shaders stripped.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "intel/media-driver"
+      }
     },
     "intel-mediasdk": {
       "version": "23.2.2",
@@ -1656,7 +1670,7 @@
     "nvme-cli": {
       "version": "3.1",
       "url_template": "https://github.com/linux-nvme/nvme-cli/archive/refs/tags/v{version}.tar.gz",
-      "sha512": "507018ff41832574bef5b88ea6a17336b9792c54f8e5c619d041bce23124e1d6d5e5e824407f46d4f1b4d6899125885eb14289f3399e61c7e7a59a603f1635e2",
+      "sha512": "980a806125c75313aefe6f24aef13b850d69893407fc5ccf549b74829b1622efdb8f28f794dff6f7b258bb2a8dcd16c7fcf457a427a04eaa558ff38c954ed2e5",
       "stage": 3,
       "note": "Fedora dist-git import. NVMe CLI tools.",
       "renovate": {
@@ -1801,13 +1815,27 @@
       "version": "3.19.6",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/protobuf3/protobuf-{version}-all.tar.gz/sha512/8f92242f2be8e1bbfba41341c87709ad91ad83b8b3e3df88bb430411541d3399295f49291fd52b50e3487b0fce33181cb4d175685fd25aac72adfaee26a612d4/protobuf-{version}-all.tar.gz",
       "sha512": "8f92242f2be8e1bbfba41341c87709ad91ad83b8b3e3df88bb430411541d3399295f49291fd52b50e3487b0fce33181cb4d175685fd25aac72adfaee26a612d4",
-      "filename": "protobuf-3.19.6-all.tar.gz"
+      "filename": "protobuf-3.19.6-all.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "googletest-5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081.tar.gz",
+          "url_template": "https://github.com/google/googletest/archive/5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081/googletest-5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081.tar.gz",
+          "sha512": "623b077b3334958fafcbc34aa85891883277994af33be530efd903f47738a3e3562001cbf3b6da1a5e7d03803c5bd51bcc1fab81490db85d5a4f2b15e7de1495"
+        }
+      ]
     },
     "pulseaudio": {
       "version": "17.0",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/pulseaudio/pulseaudio-{version}.tar.xz/sha512/be0aec46204d9c9188a796fbe41b4cf6f0f5e6b16fa08ce359b8f0f51253f0ade364b89448bbf5faa2af7e59deb6c72194734c3233944250dcfd4f31968a5e97/pulseaudio-{version}.tar.xz",
       "sha512": "be0aec46204d9c9188a796fbe41b4cf6f0f5e6b16fa08ce359b8f0f51253f0ade364b89448bbf5faa2af7e59deb6c72194734c3233944250dcfd4f31968a5e97",
-      "filename": "pulseaudio-17.0.tar.xz"
+      "filename": "pulseaudio-17.0.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "pulseaudio-17.0.tar.xz.sha256sum",
+          "url_template": "http://freedesktop.org/software/pulseaudio/releases/pulseaudio-{version}.tar.xz.sha256sum",
+          "sha512": "cd0e3d006eda69a8691c73456da5a70a8493b202c9664c6ff0a64039493056a993032a23e41119eb78f757b4f5a12d55f90713342b048464f45732b298d5c03b"
+        }
+      ]
     },
     "pycairo": {
       "version": "1.28.0",
@@ -1941,7 +1969,14 @@
       "version": "1.5.1",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/runc/runc-{version}.tar.gz/sha512/4a96870af3146203a001e08d9a0330f6234f8f0b2efe62e123a4f9b131b73967482954f658d53258e19444630c18981b5d7ef805ab736ca16a69f783f39db182/runc-{version}.tar.gz",
       "sha512": "4a96870af3146203a001e08d9a0330f6234f8f0b2efe62e123a4f9b131b73967482954f658d53258e19444630c18981b5d7ef805ab736ca16a69f783f39db182",
-      "filename": "runc-1.5.1.tar.gz"
+      "filename": "runc-1.5.1.tar.gz",
+      "vendored": true,
+      "stage": 2,
+      "note": "Fedora dist-git import. Go vendor tarball from Koji SRPM.",
+      "renovate": {
+        "datasource": "github-tags",
+        "depName": "opencontainers/runc"
+      }
     },
     "rust-just": {
       "version": "1.57.0",
