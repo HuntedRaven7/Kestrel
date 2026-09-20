@@ -289,6 +289,93 @@ def test_cmd_validate_handles_malformed_json(tmp_path, monkeypatch):
     assert sp.cmd_validate() == 1
 
 
+# --- Tests for extra_sources (declared secondary inputs) ---
+
+
+def _extras_setup(tmp_path, monkeypatch, primary: bytes, extra: bytes,
+                  extra_sha: str | None):
+    import gzip
+    main_arc = tmp_path / "main-2.tar.gz"
+    main_arc.write_bytes(gzip.compress(primary))
+    side_arc = tmp_path / "side-2.tar.gz"
+    side_arc.write_bytes(gzip.compress(extra))
+    pkg = {
+        "version": "2",
+        "url_template": f"file://{tmp_path}/main-{{version}}.tar.gz",
+        "sha512": hashlib.sha512(gzip.compress(primary)).hexdigest(),
+        "filename": "main-2.tar.gz",
+        # Declared staged name is decoupled from the URL basename.
+        "extra_sources": [{
+            "filename": "sidecar.tar.gz",
+            "url_template": f"file://{tmp_path}/side-{{version}}.tar.gz",
+            "sha512": extra_sha if extra_sha is not None else "TODO-re-record",
+        }],
+    }
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": {"multi": pkg}}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    monkeypatch.setattr(sp, "REPORTS", tmp_path / "reports")
+    monkeypatch.setattr(sp, "ROOT", tmp_path)
+    (tmp_path / "pigeon" / "packages" / "multi").mkdir(parents=True)
+
+
+def test_fetch_stages_declared_extras(tmp_path, monkeypatch):
+    import gzip
+    _extras_setup(tmp_path, monkeypatch, b"main", b"side",
+                  hashlib.sha512(gzip.compress(b"side")).hexdigest())
+    out = tmp_path / "out"
+    assert sp.cmd_fetch("multi", str(out), "pigeon/packages") == 0
+    assert (out / "main-2.tar.gz").is_file()
+    assert (out / "sidecar.tar.gz").is_file()
+    assert (tmp_path / "pigeon" / "packages" / "multi" / "sidecar.tar.gz").is_file()
+    report = json.loads((tmp_path / "reports" / "multi.json").read_text())
+    assert report["ok"] is True
+    assert report["extra_sources"][0]["ok"] is True
+
+
+def test_fetch_fails_closed_on_extra_mismatch(tmp_path, monkeypatch, capsys):
+    _extras_setup(tmp_path, monkeypatch, b"main", b"side", "0" * 128)
+    assert sp.cmd_fetch("multi", None) == 1
+    assert "digest mismatch" in capsys.readouterr().out
+
+
+def test_record_locks_extras(tmp_path, monkeypatch):
+    import gzip
+    _extras_setup(tmp_path, monkeypatch, b"main", b"side", "TODO-re-record")
+    assert sp.cmd_record("multi", None) == 0
+    locked = json.loads((tmp_path / "upstream-sources.json").read_text())
+    assert locked["packages"]["multi"]["extra_sources"][0]["sha512"] == \
+        hashlib.sha512(gzip.compress(b"side")).hexdigest()
+
+
+def test_verify_staged_checks_extras(tmp_path, monkeypatch, capsys):
+    import gzip
+    _extras_setup(tmp_path, monkeypatch, b"main", b"side",
+                  hashlib.sha512(gzip.compress(b"side")).hexdigest())
+    # Primary staged, extra missing, no stage-into healing -> refuse.
+    (tmp_path / "pigeon" / "packages" / "multi" / "main-2.tar.gz").write_bytes(
+        gzip.compress(b"main"))
+    assert sp.cmd_fetch("multi", None, None, True) == 1
+    assert "staged extra" in capsys.readouterr().out
+
+
+def test_validate_rejects_extra_without_digest():
+    data = {"packages": {
+        "pkg": {"version": "1.0", "url_template": "https://x/{version}/pkg.tar.gz",
+                "sha512": "0" * 128, "filename": "pkg.tar.gz",
+                "extra_sources": [{"filename": "side.tar.gz",
+                                   "url_template": "https://x/side.tar.gz"}]}
+    }}
+    errors = sp.validate_upstream_sources(data)
+    assert any("extra_sources[0]" in e for e in errors)
+
+
+def test_check_refuses_unrecorded_extra(tmp_path, monkeypatch, capsys):
+    _extras_setup(tmp_path, monkeypatch, b"main", b"side", "TODO-re-record")
+    assert sp.cmd_check("multi") == 1
+    assert "no recorded digest" in capsys.readouterr().out
+
+
 # --- Tests for CLI integration ---
 
 
