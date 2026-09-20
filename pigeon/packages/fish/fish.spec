@@ -126,10 +126,19 @@ mv .cargo/config.toml fishshell-cargo-config.toml
 %cargo_prep
 cat fishshell-cargo-config.toml >> .cargo/config.toml
 
-# Configure cargo to use vendored sources
+# Configure cargo to use vendored sources.
+#
+# NOTE: %cargo_prep (cargo-rpm-macros) has ALREADY written a
+# `[source.crates-io]` table pointing at the local registry. Appending a
+# second `[source.crates-io]` header makes the file invalid TOML and cargo
+# dies with:
+#   TOML parse error ... duplicate key
+#   --> [source.crates-io]
+# So repoint the existing key with sed instead of declaring the table twice.
+sed -i 's|^replace-with = "local-registry"$|replace-with = "vendored-sources"|' \
+    .cargo/config.toml
+
 cat >> .cargo/config.toml <<'EOF'
-[source.crates-io]
-replace-with = "vendored-sources"
 
 [source.vendored-sources]
 directory = "vendor"
