@@ -69,7 +69,7 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
               for n in ("0", "1", "2", "3", "4"):
                   f.write(f"matrix{n}={json.dumps(stages.get(n, []))}\n")
-              f.write(f"changed={json.dumps(buildable)}\n")
+              f.write(f"changed={json.dumps([{'package': p} for p in buildable])}\n")
           EOF
 
   preflight:
