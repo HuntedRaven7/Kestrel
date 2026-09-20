@@ -42,6 +42,21 @@ jobs:
         # pin rots into "manifest unknown" pull failures (exit 125).
         run: podman pull quay.io/fedora/fedora:44
 
+      - name: Compute dnf cache key
+        id: week
+        run: |
+          echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore shared dnf cache
+        # Seeded weekly by seed-dnf-cache.yml (single writer). A miss or
+        # corrupt entry just means a cold builddep; never fatal.
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: work/dnf-cache
+          key: pigeon-dnf-f44-${{ steps.week.outputs.week }}
+          restore-keys: |
+            pigeon-dnf-f44-
+
       - name: Stage vendored and secondary sources
         # source_pipeline.py only stages the primary Source0 archive, but
         # rpmbuild needs every Source/Patch present: Go vendor trees
