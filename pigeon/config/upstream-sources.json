@@ -328,7 +328,7 @@
         },
         {
           "filename": "fish-vendor-4.6.0.tar.gz",
-          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/fish/fish-vendor-4.6.0.tar.gz/sha512/8101c7d67500012ef6171aebbd49f3cb4ecd6c9916f7205e5d988990a991fbb8a16d8f72bcdb875dfc10b17df28439e28c7493f7abef036eeb7cb43a03e2e4c6/fish-vendor-4.6.0.tar.gz",
+          "vendored": true,
           "sha512": "8101c7d67500012ef6171aebbd49f3cb4ecd6c9916f7205e5d988990a991fbb8a16d8f72bcdb875dfc10b17df28439e28c7493f7abef036eeb7cb43a03e2e4c6"
         }
       ]
@@ -1984,7 +1984,7 @@
       "extra_sources": [
         {
           "filename": "rust-just-vendor-1.57.0.tar.gz",
-          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/rust-just/rust-just-vendor-1.57.0.tar.gz/sha512/69ac54842355ce9f427c9e92dc90ef8b9ad9ad735677284b2751631193f111a727f7b197ceccb296c158a15bac6263ad7177c26e2e434ec017f116a4af6d15c9/rust-just-vendor-1.57.0.tar.gz",
+          "vendored": true,
           "sha512": "69ac54842355ce9f427c9e92dc90ef8b9ad9ad735677284b2751631193f111a727f7b197ceccb296c158a15bac6263ad7177c26e2e434ec017f116a4af6d15c9"
         }
       ]
@@ -2287,7 +2287,7 @@
       "extra_sources": [
         {
           "filename": "waypipe-vendor-0.11.2.tar.gz",
-          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/waypipe/waypipe-vendor-0.11.2.tar.gz/sha512/fbb4511c0f80f26c80335ce1ef6a196e80e13dae16f5b89f4796959e165871a0e6d486950503546157e06849faebce8d267d5431fc4a0e0759bc89c982a11cff/waypipe-vendor-0.11.2.tar.gz",
+          "vendored": true,
           "sha512": "fbb4511c0f80f26c80335ce1ef6a196e80e13dae16f5b89f4796959e165871a0e6d486950503546157e06849faebce8d267d5431fc4a0e0759bc89c982a11cff"
         }
       ]
