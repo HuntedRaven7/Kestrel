@@ -1900,7 +1900,8 @@
       "version": "2.46.5",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/python-pydantic-core/pydantic_core-{version}.tar.gz/sha512/7af13f280d74ab0ded8e9299820930b0257502017f6a688d7d598e72351e127e178db11aeab987decaf95ca8619e151f244392ad9638ea184625728dcbb7cfff/pydantic_core-{version}.tar.gz",
       "sha512": "7af13f280d74ab0ded8e9299820930b0257502017f6a688d7d598e72351e127e178db11aeab987decaf95ca8619e151f244392ad9638ea184625728dcbb7cfff",
-      "filename": "pydantic_core-2.46.5.tar.gz"
+      "filename": "pydantic_core-2.46.5.tar.gz",
+      "stage": 1
     },
     "python-typing-inspection": {
       "version": "0.4.4",
