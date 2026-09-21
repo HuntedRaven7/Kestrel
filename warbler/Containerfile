@@ -3,7 +3,7 @@
 # Consumes Pigeon RPM repo by digest (Renovate-owned).
 # For nvidia/gaming flavors, uses kernel cache image (prebuilt OGC kernel + NVIDIA modules).
 
-ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:db1007fdcda076f2d7fd0e2adfe998141dd1908b8f66c732654f762c6a8b2728
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:63d772e7f4a5341d9a25d1c6f9bc662598233718057636f374dc1fdf8db6f709
 ARG BASE_IMAGE_SHA=sha256:5c05afed5a70b3438e5584cfe6342328e8d1a221cb6efa50913c12aa0c037393
 ARG KERNEL_CACHE_IMAGE=ghcr.io/huntedraven7/warbler-kernel-cache@sha256:TODO_KERNEL_CACHE_SHA
 ARG KERNEL_CACHE_SHA=sha256:TODO_KERNEL_CACHE_SHA
