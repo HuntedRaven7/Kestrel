@@ -1,0 +1,26 @@
+From 7a313093b5c4af964d50a5a64e73d7df6152ea3f Mon Sep 17 00:00:00 2001
+From: Michel Zou <xantares09@hotmail.com>
+Date: Thu, 26 Nov 2020 22:12:58 +0100
+Subject: [PATCH] cmake: remove mingw lib prefix
+
+we want the dll to be named vulkan-1.dll and not libvulkan-1.dll
+as it is the default on mingw (for drop-in replacement)
+---
+ loader/CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/loader/CMakeLists.txt b/loader/CMakeLists.txt
+index 7cc5fd71e..659511855 100644
+--- a/loader/CMakeLists.txt
++++ b/loader/CMakeLists.txt
+@@ -224,7 +224,9 @@ if(WIN32)
+                           PROPERTIES LINK_FLAGS_DEBUG
+                                      "/ignore:4098"
+                                      OUTPUT_NAME
+-                                     vulkan-1)
++                                     vulkan-1
++                                     PREFIX
++                                     "")
+     target_link_libraries(vulkan Vulkan::Headers)
+ 
+     if(ENABLE_WIN10_ONECORE)

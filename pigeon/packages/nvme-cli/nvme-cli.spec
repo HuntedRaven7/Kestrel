@@ -32,6 +32,13 @@ BuildRequires:  kernel-headers
 
 BuildRequires:  libnvme-devel >= 1.16.1
 BuildRequires:  json-c-devel >= 0.14
+# Kestrel: new in upstream 3.1 (libkmod feature, auto). Required explicitly
+# because %meson passes --auto-features=enabled, which turns the auto
+# default into a hard error when the dep is absent.
+BuildRequires:  pkgconfig(libkmod)
+# Kestrel: new in upstream 3.1 (keyutils feature, auto; TLS keyring support
+# for fabrics connect). Same --auto-features=enabled reasoning as libkmod.
+BuildRequires:  keyutils-libs-devel
 
 BuildRequires:  asciidoc
 BuildRequires:  xmlto

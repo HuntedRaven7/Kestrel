@@ -1523,10 +1523,10 @@
       "filename": "lm-sensors-3-6-0.tar.gz"
     },
     "localsearch": {
-      "version": "3.12~beta",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/localsearch/localsearch-3.12.beta.tar.xz/sha512/448f48ab7ea9d3368cec374c929a73c6b914d0364a6a7c7a62e68bfbf42826280da483385db855121c5cdc9eba16ffe97387c0a660c3c79b63a0e0eade13e851/localsearch-3.12.beta.tar.xz",
-      "sha512": "448f48ab7ea9d3368cec374c929a73c6b914d0364a6a7c7a62e68bfbf42826280da483385db855121c5cdc9eba16ffe97387c0a660c3c79b63a0e0eade13e851",
-      "filename": "localsearch-3.12.beta.tar.xz"
+      "version": "3.12~rc",
+      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/localsearch/localsearch-3.12.rc.tar.xz/sha512/d9cb8741aeaf18eef82a0b09242a0121bc2efe35d6f6c3294c07ca4de7861ba8ef8cf8929c6527b282cd10f44829890198f3e7e6ca6c666a5558e21758f1a8cb/localsearch-3.12.rc.tar.xz",
+      "sha512": "d9cb8741aeaf18eef82a0b09242a0121bc2efe35d6f6c3294c07ca4de7861ba8ef8cf8929c6527b282cd10f44829890198f3e7e6ca6c666a5558e21758f1a8cb",
+      "filename": "localsearch-3.12.rc.tar.xz"
     },
     "lpcnetfreedv": {
       "version": "0.5",
@@ -2021,10 +2021,10 @@
       "filename": "v0.21.0.tar.gz"
     },
     "sdl2-compat": {
-      "version": "2.32.70",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/sdl2-compat/sdl2-compat-{version}.tar.gz/sha512/141d7f329d069ba6861de1cdc2e6c428156b26b614ff5b665d73b078c973d7c6c4b53764228db4e6dfc26907d23b0b6880cc3317080117daf216bac22579bb96/sdl2-compat-{version}.tar.gz",
-      "sha512": "141d7f329d069ba6861de1cdc2e6c428156b26b614ff5b665d73b078c973d7c6c4b53764228db4e6dfc26907d23b0b6880cc3317080117daf216bac22579bb96",
-      "filename": "sdl2-compat-2.32.70.tar.gz"
+      "version": "2.32.72",
+      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/sdl2-compat/sdl2-compat-2.32.72.tar.gz/sha512/58b8dd692024ca3aa2e48b5738d581f2a6a72ff739ede6f91a15e9e5d830620f52fddc83fe5d0e75adfbdf8948626532ce19babc4a69b6e27bcc1df44fc5a85d/sdl2-compat-2.32.72.tar.gz",
+      "sha512": "58b8dd692024ca3aa2e48b5738d581f2a6a72ff739ede6f91a15e9e5d830620f52fddc83fe5d0e75adfbdf8948626532ce19babc4a69b6e27bcc1df44fc5a85d",
+      "filename": "sdl2-compat-2.32.72.tar.gz"
     },
     "seatd": {
       "version": "0.9.3",
@@ -2185,10 +2185,10 @@
       "filename": "tailscale_1.98.8_amd64.tgz"
     },
     "tecla": {
-      "version": "51~beta",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/tecla/tecla-51.beta.tar.xz/sha512/56c58e3b439deac0f3d46ed206f6d7a92a36c59714ea58c5649f6ba88a5c20d61ca0b289e5cedb02309701dba62e8eaa6097039fd2b2ed32956abc377fb64c65/tecla-51.beta.tar.xz",
-      "sha512": "56c58e3b439deac0f3d46ed206f6d7a92a36c59714ea58c5649f6ba88a5c20d61ca0b289e5cedb02309701dba62e8eaa6097039fd2b2ed32956abc377fb64c65",
-      "filename": "tecla-51.beta.tar.xz"
+      "version": "51.0",
+      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/tecla/tecla-51.0.tar.xz/sha512/4c54087f4742c14b94a80b50be32c3a891591f3ea1ae3ba8f4b677480a610beee9855ca7f000ed9869b8350bf54b61584799e371c35d706724fa3ea8f5406157/tecla-51.0.tar.xz",
+      "sha512": "4c54087f4742c14b94a80b50be32c3a891591f3ea1ae3ba8f4b677480a610beee9855ca7f000ed9869b8350bf54b61584799e371c35d706724fa3ea8f5406157",
+      "filename": "tecla-51.0.tar.xz"
     },
     "twolame": {
       "version": "0.4.0",
@@ -2245,10 +2245,10 @@
       "filename": "Vulkan-Headers-sdk-1.4.350.0.tar.gz"
     },
     "vulkan-loader": {
-      "version": "1.4.350.0",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/vulkan-loader/Vulkan-Loader-sdk-{version}.tar.gz/sha512/5d9829bed6e166b598e6769b6263c0d0408ba578c3e99b460e1ca2a5b13bd0ea38f315953f6ad74567fbd7025143050704b87e2ea11e6689c41675220e115ce1/Vulkan-Loader-sdk-{version}.tar.gz",
-      "sha512": "5d9829bed6e166b598e6769b6263c0d0408ba578c3e99b460e1ca2a5b13bd0ea38f315953f6ad74567fbd7025143050704b87e2ea11e6689c41675220e115ce1",
-      "filename": "Vulkan-Loader-sdk-1.4.350.0.tar.gz"
+      "version": "1.4.357.0",
+      "url_template": "https://github.com/KhronosGroup/Vulkan-Loader/archive/vulkan-sdk-{version}.tar.gz",
+      "sha512": "3376ce1be08ec4f453d6674118cc5e59d07ba7c7ec135f3cdd4d6820fa26bf4ef5e176ac9ade4413d25d90b4828060a1d0e0c1c2a7b4bec3118d70cdd61e6bfa",
+      "filename": "vulkan-sdk-1.4.357.0.tar.gz"
     },
     "wavpack": {
       "version": "5.9.0",
@@ -2260,7 +2260,14 @@
       "version": "1.26.0",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/wayland/wayland-{version}.tar.xz/sha512/50861b0c40cedec5f31b49ff1e99fc135a299fa4a8e2ff50ff4bac3f42e2f3f7be38271929fd2f6e58d83d5df516f643946ceba7937cc199581487c082c7ec31/wayland-{version}.tar.xz",
       "sha512": "50861b0c40cedec5f31b49ff1e99fc135a299fa4a8e2ff50ff4bac3f42e2f3f7be38271929fd2f6e58d83d5df516f643946ceba7937cc199581487c082c7ec31",
-      "filename": "wayland-1.26.0.tar.xz"
+      "filename": "wayland-1.26.0.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "wayland-1.26.0.tar.xz.sig",
+          "url_template": "https://gitlab.freedesktop.org/wayland/wayland/-/releases/{version}/downloads/wayland-{version}.tar.xz.sig",
+          "sha512": "051de7c3c80c8cef9cf713d7346467a2ce10c10ed7a39f49f3567d0ed08f409179c56e10ce8657e9eed8c544eafb2e254e251d147b13e472e60becf46100d56a"
+        }
+      ]
     },
     "wayland-protocols": {
       "version": "1.49",

@@ -157,7 +157,7 @@ pipewire = "1.6.8"
 pipewire-pulseaudio = "1.6.8"
 pipewire-alsa = "1.6.8"
 pipewire-jack = "1.6.8"
-wireplumber = "0.5.8"
+wireplumber = "0.5.14"
 alsa-lib = "*"
 alsa-utils = "*"
 alsa-sof-firmware = "2025.12.2"
@@ -219,7 +219,7 @@ gnome-bluetooth = "*"
 ModemManager = "1.24.2"
 
 # Power management
-upower = "1.91.4"
+upower = "1.91.3"
 rtkit = "0.14"
 
 # Color management
@@ -298,15 +298,15 @@ zenity = "*"
 evtest = "*"
 
 # Kubernetes / KubeStellar (k0s-based)
-k0s = "1.32.0"
-kubeflex = "0.5.0"
-kubestellar = "0.25.0"
-kubestellar-console = "0.3.34"
+k0s = "1.36.4"
+kubeflex = "0.9.3"
+kubestellar = "0.30.0"
+kubestellar-console = "0.3.42"
 
 # PipeWire stack
 pipewire = "1.6.8"
 pipewire-libs-extra = "1.6.8"
-wireplumber = "0.5.8"
+wireplumber = "0.5.14"
 rtkit = "0.14"
 alsa-firmware = "1.2.4"
 alsa-sof-firmware = "2025.12.2"
@@ -315,7 +315,7 @@ alsa-tools = "1.2.15"
 # System utilities
 distrobox = "1.8.2.5"
 fastfetch = "2.66.0"
-git = "2.47.0"
+git = "2.55.0"
 linux-firmware = "20260810"
 
 [unavailable]
