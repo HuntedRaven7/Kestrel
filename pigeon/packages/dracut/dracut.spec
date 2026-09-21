@@ -497,6 +497,7 @@ echo 'dracut_rescue_image="yes"' > $RPM_BUILD_ROOT%{dracutlibdir}/dracut.conf.d/
 %{dracutlibdir}/modules.d/40network
 %{dracutlibdir}/modules.d/70kernel-network-modules
 %{dracutlibdir}/modules.d/70qemu-net
+%{dracutlibdir}/modules.d/74chrony
 %{dracutlibdir}/modules.d/74cifs
 %{dracutlibdir}/modules.d/74fcoe
 %{dracutlibdir}/modules.d/74fcoe-uefi
