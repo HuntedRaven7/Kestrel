@@ -241,6 +241,12 @@ packages:
     downstream_package_name: fwupd
     paths:
       - pigeon/packages/fwupd
+  gdk-pixbuf2:
+    specfile_path: pigeon/packages/gdk-pixbuf2/gdk-pixbuf2.spec
+    upstream_package_name: gdk-pixbuf2
+    downstream_package_name: gdk-pixbuf2
+    paths:
+      - pigeon/packages/gdk-pixbuf2
   ghostty:
     specfile_path: pigeon/packages/ghostty/ghostty.spec
     upstream_package_name: ghostty
@@ -433,6 +439,12 @@ packages:
     downstream_package_name: libbytesize
     paths:
       - pigeon/packages/libbytesize
+  libcdio-paranoia:
+    specfile_path: pigeon/packages/libcdio-paranoia/libcdio-paranoia.spec
+    upstream_package_name: libcdio-paranoia
+    downstream_package_name: libcdio-paranoia
+    paths:
+      - pigeon/packages/libcdio-paranoia
   libinput:
     specfile_path: pigeon/packages/libinput/libinput.spec
     upstream_package_name: libinput
@@ -457,6 +469,12 @@ packages:
     downstream_package_name: linux-firmware
     paths:
       - pigeon/packages/linux-firmware
+  localsearch:
+    specfile_path: pigeon/packages/localsearch/localsearch.spec
+    upstream_package_name: localsearch
+    downstream_package_name: localsearch
+    paths:
+      - pigeon/packages/localsearch
   mango:
     specfile_path: pigeon/packages/mango/mango.spec
     upstream_package_name: mango
@@ -469,6 +487,12 @@ packages:
     downstream_package_name: mozc
     paths:
       - pigeon/packages/mozc
+  mozjs140:
+    specfile_path: pigeon/packages/mozjs140/mozjs140.spec
+    upstream_package_name: mozjs140
+    downstream_package_name: mozjs140
+    paths:
+      - pigeon/packages/mozjs140
   noopenh264:
     specfile_path: pigeon/packages/noopenh264/noopenh264.spec
     upstream_package_name: noopenh264
@@ -559,12 +583,30 @@ packages:
     downstream_package_name: pulseaudio
     paths:
       - pigeon/packages/pulseaudio
+  python-pydantic:
+    specfile_path: pigeon/packages/python-pydantic/python-pydantic.spec
+    upstream_package_name: python-pydantic
+    downstream_package_name: python-pydantic
+    paths:
+      - pigeon/packages/python-pydantic
   quickshell:
     specfile_path: pigeon/packages/quickshell/quickshell.spec
     upstream_package_name: quickshell
     downstream_package_name: quickshell
     paths:
       - pigeon/packages/quickshell
+  re2:
+    specfile_path: pigeon/packages/re2/re2.spec
+    upstream_package_name: re2
+    downstream_package_name: re2
+    paths:
+      - pigeon/packages/re2
+  rest:
+    specfile_path: pigeon/packages/rest/rest.spec
+    upstream_package_name: rest
+    downstream_package_name: rest
+    paths:
+      - pigeon/packages/rest
   rofi:
     specfile_path: pigeon/packages/rofi/rofi.spec
     upstream_package_name: rofi
@@ -601,6 +643,12 @@ packages:
     downstream_package_name: sddm
     paths:
       - pigeon/packages/sddm
+  sdl2-compat:
+    specfile_path: pigeon/packages/sdl2-compat/sdl2-compat.spec
+    upstream_package_name: sdl2-compat
+    downstream_package_name: sdl2-compat
+    paths:
+      - pigeon/packages/sdl2-compat
   seatd:
     specfile_path: pigeon/packages/seatd/seatd.spec
     upstream_package_name: seatd
@@ -643,6 +691,12 @@ packages:
     downstream_package_name: tailscale
     paths:
       - pigeon/packages/tailscale
+  tecla:
+    specfile_path: pigeon/packages/tecla/tecla.spec
+    upstream_package_name: tecla
+    downstream_package_name: tecla
+    paths:
+      - pigeon/packages/tecla
   udisks2:
     specfile_path: pigeon/packages/udisks2/udisks2.spec
     upstream_package_name: udisks2
@@ -667,6 +721,18 @@ packages:
     downstream_package_name: voxtype
     paths:
       - pigeon/packages/voxtype
+  vulkan-loader:
+    specfile_path: pigeon/packages/vulkan-loader/vulkan-loader.spec
+    upstream_package_name: vulkan-loader
+    downstream_package_name: vulkan-loader
+    paths:
+      - pigeon/packages/vulkan-loader
+  wayland:
+    specfile_path: pigeon/packages/wayland/wayland.spec
+    upstream_package_name: wayland
+    downstream_package_name: wayland
+    paths:
+      - pigeon/packages/wayland
   waypipe:
     specfile_path: pigeon/packages/waypipe/waypipe.spec
     upstream_package_name: waypipe
