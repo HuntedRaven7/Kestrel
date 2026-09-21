@@ -128,7 +128,7 @@ cat fishshell-cargo-config.toml >> .cargo/config.toml
 
 # Configure cargo to use vendored sources.
 #
-# NOTE: %cargo_prep (cargo-rpm-macros) has ALREADY written a
+# NOTE: %%cargo_prep (cargo-rpm-macros) has ALREADY written a
 # `[source.crates-io]` table pointing at the local registry. Appending a
 # second `[source.crates-io]` header makes the file invalid TOML and cargo
 # dies with:
