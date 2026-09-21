@@ -205,12 +205,6 @@ packages:
     downstream_package_name: firewalld
     paths:
       - pigeon/packages/firewalld
-  fish:
-    specfile_path: pigeon/packages/fish/fish.spec
-    upstream_package_name: fish
-    downstream_package_name: fish
-    paths:
-      - pigeon/packages/fish
   flatpak:
     specfile_path: pigeon/packages/flatpak/flatpak.spec
     upstream_package_name: flatpak

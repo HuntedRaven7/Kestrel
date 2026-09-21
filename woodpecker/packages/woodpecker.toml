@@ -168,7 +168,6 @@ pulseaudio-utils = "*"
 distrobox = "1.8.2.5"
 fuse = "2.9.9"
 fzf = "*"
-fish = "*"
 zsh = "*"
 fastfetch = "2.66.0"
 

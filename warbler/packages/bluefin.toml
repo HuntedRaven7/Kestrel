@@ -186,7 +186,6 @@ bat = "*"
 eza = "*"
 zoxide = "*"
 starship = "*"
-fish = "*"
 zsh = "*"
 
 # Flatpak

@@ -33,7 +33,7 @@ rofi_keybind = "Super+Space"
 [terminal]
 # ghostty
 ghostty_config = "/usr/share/ghostty/kestrel.conf"
-ghostty_shell = "/usr/bin/fish"
+ghostty_shell = "/usr/bin/bash"
 
 [portal]
 # xdg-desktop-portal-wlr for screen capture, etc.
