@@ -14,8 +14,11 @@ Source0:        %{url}/archive/v%{version_no_tilde}/%{name}-%{version_no_tilde}.
 Source1:        99-nvme-nbft-connect.sh
 Source2:        99-nvme-nbft-no-ignore-carrier.conf
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=2501829
-Patch0:         format-sigint.patch
+# Kestrel: Fedora's format-sigint.patch (rhbz#2501829, SIGINT during the
+# format 10s warning) is dropped. Upstream 3.1 restructured the tree
+# (nvme.c -> src/) and already carries the equivalent fix as
+# shr_sigint_received in src/nvme-cmds-sanitize.c. Do not re-add on re-import
+# without checking the new tree layout first.
 
 BuildRequires:  meson >= 0.53
 BuildRequires:  gcc gcc-c++

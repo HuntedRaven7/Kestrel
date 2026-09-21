@@ -47,9 +47,11 @@ Patch6:  0006-fix-ossl-ignore-compiler-warnings.patch
 Patch7:  0007-Revert-feat-fips-include-openssl-s-fips.so-and-opens.patch
 # fix(network-legacy): remove network-legacy completely from the codebase
 # Author: Pavel Valena <pvalena@redhat.com>
+# Kestrel: deletion regenerated against the 112 tree (111->112 rebase).
 Patch8:  0008-fix-network-legacy-remove-network-legacy-completely-.patch
 # fix(iscsi): replace `echo` writes with `printf` to prevent variable injection
 # Author: Pavel Valena <pvalena@redhat.com>
+# Kestrel: context rebased onto the 112 tree (same substitutions).
 Patch9:  0009-fix-iscsi-replace-echo-writes-with-printf-to-prevent.patch
 # fix(base): escape arguments in initqueue hook script generation
 # Author: Pavel Valena <pvalena@redhat.com>
@@ -57,24 +59,27 @@ Patch10: 0010-fix-base-escape-arguments-in-initqueue-hook-script-g.patch
 # fix(net-lib): warn on suspicious shell metacharacters in hostname file
 # Author: Pavel Valena <pvalena@redhat.com>
 Patch11: 0011-fix-net-lib-warn-on-suspicious-shell-metacharacters-.patch
+# Kestrel: dropped on the 111->112 rebase, already merged upstream in 112
+# (11systemd-networkd now escapes via the escape() helper).
 # fix(systemd-networkd): escape DHCP lease values in dhcpopts generation
 # Author: Pavel Valena <pvalena@redhat.com>
-Patch12: 0012-fix-systemd-networkd-escape-DHCP-lease-values-in-dhc.patch
+# Kestrel: dropped on the 111->112 rebase, already merged upstream in 112
+# (70qcom-adsp files + doc entry byte-identical to the patch).
 # feat(dracut): add module to load Qualcomm ADSP module pre-udev
 # Author: Hans de Goede <johannes.goede@oss.qualcomm.com>
-Patch13: 0013-feat-dracut-add-module-to-load-Qualcomm-ADSP-module-.patch
 # fix(base): escape die() message in emergency hook script
 # Author: Pavel Valena <pvalena@redhat.com>
 Patch14: 0014-fix-base-escape-die-message-in-emergency-hook-script.patch
 # fix(base): replace eval with safe variable indirection in splitsep and export_n
 # Author: Pavel Valena <pvalena@redhat.com>
+# Kestrel: context rebased onto the 112 tree (same nameref conversion).
 Patch15: 0015-fix-base-replace-eval-with-safe-variable-indirection.patch
 # build(Makefile): do not fail on network-legacy missing
 # Author: Pavel Valena <pvalena@redhat.com>
 Patch16: 0016-build-Makefile-do-not-fail-on-network-legacy-missing.patch
+# Kestrel: dropped on the 111->112 rebase, already merged upstream in 112.
 # perf(devicetree-firmware): do not call inst_multiple if there are no fw files
 # Author: Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
-Patch17: 0017-perf-devicetree-firmware-do-not-call-inst_multiple-i.patch
 # refactor(devicetree-firmware): make looping over fw_dir top-level loop
 # Author: Hans de Goede <johannes.goede@oss.qualcomm.com>
 Patch18: 0018-refactor-devicetree-firmware-make-looping-over-fw_di.patch
@@ -84,9 +89,9 @@ Patch19: 0019-fix-devicetree-firmware-include-soc-specific-firmwar.patch
 # fix(devicetree-firmware): include Qualcomm X2 laptop model specific firmwares
 # Author: Hans de Goede <johannes.goede@oss.qualcomm.com>
 Patch20: 0020-fix-devicetree-firmware-include-Qualcomm-X2-laptop-m.patch
+# Kestrel: dropped on the 111->112 rebase, already merged upstream in 112.
 # fix(dracut-install): remove FTS_NOSTAT in install_modules() fts traversal
 # Author: Josh Poimboeuf <jpoimboe@kernel.org>
-Patch21: 0021-fix-dracut-install-remove-FTS_NOSTAT-in-install_modu.patch
 # fix(drm): add leds-qcom-lpg to aarch64 specific modules needed by drm
 # Author: Hans de Goede <johannes.goede@oss.qualcomm.com>
 Patch22: 0022-fix-drm-add-leds-qcom-lpg-to-aarch64-specific-module.patch
@@ -539,11 +544,11 @@ echo 'dracut_rescue_image="yes"' > $RPM_BUILD_ROOT%{dracutlibdir}/dracut.conf.d/
 %{_prefix}/lib/kernel/install.d/51-dracut-rescue.install
 
 %changelog
-* Wed Sep 09 2026 Pavel Valena <pvalena@redhat.com> - 111-4
-- build: add Requires: kbd for i18n
-
 * Fri Sep 11 2026 Hans de Goede <johannes.goede@oss.qualcomm.com> - 111-3
 - fix(drm): add leds-qcom-lpg to aarch64 specific modules needed by drm
+
+* Wed Sep 09 2026 Pavel Valena <pvalena@redhat.com> - 111-4
+- build: add Requires: kbd for i18n
 
 * Fri Sep 04 2026 Pavel Valena <pvalena@redhat.com> - 111-3
 - fix(dracut-install): remove FTS_NOSTAT in install_modules() fts traversal
