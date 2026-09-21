@@ -205,3 +205,43 @@ def test_build_stage_shares_source_staging_with_srpm_wave():
     assert any(s.get("uses", "") == "./.github/actions/stage-sources"
                for s in steps), (
         "build-stage does not use the shared stage-sources action")
+
+
+def test_merge_jobs_cover_all_stages():
+    # One merge job per wave collapses per-package artifacts into a single
+    # merged-stage-N blob; without it matrix jobs fan out ~150 artifact API
+    # calls each and exhaust the shared rate limit mid-run.
+    data = _rebuild_pigeon()
+    jobs = data["jobs"]
+    for n in "01234":
+        job = jobs.get(f"merge{n}")
+        assert job is not None, f"merge{n} job missing"
+        assert f"rebuild{n}" in (job.get("needs") or []), (
+            f"merge{n} must wait for rebuild{n}")
+        assert f"matrix{n}" in job.get("if", ""), (
+            f"merge{n} must run exactly when its wave ran")
+        steps = job.get("steps", []) or []
+        runs = " ".join(s.get("run", "") for s in steps)
+        assert f"--pattern 'stage-{n}-*'" in runs, (
+            f"merge{n} must download only its own wave")
+        import yaml as _yaml
+        assert f"name: merged-stage-{n}" in _yaml.safe_dump(job), (
+            f"merge{n} must publish the merged blob")
+
+
+def test_waves_consume_merges_not_per_package_artifacts():
+    # Every wave after the first must wait for the previous wave's merge,
+    # and every artifact download must take merged blobs — otherwise a
+    # matrix job fans out per-package downloads again.
+    data = _rebuild_pigeon()
+    jobs = data["jobs"]
+    for n in (1, 2, 3, 4):
+        needs = jobs[f"rebuild{n}"].get("needs") or []
+        assert f"merge{n - 1}" in needs, (
+            f"rebuild{n} must wait for merge{n - 1}")
+    text = (WORKFLOWS / "rebuild-pigeon.yml").read_text()
+    assert "--pattern 'stage-*'" not in text, (
+        "per-package pattern still present in rebuild-pigeon.yml")
+    build_text = (WORKFLOWS / "build-stage.yml").read_text()
+    assert "--pattern 'merged-stage-*'" in build_text, (
+        "build-stage matrix must download merged blobs")

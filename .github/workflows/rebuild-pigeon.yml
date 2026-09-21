@@ -151,9 +151,54 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge0:
+    name: Merge Stage 0 artifacts
+    # Collapse this wave's per-package artifacts into one merged-stage blob.
+    # Matrix jobs fetch merged blobs (a handful of API calls each) instead
+    # of every per-package artifact (~150 calls per job), which exhausts
+    # the shared API rate limit mid-run. Runs exactly when its wave ran;
+    # fails loud when there is nothing to merge, so downstream waves never
+    # silently resolve Fedora fallbacks for missing priors.
+    needs: [prepare, rebuild0]
+    if: ${{ needs.prepare.outputs.matrix0 != '' && needs.prepare.outputs.matrix0 != '[]' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Download stage packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/merge
+          tmpdir=$(mktemp -d)
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf "$tmpdir"
+            mkdir -p "$tmpdir"
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-0-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/merge/ {} +
+              break
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              echo "::error title=merge has nothing to merge::stage 0 ran but published no artifacts"
+              exit 1
+            fi
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
+          done
+          rm -rf "$tmpdir"
+          test -n "$(find work/merge -name '*.rpm' -print -quit)"
+      - name: Upload merged stage artifact
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
+        with:
+          action: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          attempt_limit: 5
+          attempt_delay: 15000
+          with: |
+            name: merged-stage-0
+            path: work/merge/
+            retention-days: 7
   rebuild1:
     name: Build Stage 1
-    needs: [prepare, preflight, rebuild0]
+    needs: [prepare, preflight, merge0]
     if: ${{ needs.prepare.outputs.matrix1 != '' && needs.prepare.outputs.matrix1 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
@@ -162,9 +207,54 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge1:
+    name: Merge Stage 1 artifacts
+    # Collapse this wave's per-package artifacts into one merged-stage blob.
+    # Matrix jobs fetch merged blobs (a handful of API calls each) instead
+    # of every per-package artifact (~150 calls per job), which exhausts
+    # the shared API rate limit mid-run. Runs exactly when its wave ran;
+    # fails loud when there is nothing to merge, so downstream waves never
+    # silently resolve Fedora fallbacks for missing priors.
+    needs: [prepare, rebuild1]
+    if: ${{ needs.prepare.outputs.matrix1 != '' && needs.prepare.outputs.matrix1 != '[]' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Download stage packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/merge
+          tmpdir=$(mktemp -d)
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf "$tmpdir"
+            mkdir -p "$tmpdir"
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-1-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/merge/ {} +
+              break
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              echo "::error title=merge has nothing to merge::stage 1 ran but published no artifacts"
+              exit 1
+            fi
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
+          done
+          rm -rf "$tmpdir"
+          test -n "$(find work/merge -name '*.rpm' -print -quit)"
+      - name: Upload merged stage artifact
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
+        with:
+          action: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          attempt_limit: 5
+          attempt_delay: 15000
+          with: |
+            name: merged-stage-1
+            path: work/merge/
+            retention-days: 7
   rebuild2:
     name: Build Stage 2
-    needs: [prepare, preflight, rebuild1]
+    needs: [prepare, preflight, merge1]
     if: ${{ needs.prepare.outputs.matrix2 != '' && needs.prepare.outputs.matrix2 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
@@ -173,9 +263,54 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge2:
+    name: Merge Stage 2 artifacts
+    # Collapse this wave's per-package artifacts into one merged-stage blob.
+    # Matrix jobs fetch merged blobs (a handful of API calls each) instead
+    # of every per-package artifact (~150 calls per job), which exhausts
+    # the shared API rate limit mid-run. Runs exactly when its wave ran;
+    # fails loud when there is nothing to merge, so downstream waves never
+    # silently resolve Fedora fallbacks for missing priors.
+    needs: [prepare, rebuild2]
+    if: ${{ needs.prepare.outputs.matrix2 != '' && needs.prepare.outputs.matrix2 != '[]' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Download stage packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/merge
+          tmpdir=$(mktemp -d)
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf "$tmpdir"
+            mkdir -p "$tmpdir"
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-2-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/merge/ {} +
+              break
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              echo "::error title=merge has nothing to merge::stage 2 ran but published no artifacts"
+              exit 1
+            fi
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
+          done
+          rm -rf "$tmpdir"
+          test -n "$(find work/merge -name '*.rpm' -print -quit)"
+      - name: Upload merged stage artifact
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
+        with:
+          action: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          attempt_limit: 5
+          attempt_delay: 15000
+          with: |
+            name: merged-stage-2
+            path: work/merge/
+            retention-days: 7
   rebuild3:
     name: Build Stage 3
-    needs: [prepare, preflight, rebuild2]
+    needs: [prepare, preflight, merge2]
     if: ${{ needs.prepare.outputs.matrix3 != '' && needs.prepare.outputs.matrix3 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
@@ -184,9 +319,54 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge3:
+    name: Merge Stage 3 artifacts
+    # Collapse this wave's per-package artifacts into one merged-stage blob.
+    # Matrix jobs fetch merged blobs (a handful of API calls each) instead
+    # of every per-package artifact (~150 calls per job), which exhausts
+    # the shared API rate limit mid-run. Runs exactly when its wave ran;
+    # fails loud when there is nothing to merge, so downstream waves never
+    # silently resolve Fedora fallbacks for missing priors.
+    needs: [prepare, rebuild3]
+    if: ${{ needs.prepare.outputs.matrix3 != '' && needs.prepare.outputs.matrix3 != '[]' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Download stage packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/merge
+          tmpdir=$(mktemp -d)
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf "$tmpdir"
+            mkdir -p "$tmpdir"
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-3-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/merge/ {} +
+              break
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              echo "::error title=merge has nothing to merge::stage 3 ran but published no artifacts"
+              exit 1
+            fi
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
+          done
+          rm -rf "$tmpdir"
+          test -n "$(find work/merge -name '*.rpm' -print -quit)"
+      - name: Upload merged stage artifact
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
+        with:
+          action: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          attempt_limit: 5
+          attempt_delay: 15000
+          with: |
+            name: merged-stage-3
+            path: work/merge/
+            retention-days: 7
   rebuild4:
     name: Build Stage 4
-    needs: [prepare, preflight, rebuild3]
+    needs: [prepare, preflight, merge3]
     if: ${{ needs.prepare.outputs.matrix4 != '' && needs.prepare.outputs.matrix4 != '[]' }}
     uses: ./.github/workflows/build-stage.yml
     with:
@@ -195,10 +375,55 @@ jobs:
     secrets:
       GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  merge4:
+    name: Merge Stage 4 artifacts
+    # Collapse this wave's per-package artifacts into one merged-stage blob.
+    # Matrix jobs fetch merged blobs (a handful of API calls each) instead
+    # of every per-package artifact (~150 calls per job), which exhausts
+    # the shared API rate limit mid-run. Runs exactly when its wave ran;
+    # fails loud when there is nothing to merge, so downstream waves never
+    # silently resolve Fedora fallbacks for missing priors.
+    needs: [prepare, rebuild4]
+    if: ${{ needs.prepare.outputs.matrix4 != '' && needs.prepare.outputs.matrix4 != '[]' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Download stage packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p work/merge
+          tmpdir=$(mktemp -d)
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf "$tmpdir"
+            mkdir -p "$tmpdir"
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-4-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/merge/ {} +
+              break
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              echo "::error title=merge has nothing to merge::stage 4 ran but published no artifacts"
+              exit 1
+            fi
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
+          done
+          rm -rf "$tmpdir"
+          test -n "$(find work/merge -name '*.rpm' -print -quit)"
+      - name: Upload merged stage artifact
+        uses: Wandalen/wretry.action@e68c23e6309f2871ca8ae4763e7629b9c258e1ea # v3.8.0
+        with:
+          action: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+          attempt_limit: 5
+          attempt_delay: 15000
+          with: |
+            name: merged-stage-4
+            path: work/merge/
+            retention-days: 7
   precedence:
     name: Precedence check
     runs-on: ubuntu-26.04
-    needs: [prepare, rebuild0, rebuild1, rebuild2, rebuild3, rebuild4]
+    needs: [prepare, rebuild0, rebuild1, rebuild2, rebuild3, rebuild4, merge0, merge1, merge2, merge3, merge4]
     if: ${{ always() && needs.prepare.outputs.changed != '[]' }}
     steps:
       - name: Checkout
@@ -227,7 +452,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
-            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'merged-stage-*' --dir "$tmpdir" 2>&1); then
               find "$tmpdir" -name '*.rpm' -exec cp -t ~/stages/ {} +
               break
             elif echo "$err" | grep -qi "no artifact matches"; then
@@ -304,7 +529,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
-            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'merged-stage-*' --dir "$tmpdir" 2>&1); then
               find "$tmpdir" -name '*.rpm' -exec cp -t ~/stages/ {} +
               break
             elif echo "$err" | grep -qi "no artifact matches"; then
