@@ -23,6 +23,14 @@ BuildArch:      noarch
 # this package is installed; without the static BR, rpmbuild -br stops at
 # "Failed build dependencies" before the dynamic BRs are ever resolved.
 BuildRequires:  pyproject-rpm-macros
+# Kestrel: mirror of the %generate_buildrequires output (hatchling backend).
+# CI resolves build deps in a single dnf builddep pass before rpmbuild -br
+# discovers the dynamic ones, so they must also be stated statically or the
+# build stops at "Failed build dependencies".
+BuildRequires:  python3-devel
+BuildRequires:  python3dist(hatchling)
+BuildRequires:  python3dist(hatch-fancy-pypi-readme) >= 22.5
+BuildRequires:  python3dist(pip) >= 19
 BuildRequires:  tomcli
 # For check phase
 %if %{with tests}

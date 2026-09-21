@@ -2,7 +2,12 @@
 %bcond heif     %{undefined rhel}
 %bcond jpegxl   %{undefined rhel}
 
-%bcond bundled_rust_deps %{defined rhel}
+# Kestrel: always build from the vendored tree (Source1). The system-deps
+# branch emits ~100 crate() dynamic BuildRequires that only resolve where a
+# full Fedora rust-*-devel set exists; the factory builds plain crates, so
+# rpmbuild -br stops at "Failed build dependencies". (Upstream default is
+# RHEL-only vendoring; on RHEL this changes nothing.)
+%bcond bundled_rust_deps 1
 
 Name:           glycin
 Version:        2.2.0

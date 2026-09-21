@@ -133,6 +133,13 @@ export M4=m4
 export AWK=awk
 export AC_MACRODIR=./build/autoconf/
 
+# Kestrel: CI exports RPMBUILD=/root/rpmbuild (rpm's topdir for its own
+# bookkeeping), but moz.configure reads $RPMBUILD as a user override for the
+# rpmbuild program path. A directory is never executable, and a set-but-bad
+# value is fatal despite allow_missing, so configure dies with
+# "ERROR: Cannot find rpmbuild". Nothing in the build uses $RPMBUILD.
+unset RPMBUILD
+
 pushd js/src/
 %configure \
   --with-system-icu \
