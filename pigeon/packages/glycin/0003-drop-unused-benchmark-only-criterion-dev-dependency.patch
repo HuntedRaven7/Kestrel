@@ -1,0 +1,37 @@
+From c7d516480b43a7303c34f44f6f54f2eb07d36f79 Mon Sep 17 00:00:00 2001
+From: Fabio Valentini <decathorpe@gmail.com>
+Date: Sat, 8 Aug 2026 00:03:40 +0200
+Subject: [PATCH 3/5] drop unused, benchmark-only criterion dev-dependency
+
+---
+ Cargo.toml         | 1 -
+ benches/Cargo.toml | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index ddcd0c6..ff1f7d6 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -42,7 +42,6 @@ bitflags = "2.9.0"
+ blocking = "1.6.1"
+ bytemuck = { version = "1.25", features = ["extern_crate_std"] }
+ cairo-rs = "0.22.0"
+-criterion = "0.8.0"
+ env_logger = { version = "0.11.0", default-features = false, features = [
+     "humantime",
+ ] }
+diff --git a/benches/Cargo.toml b/benches/Cargo.toml
+index 1b47ddd..b140e0e 100644
+--- a/benches/Cargo.toml
++++ b/benches/Cargo.toml
+@@ -9,7 +9,6 @@ publish = false
+ 
+ [dev-dependencies]
+ async-io.workspace = true
+-criterion.workspace = true
+ gdk-pixbuf.workspace = true
+ gio.workspace = true
+ glib.workspace = true
+-- 
+2.55.0
+

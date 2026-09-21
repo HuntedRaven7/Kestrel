@@ -259,6 +259,12 @@ packages:
     downstream_package_name: git
     paths:
       - pigeon/packages/git
+  glycin:
+    specfile_path: pigeon/packages/glycin/glycin.spec
+    upstream_package_name: glycin
+    downstream_package_name: glycin
+    paths:
+      - pigeon/packages/glycin
   grim:
     specfile_path: pigeon/packages/grim/grim.spec
     upstream_package_name: grim
@@ -721,6 +727,12 @@ packages:
     downstream_package_name: voxtype
     paths:
       - pigeon/packages/voxtype
+  vulkan-headers:
+    specfile_path: pigeon/packages/vulkan-headers/vulkan-headers.spec
+    upstream_package_name: vulkan-headers
+    downstream_package_name: vulkan-headers
+    paths:
+      - pigeon/packages/vulkan-headers
   vulkan-loader:
     specfile_path: pigeon/packages/vulkan-loader/vulkan-loader.spec
     upstream_package_name: vulkan-loader
