@@ -46,7 +46,7 @@ CARGO_SPECS = _specs_with_cargo_prep()
 
 def test_gate_covers_known_cargo_packages():
     """The gate must stay meaningful: the known cargo packages are scanned."""
-    assert {"fish", "waypipe", "rust-just"} <= {s.parent.name for s in CARGO_SPECS}
+    assert {"waypipe", "rust-just"} <= {s.parent.name for s in CARGO_SPECS}
 
 
 @pytest.mark.parametrize("spec", CARGO_SPECS, ids=lambda p: p.parent.name)

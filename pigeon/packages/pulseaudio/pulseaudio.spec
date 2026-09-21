@@ -43,12 +43,14 @@ URL:            http://www.freedesktop.org/wiki/Software/PulseAudio
 Source0:        pulseaudio-%{version}-%{gitrel}-g%{shortcommit}.tar.xz
 %else
 Source0:        http://freedesktop.org/software/pulseaudio/releases/pulseaudio-%{version}.tar.xz
-# Kestrel: keep upstream's Source1. It is never read via %SOURCE1, but
-# rpmbuild -bs hard-fails with "Bad file" when any declared source is absent
-# from SOURCES/, so it MUST be staged. It is registered as an extra_source in
-# pigeon/config/upstream-sources.json and hash-verified there.
-# Do not remove without dropping this Source1 line too.
-Source1:        http://freedesktop.org/software/pulseaudio/releases/pulseaudio-%{version}.tar.xz.sha256sum
+# Kestrel: upstream's Source1 (pulseaudio-%{version}.tar.xz.sha256sum) is
+# deliberately dropped. It was never read via %SOURCE1, yet rpmbuild -br
+# hard-fails with "Bad file" when any declared source is absent from
+# SOURCES/. Staging it meant an extra network fetch whose failure was masked
+# as a WARN sidecar and only surfaced as a Bad file later. The primary
+# tarball is already hash-verified (SHA-512) by source_pipeline.py, which is
+# stronger than this reference checksum. Do not re-add Source1 on re-import
+# without also registering + staging the file.
 %endif
 
 Source5:        default.pa-for-gdm

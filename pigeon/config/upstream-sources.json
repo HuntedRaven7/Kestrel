@@ -305,34 +305,6 @@
       },
       "filename": "firewalld-2.5.2.tar.bz2"
     },
-    "fish": {
-      "version": "4.6.0",
-      "url_template": "https://github.com/fish-shell/fish-shell/releases/download/{version}/fish-{version}.tar.xz",
-      "sha512": "2acc6453f102b570f0f2765739a020f63051b7ee2a7f49d086459287c9e5a8658294b0081904b4897315195c6510a7e53794da9937f6f64aa53c65eb448d68b5",
-      "filename": "fish-4.6.0.tar.xz",
-      "extra_sources": [
-        {
-          "filename": "fish-4.6.0.tar.xz.asc",
-          "url_template": "https://github.com/fish-shell/fish-shell/releases/download/4.6.0/fish-4.6.0.tar.xz.asc",
-          "sha512": "ba2327992397577a9d315bb49622f4272e49c627d56ba0de47a89bb13462a2f1204e74f702679e688fedac058e7268beb65611be50505909cd27870d135f10a2"
-        },
-        {
-          "filename": "krobelus.gpg",
-          "url_template": "https://github.com/krobelus.gpg",
-          "sha512": "ed1188ae5234586c02125931a59361cb605c51e6d3b07657d11f6a5dddc7b9deae21c1e0cb73f8c89ff3f69e07e3df01c3e185dbca4f9f3e1597ac0c7de5492b"
-        },
-        {
-          "filename": "rust-pcre2-0.2.9-utf32.tar.gz",
-          "url_template": "https://github.com/fish-shell/rust-pcre2/archive/0.2.9-utf32/rust-pcre2-0.2.9-utf32.tar.gz",
-          "sha512": "d00577beee02edf3f35c4371e9a7fb35a2ed9225cd5bc4e539b6a2cd1f31f2a3c55a91832f3310afdeb004e4c59f24aa06c72c2e31ce1827d349b058a7a91a3c"
-        },
-        {
-          "filename": "fish-vendor-4.6.0.tar.gz",
-          "vendored": true,
-          "sha512": "8101c7d67500012ef6171aebbd49f3cb4ecd6c9916f7205e5d988990a991fbb8a16d8f72bcdb875dfc10b17df28439e28c7493f7abef036eeb7cb43a03e2e4c6"
-        }
-      ]
-    },
     "flac": {
       "version": "1.5.0",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/flac/flac-{version}.tar.xz/sha512/34c9193b804e990b0828a5759e4d7ef1d1859174262d3b305d03e65285edb35c7f429e8071d9dd2c6da0c16e842b40b439bf215704636ae15dd5886151f0d17a/flac-{version}.tar.xz",
@@ -1854,14 +1826,7 @@
       "version": "17.0",
       "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/pulseaudio/pulseaudio-{version}.tar.xz/sha512/be0aec46204d9c9188a796fbe41b4cf6f0f5e6b16fa08ce359b8f0f51253f0ade364b89448bbf5faa2af7e59deb6c72194734c3233944250dcfd4f31968a5e97/pulseaudio-{version}.tar.xz",
       "sha512": "be0aec46204d9c9188a796fbe41b4cf6f0f5e6b16fa08ce359b8f0f51253f0ade364b89448bbf5faa2af7e59deb6c72194734c3233944250dcfd4f31968a5e97",
-      "filename": "pulseaudio-17.0.tar.xz",
-      "extra_sources": [
-        {
-          "filename": "pulseaudio-17.0.tar.xz.sha256sum",
-          "url_template": "http://freedesktop.org/software/pulseaudio/releases/pulseaudio-{version}.tar.xz.sha256sum",
-          "sha512": "cd0e3d006eda69a8691c73456da5a70a8493b202c9664c6ff0a64039493056a993032a23e41119eb78f757b4f5a12d55f90713342b048464f45732b298d5c03b"
-        }
-      ]
+      "filename": "pulseaudio-17.0.tar.xz"
     },
     "pycairo": {
       "version": "1.28.0",
