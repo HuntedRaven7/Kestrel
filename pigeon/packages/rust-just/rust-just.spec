@@ -149,6 +149,9 @@ install -D -m644 -pv completions/just.zsh  %{buildroot}%{zsh_completions_dir}/_j
 %check
 # Required for directories::runtime_dir
 export XDG_RUNTIME_DIR=$(mktemp -d)
+# functions::env_var_functions_unix unwraps $USER; container build roots
+# (podman, no login shell) do not set it, so provide the current user.
+export USER=$(id -un)
 # * completions::bash test script does not work outside of git checkout
 # * completions::tests::scripts requires pinned version of clap_complete
 %{cargo_test -- -- %{shrink:
