@@ -79,6 +79,11 @@ The pkg-config file for %{name}.
 %prep
 %autosetup -p1
 
+# Bundled fallback interface for the meson-flatpak-xml patch above:
+# data/meson.build references files('org.freedesktop.portal.Flatpak.xml')
+# relative to data/, so stage our Source2 copy where meson expects it.
+cp %{SOURCE2} data/org.freedesktop.portal.Flatpak.xml
+
 
 %build
 %meson %{!?with_docs:-Ddocumentation=disabled}

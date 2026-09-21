@@ -1,7 +1,8 @@
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -1,7 +1,9 @@
+@@ -1,8 +1,13 @@
  # This file is built into the GDbus sources but does not get installed by us
++fs = import('fs')
  flatpak_intf_sources = []
 -if flatpak_intf_dir != ''
 -  flatpak_intf_sources = files(flatpak_intf_dir / 'org.freedesktop.portal.Flatpak.xml')
@@ -12,6 +13,6 @@
 +  # Bundled fallback for systems where flatpak is installed without the XML
 +  flatpak_intf_sources = files('org.freedesktop.portal.Flatpak.xml')
 +endif
- 
+
  portal_sources = files(
    'org.freedesktop.portal.Account.xml',

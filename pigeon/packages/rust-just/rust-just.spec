@@ -114,11 +114,11 @@ use the "default" feature of the "%{crate}" crate.
 # Extract vendored dependencies
 tar -xf %{SOURCE2}
 
-# %cargo_prep -v vendor would write [source.vendored-sources] and
+# %%cargo_prep -v vendor would write [source.vendored-sources] and
 # [source.crates-io] with replace-with = "vendored-sources". But older
-# cargo-rpm-macros versions (pre-28.5) have a bug where plain %cargo_prep
+# cargo-rpm-macros versions (pre-28.5) have a bug where plain %%cargo_prep
 # already wrote a [source.crates-io] table, so appending a second one via
-# -v produces invalid TOML ("duplicate key"). Use plain %cargo_prep and
+# -v produces invalid TOML ("duplicate key"). Use plain %%cargo_prep and
 # repoint the existing replace-with key with sed instead.
 %cargo_prep
 sed -i 's|^replace-with = "local-registry"$|replace-with = "vendored-sources"|' \
