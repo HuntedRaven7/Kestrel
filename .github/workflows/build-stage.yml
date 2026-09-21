@@ -188,6 +188,14 @@ jobs:
               dnf install -qy dnf-plugins-core rpm-build createrepo_c python3 git
               # Same shared cache mount as the resolve step (see above).
               printf "\nkeepcache=1\n" >> /etc/dnf/dnf.conf
+              # The fedora image sets tsflags=nodocs, which skips %doc files
+              # at install time. Rust registry crates flag their READMEs as
+              # doc, and crates that include_str! them (e.g. bitvec via
+              # pydantic-core) then fail to compile with a missing-file
+              # error that looks nothing like packaging. Mock and koji do
+              # not set nodocs, so builds that pass there fail here without
+              # this. An empty value clears the inherited flag.
+              printf "\ntsflags=\n" >> /etc/dnf/dnf.conf
               # Hummingbird overlay repo. NOTE: the old Copr URL is dead;
               # the live yum repo is the pulp-content endpoint below.
               # gpgcheck=0: no signing key is published for it (revisit).
