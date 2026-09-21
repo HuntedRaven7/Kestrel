@@ -72,22 +72,23 @@ jobs:
           # Semantics match the old merge-multiple step: every matching
           # artifact's RPMs land flat in work/prior. Tolerant by design (see
           # continue-on-error): an early stage simply has no priors yet.
+          # Backoff is exponential with jitter: bursts of matrix jobs share
+          # one API rate limit, so hammering a 403 makes it worse.
           mkdir -p work/prior
           tmpdir=$(mktemp -d)
-          for attempt in 1 2 3 4; do
+          delay=15
+          for attempt in 1 2 3 4 5; do
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
-            if names=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" --paginate -q '.artifacts[] | select(.name | startswith("stage-")) | .name' 2>/dev/null); then
-              if [ -z "$names" ]; then
-                break
-              fi
-              if gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir"; then
-                find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
-                break
-              fi
+            if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
+              find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
+              break
+            elif echo "$err" | grep -q "no artifact matches"; then
+              break
             fi
-            echo "::warning title=artifact download retry::attempt $attempt failed, waiting before retry"
-            sleep 15
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            sleep $delay
+            delay=$((delay * 2 + RANDOM % 10))
           done
           rm -rf "$tmpdir"
         continue-on-error: true
