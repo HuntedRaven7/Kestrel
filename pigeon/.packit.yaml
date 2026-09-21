@@ -595,6 +595,12 @@ packages:
     downstream_package_name: python-pydantic
     paths:
       - pigeon/packages/python-pydantic
+  python-pydantic-core:
+    specfile_path: pigeon/packages/python-pydantic-core/python-pydantic-core.spec
+    upstream_package_name: python-pydantic-core
+    downstream_package_name: python-pydantic-core
+    paths:
+      - pigeon/packages/python-pydantic-core
   quickshell:
     specfile_path: pigeon/packages/quickshell/quickshell.spec
     upstream_package_name: quickshell
