@@ -450,7 +450,8 @@
           "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/glycin/glycin-2.2.0-vendor.tar.xz/sha512/75e2dae1337a79b829d22b370e70262660ceb297f9778ad03d949e3c13d9442c90c89a5462fa21b14771fd5ba2cdbf1356a5db4dbb155c633dec2ae9a2ec45e7/glycin-2.2.0-vendor.tar.xz",
           "sha512": "75e2dae1337a79b829d22b370e70262660ceb297f9778ad03d949e3c13d9442c90c89a5462fa21b14771fd5ba2cdbf1356a5db4dbb155c633dec2ae9a2ec45e7"
         }
-      ]
+      ],
+      "stage": 1
     },
     "gnome-autoar": {
       "version": "0.5.0",
@@ -2249,7 +2250,8 @@
       "version": "1.4.357.0",
       "url_template": "https://github.com/KhronosGroup/Vulkan-Headers/archive/vulkan-sdk-{version}.tar.gz",
       "sha512": "253975e391fe23a3a63f9c10b7510e5e5bce6b15b36a81499eba9ceb1000cbf69b00807442b4678e69d4b6a2a8ec14c6c0d9d05ec739c277ca1cd8ee7d5d84f6",
-      "filename": "vulkan-sdk-1.4.357.0.tar.gz"
+      "filename": "vulkan-sdk-1.4.357.0.tar.gz",
+      "stage": 1
     },
     "vulkan-loader": {
       "version": "1.4.357.0",
