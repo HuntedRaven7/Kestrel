@@ -1,10 +1,9 @@
-"""Tests for the Packit SRPM pilot in pigeon/.github/workflows/.
+"""Tests for the Packit SRPM tooling (packit_workflow.py, packit_source0.py).
 
-Mirrors utah-packages/tests/test_packit_srpm.py: the pilot is additive and
-does not touch rebuild-pigeon.yml, so its shape is asserted directly.
+The packit-srpm pilot workflows were removed, so only the tool-level and
+config-level shape is asserted here.
 """
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -17,46 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "pigeon" / "tools")
 import packit_workflow as pw
 
 ROOT = Path(__file__).resolve().parents[2]
-WORKFLOWS = ROOT / "pigeon" / ".github" / "workflows"
 PACKIT_CONFIG = ROOT / "pigeon" / ".packit.yaml"
-SOURCE_CONFIG = ROOT / "pigeon" / "config" / "upstream-sources.json"
-
-
-def _wf(name):
-    return yaml.safe_load((WORKFLOWS / name).read_text())
-
-
-def test_only_dispatch_launches_the_full_srpm_matrix():
-    workflow = _wf("packit-srpm-pilot.yml")
-    triggers = workflow.get("on", workflow.get(True, {}))
-    assert set(triggers) == {"workflow_dispatch"}
-
-
-def test_workflow_stages_verified_sources_for_every_configured_package():
-    config_packages = set(pw.packages())
-    workflow = (WORKFLOWS / "packit-srpm-pilot.yml").read_text()
-    workflow += (WORKFLOWS / "packit-srpm-chunk.yml").read_text()
-    source_packages = set(json.loads(SOURCE_CONFIG.read_text())["packages"])
-    # Every .packit.yaml entry is a real source lock entry, and vice versa:
-    # the two can never drift because render_packit_config.py generates one
-    # from the other.
-    assert config_packages <= source_packages
-    assert "pigeon/tools/packit_workflow.py packages" in workflow
-    assert "fromJson(needs.discover.outputs.chunks)" in workflow
-    assert "fromJson(inputs.packages)" in workflow
-    assert "pigeon/tools/packit_workflow.py chunks" in workflow
-    assert "--stage-into pigeon/packages" in workflow
-    assert "--verify-staged pigeon/packages" in workflow
-    assert "packit srpm --preserve-spec" in workflow
-    assert "create-archive:" in PACKIT_CONFIG.read_text()
-    assert "pigeon/tools/packit_source0.py" in PACKIT_CONFIG.read_text()
-    # Pinned by digest, never a mutable tag.
-    assert re.search(
-        r"quay\.io/packit/packit:[\w.-]+@sha256:[0-9a-f]{64}", workflow
-    )
-    assert not re.search(
-        r"quay\.io/packit/packit:[\w.-]+(?!@sha256:)\s", workflow
-    )
 
 
 def test_every_chunk_fits_inside_the_matrix_cap():
