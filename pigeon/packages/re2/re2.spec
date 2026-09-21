@@ -37,14 +37,6 @@ BuildRequires:  gcc-c++
 # dependencies" before the dynamic BRs are ever resolved.
 BuildRequires:  cmake-rpm-macros
 BuildRequires:  pyproject-rpm-macros
-# Kestrel: mirror of the %generate_buildrequires output. CI resolves build
-# deps in a single dnf builddep pass before rpmbuild -br discovers the
-# dynamic ones, so they must also be stated statically or the build stops at
-# "Failed build dependencies".
-BuildRequires:  cmake
-BuildRequires:  python3-devel
-BuildRequires:  python3dist(pip) >= 19
-BuildRequires:  python3dist(setuptools) >= 40.8
 
 BuildRequires:  cmake(absl)
 BuildRequires:  pkgconfig(icu-uc)
