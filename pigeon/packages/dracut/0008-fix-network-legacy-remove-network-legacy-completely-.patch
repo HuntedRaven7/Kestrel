@@ -1,12 +1,12 @@
-From a98d67bbe4b363303a8760fb5cfac45b49d8a18a Mon Sep 17 00:00:00 2001
+From c3759d2ded9fa7d2260528cb1eb56948d37d23bb Mon Sep 17 00:00:00 2001
 From: Pavel Valena <pvalena@redhat.com>
 Date: Thu, 7 May 2026 00:40:31 +0200
-Subject: [PATCH 08/12] fix(network-legacy): remove network-legacy completely
+Subject: [PATCH 1/3] fix(network-legacy): remove network-legacy completely
  from the codebase
 
 (To not rely solely on a dracut.spec file.)
 ---
- modules.d/35network-legacy/dhclient-script.sh | 305 ----------
+ modules.d/35network-legacy/dhclient-script.sh | 316 ----------
  modules.d/35network-legacy/dhclient.conf      |  11 -
  modules.d/35network-legacy/dhcp-multi.sh      | 133 -----
  modules.d/35network-legacy/ifup.sh            | 562 ------------------
@@ -20,7 +20,7 @@ Subject: [PATCH 08/12] fix(network-legacy): remove network-legacy completely
  modules.d/35network-legacy/parse-ip-opts.sh   | 151 -----
  modules.d/35network-legacy/parse-team.sh      |  66 --
  modules.d/35network-legacy/parse-vlan.sh      |  37 --
- 14 files changed, 1654 deletions(-)
+ 14 files changed, 1665 deletions(-)
  delete mode 100755 modules.d/35network-legacy/dhclient-script.sh
  delete mode 100644 modules.d/35network-legacy/dhclient.conf
  delete mode 100755 modules.d/35network-legacy/dhcp-multi.sh
@@ -38,10 +38,10 @@ Subject: [PATCH 08/12] fix(network-legacy): remove network-legacy completely
 
 diff --git a/modules.d/35network-legacy/dhclient-script.sh b/modules.d/35network-legacy/dhclient-script.sh
 deleted file mode 100755
-index 0cb00ab4..00000000
+index ae68952..0000000
 --- a/modules.d/35network-legacy/dhclient-script.sh
 +++ /dev/null
-@@ -1,305 +0,0 @@
+@@ -1,316 +0,0 @@
 -#!/bin/sh
 -
 -PATH=/usr/sbin:/usr/bin:/sbin:/bin
@@ -58,11 +58,11 @@ index 0cb00ab4..00000000
 -    mask=$new_subnet_mask
 -    bcast=$new_broadcast_address
 -    gw=${new_routers%%,*}
--    domain=$new_domain_name
 -    # get rid of control chars
+-    domain=$(printf -- "%s" "$new_domain_name" | tr -d '[:cntrl:]')
 -    search=$(printf -- "%s" "$new_domain_search" | tr -d '[:cntrl:]')
 -    namesrv=$new_domain_name_servers
--    hostname=$new_host_name
+-    hostname=$(printf '%s' "$new_host_name" | tr -d -c 'a-zA-Z0-9.-')
 -    [ -n "$new_dhcp_lease_time" ] && lease_time=$new_dhcp_lease_time
 -    [ -n "$new_max_life" ] && lease_time=$new_max_life
 -    preferred_lft=$lease_time
@@ -90,20 +90,32 @@ index 0cb00ab4..00000000
 -        ${preferred_lft:+preferred_lft ${preferred_lft}}
 -
 -    if [ -n "$gw" ]; then
--        if [ "$mask" = "255.255.255.255" ]; then
--            # point-to-point connection => set explicit route to gateway
--            echo ip route add "$gw" dev "$netif" > /tmp/net."$netif".gw
--        fi
+-        gw_check=0
+-        for g in $gw; do
+-            case "$g" in
+-                *[!0-9.]*)
+-                    gw_check=1
+-                    break
+-                    ;;
+-            esac
+-        done
 -
--        echo "$gw" | {
--            IFS=' ' read -r main_gw other_gw
--            echo ip route replace default via "$main_gw" dev "$netif" >> /tmp/net."$netif".gw
--            if [ -n "$other_gw" ]; then
--                for g in $other_gw; do
--                    echo ip route add default via "$g" dev "$netif" >> /tmp/net."$netif".gw
--                done
+-        if [ $gw_check -eq 0 ]; then
+-            if [ "$mask" = "255.255.255.255" ]; then
+-                # point-to-point connection => set explicit route to gateway
+-                echo ip route add "$gw" dev "$netif" > /tmp/net."$netif".gw
 -            fi
--        }
+-
+-            echo "$gw" | {
+-                IFS=' ' read -r main_gw other_gw
+-                echo ip route replace default via "$main_gw" dev "$netif" >> /tmp/net."$netif".gw
+-                if [ -n "$other_gw" ]; then
+-                    for g in $other_gw; do
+-                        echo ip route add default via "$g" dev "$netif" >> /tmp/net."$netif".gw
+-                    done
+-                fi
+-            }
+-        fi
 -    fi
 -
 -    if getargbool 1 rd.peerdns; then
@@ -116,15 +128,15 @@ index 0cb00ab4..00000000
 -    fi
 -    # Note: hostname can be fqdn OR short hostname, so chop off any
 -    # trailing domain name and explicitly add any domain if set.
--    [ -n "$hostname" ] && echo "echo ${hostname%."$domain"}${domain:+.$domain} > /proc/sys/kernel/hostname" > /tmp/net."$netif".hostname
+-    [ -n "$hostname" ] && echo "echo '${hostname%."$domain"}${domain:+.$domain}' > /proc/sys/kernel/hostname" > /tmp/net."$netif".hostname
 -}
 -
 -setup_interface6() {
--    domain=$new_domain_name
 -    # get rid of control chars
+-    domain=$(printf -- "%s" "$new_domain_name" | tr -d '[:cntrl:]')
 -    search=$(printf -- "%s" "$new_dhcp6_domain_search" | tr -d '[:cntrl:]')
 -    namesrv=$new_dhcp6_name_servers
--    hostname=$new_host_name
+-    hostname=$(printf '%s' "$new_host_name" | tr -d -c 'a-zA-Z0-9.-')
 -    [ -n "$new_dhcp_lease_time" ] && lease_time=$new_dhcp_lease_time
 -    [ -n "$new_max_life" ] && lease_time=$new_max_life
 -    preferred_lft=$lease_time
@@ -149,7 +161,7 @@ index 0cb00ab4..00000000
 -
 -    # Note: hostname can be fqdn OR short hostname, so chop off any
 -    # trailing domain name and explicitly add any domain if set.
--    [ -n "$hostname" ] && echo "echo ${hostname%."$domain"}${domain:+.$domain} > /proc/sys/kernel/hostname" > /tmp/net."$netif".hostname
+-    [ -n "$hostname" ] && echo "echo '${hostname%."$domain"}${domain:+.$domain}' > /proc/sys/kernel/hostname" > /tmp/net."$netif".hostname
 -}
 -
 -parse_option_121() {
@@ -157,16 +169,18 @@ index 0cb00ab4..00000000
 -    # Each route is: <mask_width> <dest_octets...> <gateway_4_octets>
 -    # mask_width determines how many destination octets follow (0-4)
 -    #
--    # This version validates arguments before operations to prevent
--    # "integer expression expected" and "shift count out of range" errors.
+-    # Validate all arguments are numeric upfront to prevent
+-    # shell injection via crafted octets in destination/gateway.
+-    for _octet in "$@"; do
+-        case "$_octet" in
+-            '' | *[!0-9]*) return 0 ;;
+-        esac
+-    done
 -
 -    while [ $# -ge 5 ]; do
 -        mask="$1"
 -
 -        # Validate mask is a number between 0-32
--        case "$mask" in
--            '' | *[!0-9]*) return 0 ;;
--        esac
 -        if [ "$mask" -lt 0 ] 2> /dev/null || [ "$mask" -gt 32 ] 2> /dev/null; then
 -            return 0
 -        fi
@@ -194,9 +208,6 @@ index 0cb00ab4..00000000
 -        # Check if destination is multicast (224.0.0.0 - 239.255.255.255)
 -        multicast=0
 -        if [ $need_dest -ge 1 ]; then
--            case "$1" in
--                '' | *[!0-9]*) return 0 ;;
--            esac
 -            if [ "$1" -ge 224 ] 2> /dev/null && [ "$1" -lt 240 ] 2> /dev/null; then
 -                multicast=1
 -            fi
@@ -349,7 +360,7 @@ index 0cb00ab4..00000000
 -exit 0
 diff --git a/modules.d/35network-legacy/dhclient.conf b/modules.d/35network-legacy/dhclient.conf
 deleted file mode 100644
-index ffd24ef6..00000000
+index ffd24ef..0000000
 --- a/modules.d/35network-legacy/dhclient.conf
 +++ /dev/null
 @@ -1,11 +0,0 @@
@@ -366,7 +377,7 @@ index ffd24ef6..00000000
 -        dhcp6.name-servers, dhcp6.sntp-servers;
 diff --git a/modules.d/35network-legacy/dhcp-multi.sh b/modules.d/35network-legacy/dhcp-multi.sh
 deleted file mode 100755
-index 1c5ee733..00000000
+index 1c5ee73..0000000
 --- a/modules.d/35network-legacy/dhcp-multi.sh
 +++ /dev/null
 @@ -1,133 +0,0 @@
@@ -505,7 +516,7 @@ index 1c5ee733..00000000
 -fi
 diff --git a/modules.d/35network-legacy/ifup.sh b/modules.d/35network-legacy/ifup.sh
 deleted file mode 100755
-index b2ed4607..00000000
+index b2ed460..0000000
 --- a/modules.d/35network-legacy/ifup.sh
 +++ /dev/null
 @@ -1,562 +0,0 @@
@@ -1073,7 +1084,7 @@ index b2ed4607..00000000
 -exit 0
 diff --git a/modules.d/35network-legacy/kill-dhclient.sh b/modules.d/35network-legacy/kill-dhclient.sh
 deleted file mode 100755
-index 9ed615fd..00000000
+index 9ed615f..0000000
 --- a/modules.d/35network-legacy/kill-dhclient.sh
 +++ /dev/null
 @@ -1,15 +0,0 @@
@@ -1094,7 +1105,7 @@ index 9ed615fd..00000000
 -done
 diff --git a/modules.d/35network-legacy/module-setup.sh b/modules.d/35network-legacy/module-setup.sh
 deleted file mode 100755
-index 463b2b98..00000000
+index 463b2b9..0000000
 --- a/modules.d/35network-legacy/module-setup.sh
 +++ /dev/null
 @@ -1,90 +0,0 @@
@@ -1190,7 +1201,7 @@ index 463b2b98..00000000
 -}
 diff --git a/modules.d/35network-legacy/net-genrules.sh b/modules.d/35network-legacy/net-genrules.sh
 deleted file mode 100755
-index cd5a669a..00000000
+index cd5a669..0000000
 --- a/modules.d/35network-legacy/net-genrules.sh
 +++ /dev/null
 @@ -1,125 +0,0 @@
@@ -1321,7 +1332,7 @@ index cd5a669a..00000000
 -} > /etc/udev/rules.d/90-net.rules
 diff --git a/modules.d/35network-legacy/parse-bond.sh b/modules.d/35network-legacy/parse-bond.sh
 deleted file mode 100755
-index ba30a3bc..00000000
+index ba30a3b..0000000
 --- a/modules.d/35network-legacy/parse-bond.sh
 +++ /dev/null
 @@ -1,76 +0,0 @@
@@ -1403,7 +1414,7 @@ index ba30a3bc..00000000
 -done
 diff --git a/modules.d/35network-legacy/parse-bridge.sh b/modules.d/35network-legacy/parse-bridge.sh
 deleted file mode 100755
-index d331f9d7..00000000
+index d331f9d..0000000
 --- a/modules.d/35network-legacy/parse-bridge.sh
 +++ /dev/null
 @@ -1,49 +0,0 @@
@@ -1458,7 +1469,7 @@ index d331f9d7..00000000
 -done
 diff --git a/modules.d/35network-legacy/parse-ibft.sh b/modules.d/35network-legacy/parse-ibft.sh
 deleted file mode 100755
-index 1937f138..00000000
+index 1937f13..0000000
 --- a/modules.d/35network-legacy/parse-ibft.sh
 +++ /dev/null
 @@ -1,10 +0,0 @@
@@ -1474,7 +1485,7 @@ index 1937f138..00000000
 -fi
 diff --git a/modules.d/35network-legacy/parse-ifname.sh b/modules.d/35network-legacy/parse-ifname.sh
 deleted file mode 100755
-index be7b6ad6..00000000
+index be7b6ad..0000000
 --- a/modules.d/35network-legacy/parse-ifname.sh
 +++ /dev/null
 @@ -1,24 +0,0 @@
@@ -1504,7 +1515,7 @@ index be7b6ad6..00000000
 -done
 diff --git a/modules.d/35network-legacy/parse-ip-opts.sh b/modules.d/35network-legacy/parse-ip-opts.sh
 deleted file mode 100755
-index eea71e40..00000000
+index eea71e4..0000000
 --- a/modules.d/35network-legacy/parse-ip-opts.sh
 +++ /dev/null
 @@ -1,151 +0,0 @@
@@ -1661,7 +1672,7 @@ index eea71e40..00000000
 -[ -n "$IFACES" ] && echo "$IFACES" > /tmp/net.ifaces
 diff --git a/modules.d/35network-legacy/parse-team.sh b/modules.d/35network-legacy/parse-team.sh
 deleted file mode 100755
-index 83badc99..00000000
+index 83badc9..0000000
 --- a/modules.d/35network-legacy/parse-team.sh
 +++ /dev/null
 @@ -1,66 +0,0 @@
@@ -1733,7 +1744,7 @@ index 83badc99..00000000
 -done
 diff --git a/modules.d/35network-legacy/parse-vlan.sh b/modules.d/35network-legacy/parse-vlan.sh
 deleted file mode 100755
-index c23f8331..00000000
+index c23f833..0000000
 --- a/modules.d/35network-legacy/parse-vlan.sh
 +++ /dev/null
 @@ -1,37 +0,0 @@

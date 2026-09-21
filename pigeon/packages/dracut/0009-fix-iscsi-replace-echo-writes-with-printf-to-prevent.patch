@@ -1,7 +1,7 @@
-From aadea48ad5b46e25b758cb419eb085533f9fa31f Mon Sep 17 00:00:00 2001
+From 221d5a344b4fd6fa3ec85698a77e81349ea68530 Mon Sep 17 00:00:00 2001
 From: Pavel Valena <pvalena@redhat.com>
 Date: Thu, 7 May 2026 00:45:31 +0200
-Subject: [PATCH 09/12] fix(iscsi): replace `echo` writes with `printf` to
+Subject: [PATCH 2/3] fix(iscsi): replace `echo` writes with `printf` to
  prevent variable injection
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -23,28 +23,28 @@ literally — breaking the connection rather than allowing injection.
  2 files changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/modules.d/74iscsi/iscsiroot.sh b/modules.d/74iscsi/iscsiroot.sh
-index 50b10259..50030e20 100755
+index 67ddcab..b416388 100755
 --- a/modules.d/74iscsi/iscsiroot.sh
 +++ b/modules.d/74iscsi/iscsiroot.sh
-@@ -144,7 +144,7 @@ handle_netroot() {
- 
+@@ -145,7 +145,7 @@ handle_netroot() {
      if [ -z "$iscsi_initiator" ] && [ -f /sys/firmware/ibft/initiator/initiator-name ] && ! [ -f /tmp/iscsi_set_initiator ]; then
          iscsi_initiator=$(while read -r line || [ -n "$line" ]; do echo "$line"; done < /sys/firmware/ibft/initiator/initiator-name)
+         iscsi_initiator=$(normalized_iscsi_name "$iscsi_initiator")
 -        echo "InitiatorName=$iscsi_initiator" > /run/initiatorname.iscsi
 +        printf 'InitiatorName=%q\n' "$iscsi_initiator" > /run/initiatorname.iscsi
          rm -f /etc/iscsi/initiatorname.iscsi
          mkdir -p /etc/iscsi
          ln -fs /run/initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
-@@ -165,7 +165,7 @@ handle_netroot() {
+@@ -166,7 +166,7 @@ handle_netroot() {
  
      if [ -z "$iscsi_initiator" ]; then
-         iscsi_initiator=$(iscsi-iname)
+         iscsi_initiator=$(normalized_iscsi_name "$(iscsi-iname)")
 -        echo "InitiatorName=$iscsi_initiator" > /run/initiatorname.iscsi
 +        printf 'InitiatorName=%q\n' "$iscsi_initiator" > /run/initiatorname.iscsi
          rm -f /etc/iscsi/initiatorname.iscsi
          mkdir -p /etc/iscsi
          ln -fs /run/initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
-@@ -189,7 +189,7 @@ handle_netroot() {
+@@ -190,7 +190,7 @@ handle_netroot() {
          iscsi_lun=0
      fi
  
@@ -53,7 +53,7 @@ index 50b10259..50030e20 100755
      ln -fs /run/initiatorname.iscsi /dev/.initiatorname.iscsi
      if ! [ -e /etc/iscsi/initiatorname.iscsi ]; then
          mkdir -p /etc/iscsi
-@@ -210,14 +210,14 @@ handle_netroot() {
+@@ -211,14 +211,14 @@ handle_netroot() {
  
      if [ "$root" = "dhcp" ] || [ "$netroot" = "dhcp" ]; then
          # if root is not specified try to mount the whole iSCSI LUN
@@ -71,21 +71,21 @@ index 50b10259..50030e20 100755
  
      if strglobin "$iscsi_target_ip" '*:*:*' && ! strglobin "$iscsi_target_ip" '['; then
 diff --git a/modules.d/74iscsi/parse-iscsiroot.sh b/modules.d/74iscsi/parse-iscsiroot.sh
-index 0b12d35b..95860804 100755
+index 7ff9bda..7f9fad9 100755
 --- a/modules.d/74iscsi/parse-iscsiroot.sh
 +++ b/modules.d/74iscsi/parse-iscsiroot.sh
-@@ -111,7 +111,7 @@ fi
+@@ -112,7 +112,7 @@ fi
  
  if arg=$(getarg rd.iscsi.initiator -d iscsi_initiator=) && [ -n "$arg" ] && ! [ -f /run/initiatorname.iscsi ]; then
-     iscsi_initiator=$arg
+     iscsi_initiator=$(normalized_iscsi_name "$arg")
 -    echo "InitiatorName=$iscsi_initiator" > /run/initiatorname.iscsi
 +    printf 'InitiatorName=%q\n' "$iscsi_initiator" > /run/initiatorname.iscsi
      ln -fs /run/initiatorname.iscsi /dev/.initiatorname.iscsi
      rm -f /etc/iscsi/initiatorname.iscsi
      mkdir -p /etc/iscsi
-@@ -127,7 +127,7 @@ fi
- if [ -z "$iscsi_initiator" ] && [ -f /sys/firmware/ibft/initiator/initiator-name ] && ! [ -f /tmp/iscsi_set_initiator ]; then
+@@ -129,7 +129,7 @@ if [ -z "$iscsi_initiator" ] && [ -f /sys/firmware/ibft/initiator/initiator-name
      iscsi_initiator=$(while read -r line || [ -n "$line" ]; do echo "$line"; done < /sys/firmware/ibft/initiator/initiator-name)
+     iscsi_initiator=$(normalized_iscsi_name "$iscsi_initiator")
      if [ -n "$iscsi_initiator" ]; then
 -        echo "InitiatorName=$iscsi_initiator" > /run/initiatorname.iscsi
 +        printf 'InitiatorName=%q\n' "$iscsi_initiator" > /run/initiatorname.iscsi
