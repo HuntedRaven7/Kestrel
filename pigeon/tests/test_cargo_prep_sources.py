@@ -69,7 +69,7 @@ def test_spec_side_vendored_sources_are_consistent(spec):
         pytest.skip("spec does not declare a vendored-sources table itself")
     # With `%cargo_prep -v DIR` the macro writes the vendored table; declaring
     # it again in the spec is a duplicate key.
-    assert not re.search(r"^%cargo_prep\s+\S+", body, re.M), (
+    assert not re.search(r"^%cargo_prep\s+-v\b", body, re.M), (
         "%cargo_prep -v DIR already writes [source.vendored-sources]; "
         "declaring it again in the spec is a duplicate key"
     )
