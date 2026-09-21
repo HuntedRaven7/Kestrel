@@ -18,6 +18,11 @@ Patch:          https://github.com/pydantic/pydantic/commit/e3fe82eba47c78758a21
 
 BuildArch:      noarch
 
+# Kestrel: stated explicitly (Fedora relies on it transitively). The spec's
+# %generate_buildrequires runs on %pyproject_* macros, which only expand once
+# this package is installed; without the static BR, rpmbuild -br stops at
+# "Failed build dependencies" before the dynamic BRs are ever resolved.
+BuildRequires:  pyproject-rpm-macros
 BuildRequires:  tomcli
 # For check phase
 %if %{with tests}

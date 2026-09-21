@@ -440,10 +440,17 @@
       "filename": "glib-networking-2.90.alpha.tar.xz"
     },
     "glycin": {
-      "version": "2.2~beta",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/glycin/glycin-2.2.beta.tar.xz/sha512/e6b9ba38e3cd8f121f344f53fc8643c29f679d1347973a89d517d6ef2712364849dafdf55e7143a9a49f13282539ad2c34fb0176bb083a01458feda02a3efdb8/glycin-2.2.beta.tar.xz",
-      "sha512": "e6b9ba38e3cd8f121f344f53fc8643c29f679d1347973a89d517d6ef2712364849dafdf55e7143a9a49f13282539ad2c34fb0176bb083a01458feda02a3efdb8",
-      "filename": "glycin-2.2.beta.tar.xz"
+      "version": "2.2.0",
+      "url_template": "https://download.gnome.org/sources/glycin/2.2/glycin-{version}.tar.xz",
+      "sha512": "de32c4819d86a8107f644822d4d948750645464e68f0949632ad96fc083700abafb5407aa38ca82ff9b0a18948ccdcbebee220be5c9ae484d1c9643f5125f88b",
+      "filename": "glycin-2.2.0.tar.xz",
+      "extra_sources": [
+        {
+          "filename": "glycin-2.2.0-vendor.tar.xz",
+          "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/glycin/glycin-2.2.0-vendor.tar.xz/sha512/75e2dae1337a79b829d22b370e70262660ceb297f9778ad03d949e3c13d9442c90c89a5462fa21b14771fd5ba2cdbf1356a5db4dbb155c633dec2ae9a2ec45e7/glycin-2.2.0-vendor.tar.xz",
+          "sha512": "75e2dae1337a79b829d22b370e70262660ceb297f9778ad03d949e3c13d9442c90c89a5462fa21b14771fd5ba2cdbf1356a5db4dbb155c633dec2ae9a2ec45e7"
+        }
+      ]
     },
     "gnome-autoar": {
       "version": "0.5.0",
@@ -2239,10 +2246,10 @@
       "filename": "v1.0.1.tar.gz"
     },
     "vulkan-headers": {
-      "version": "1.4.350.0",
-      "url_template": "https://src.fedoraproject.org/repo/pkgs/rpms/vulkan-headers/Vulkan-Headers-sdk-{version}.tar.gz/sha512/b7987072292d81bae34d28878b3cc12845db0a51710b4d5c21cf804d7c593b1db9ee736f10b8d7696150a25d9e8e2d3d1e17e670c6cca029858de027d5df08ea/Vulkan-Headers-sdk-{version}.tar.gz",
-      "sha512": "b7987072292d81bae34d28878b3cc12845db0a51710b4d5c21cf804d7c593b1db9ee736f10b8d7696150a25d9e8e2d3d1e17e670c6cca029858de027d5df08ea",
-      "filename": "Vulkan-Headers-sdk-1.4.350.0.tar.gz"
+      "version": "1.4.357.0",
+      "url_template": "https://github.com/KhronosGroup/Vulkan-Headers/archive/vulkan-sdk-{version}.tar.gz",
+      "sha512": "253975e391fe23a3a63f9c10b7510e5e5bce6b15b36a81499eba9ceb1000cbf69b00807442b4678e69d4b6a2a8ec14c6c0d9d05ec739c277ca1cd8ee7d5d84f6",
+      "filename": "vulkan-sdk-1.4.357.0.tar.gz"
     },
     "vulkan-loader": {
       "version": "1.4.357.0",

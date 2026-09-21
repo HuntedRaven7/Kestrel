@@ -31,6 +31,13 @@ BuildOption(conf): -DRE2_TEST:BOOL=%{with ctest}
 
 BuildRequires:  gcc-c++
 
+# Kestrel: stated explicitly (Fedora relies on them transitively). The
+# declarative BuildSystem and %pyproject_* macros only expand once these are
+# installed; without the static BRs, rpmbuild -br stops at "Failed build
+# dependencies" before the dynamic BRs are ever resolved.
+BuildRequires:  cmake-rpm-macros
+BuildRequires:  pyproject-rpm-macros
+
 BuildRequires:  cmake(absl)
 BuildRequires:  pkgconfig(icu-uc)
 %if %{with ctest}
