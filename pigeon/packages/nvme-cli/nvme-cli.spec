@@ -47,7 +47,10 @@ nvme-cli provides NVM-Express user space tooling for Linux.
 
 
 %build
-%meson -Dudevrulesdir=%{_udevrulesdir} -Dsystemddir=%{_unitdir} -Dpdc-enabled=false -Ddocs=all -Ddocs-build=true -Dhtmldir=%{_pkgdocdir}
+%meson -Dudevrulesdir=%{_udevrulesdir} -Dsystemddir=%{_unitdir} -Ddocs=all -Ddocs-build=true -Dhtmldir=%{_pkgdocdir}
+# Kestrel: 2.x's -Dpdc-enabled= flag is dropped; upstream 3.1 removed the pdc
+# option (persistent discovery is now the nvme-discoverd feature, off by
+# default). Do not re-add on re-import without checking meson_options.txt.
 %meson_build
 
 
