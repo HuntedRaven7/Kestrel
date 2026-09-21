@@ -85,6 +85,10 @@ jobs:
 
       - name: Install podman
         run: |
+          # The runner image's Google Chrome apt repo frequently desyncs
+          # (Packages.gz size mismatch), failing the whole update. Nothing we
+          # install comes from it, so drop it before updating.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update -qq
           sudo apt-get install -y -qq podman
 
