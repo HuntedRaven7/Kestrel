@@ -114,11 +114,21 @@ use the "default" feature of the "%{crate}" crate.
 # Extract vendored dependencies
 tar -xf %{SOURCE2}
 
-# -v vendor makes %cargo_prep write [source.vendored-sources] itself and
-# redirect crates-io to it. Do not re-declare those tables in a heredoc:
-# the macro already wrote them and cargo fails to parse the config with
-# "duplicate key" (this broke the stage-2 rebuild).
-%cargo_prep -v vendor
+# %cargo_prep -v vendor would write [source.vendored-sources] and
+# [source.crates-io] with replace-with = "vendored-sources". But older
+# cargo-rpm-macros versions (pre-28.5) have a bug where plain %cargo_prep
+# already wrote a [source.crates-io] table, so appending a second one via
+# -v produces invalid TOML ("duplicate key"). Use plain %cargo_prep and
+# repoint the existing replace-with key with sed instead.
+%cargo_prep
+sed -i 's|^replace-with = "local-registry"$|replace-with = "vendored-sources"|' \
+    .cargo/config.toml
+
+cat >> .cargo/config.toml <<'EOF'
+
+[source.vendored-sources]
+directory = "vendor"
+EOF
 
 %build
 export CARGO_NET_OFFLINE=true

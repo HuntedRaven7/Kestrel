@@ -15,6 +15,8 @@ Summary: Portal frontend service to flatpak
 License: LGPL-2.1-or-later
 URL:     https://github.com/flatpak/xdg-desktop-portal/
 Source0: https://github.com/flatpak/xdg-desktop-portal/releases/download/%{version}/%{name}-%{version}.tar.xz
+Source2: org.freedesktop.portal.Flatpak.xml
+Patch1: meson-flatpak-xml.patch
 
 BuildRequires: gcc
 BuildRequires: gettext
