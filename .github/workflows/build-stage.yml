@@ -73,7 +73,10 @@ jobs:
           # artifact's RPMs land flat in work/prior. Tolerant by design (see
           # continue-on-error): an early stage simply has no priors yet.
           # Backoff is exponential with jitter: bursts of matrix jobs share
-          # one API rate limit, so hammering a 403 makes it worse.
+          # one API rate limit, so hammering a 403 makes it worse. Rate-limit
+          # errors are not retried at all: the budget will not clear while
+          # sibling jobs keep spending it, so fail fast and let the build
+          # either pass on Fedora fallbacks or fail loudly at rpmbuild.
           mkdir -p work/prior
           tmpdir=$(mktemp -d)
           delay=15
@@ -83,7 +86,10 @@ jobs:
             if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
               find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
               break
-            elif echo "$err" | grep -q "no artifact matches"; then
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              break
+            elif echo "$err" | grep -qi "rate limit"; then
+              echo "::warning title=artifact download rate limited::priors unavailable, continuing without them"
               break
             fi
             echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"

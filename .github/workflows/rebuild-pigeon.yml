@@ -213,7 +213,10 @@ jobs:
           # artifact's RPMs land flat in ~/stages. Tolerant by design (see
           # continue-on-error): the exists check below handles the empty case.
           # Backoff is exponential with jitter: bursts of matrix jobs share
-          # one API rate limit, so hammering a 403 makes it worse.
+          # one API rate limit, so hammering a 403 makes it worse. Rate-limit
+          # errors are not retried at all: the budget will not clear while
+          # sibling jobs keep spending it, so fail fast and let the build
+          # either pass on fallbacks or fail loudly at rpmbuild.
           mkdir -p ~/stages
           tmpdir=$(mktemp -d)
           delay=15
@@ -221,9 +224,12 @@ jobs:
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
             if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
-              find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
+              find "$tmpdir" -name '*.rpm' -exec cp -t ~/stages/ {} +
               break
-            elif echo "$err" | grep -q "no artifact matches"; then
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              break
+            elif echo "$err" | grep -qi "rate limit"; then
+              echo "::warning title=artifact download rate limited::priors unavailable, continuing without them"
               break
             fi
             echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
@@ -284,7 +290,10 @@ jobs:
           # artifact's RPMs land flat in ~/stages. Tolerant by design (see
           # continue-on-error): the exists check below handles the empty case.
           # Backoff is exponential with jitter: bursts of matrix jobs share
-          # one API rate limit, so hammering a 403 makes it worse.
+          # one API rate limit, so hammering a 403 makes it worse. Rate-limit
+          # errors are not retried at all: the budget will not clear while
+          # sibling jobs keep spending it, so fail fast and let the build
+          # either pass on fallbacks or fail loudly at rpmbuild.
           mkdir -p ~/stages
           tmpdir=$(mktemp -d)
           delay=15
@@ -292,9 +301,12 @@ jobs:
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
             if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'stage-*' --dir "$tmpdir" 2>&1); then
-              find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
+              find "$tmpdir" -name '*.rpm' -exec cp -t ~/stages/ {} +
               break
-            elif echo "$err" | grep -q "no artifact matches"; then
+            elif echo "$err" | grep -qi "no artifact matches"; then
+              break
+            elif echo "$err" | grep -qi "rate limit"; then
+              echo "::warning title=artifact download rate limited::priors unavailable, continuing without them"
               break
             fi
             echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
