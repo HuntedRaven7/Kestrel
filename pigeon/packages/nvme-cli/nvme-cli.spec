@@ -58,7 +58,7 @@ nvme-cli provides NVM-Express user space tooling for Linux.
 
 
 %build
-%meson -Dudevrulesdir=%{_udevrulesdir} -Dsystemddir=%{_unitdir} -Ddocs=all -Ddocs-build=true -Dhtmldir=%{_pkgdocdir} -Dpython=disabled
+%meson -Dudevrulesdir=%{_udevrulesdir} -Dsystemddir=%{_unitdir} -Ddocs=all -Ddocs-build=true -Dhtmldir=%{_pkgdocdir} -Drstdir=%{_pkgdocdir} -Dpython=disabled
 # Kestrel: 2.x's -Dpdc-enabled= flag is dropped; upstream 3.1 removed the pdc
 # option (persistent discovery is now the nvme-discoverd feature, off by
 # default). Do not re-add on re-import without checking meson_options.txt.
@@ -93,6 +93,8 @@ rm -rf %{buildroot}%{_pkgdocdir}/nvme
 
 %post
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/#_systemd
+# Kestrel: 3.1 bundles libnvme3 in this package; refresh the linker cache.
+/sbin/ldconfig
 %systemd_post nvmefc-boot-connections.service
 %systemd_post nvmf-autoconnect.service
 %systemd_post nvmf-connect@.service
@@ -109,6 +111,7 @@ fi
 %systemd_preun nvmf-connect-nbft.service
 
 %postun
+/sbin/ldconfig
 %systemd_postun nvmefc-boot-connections.service
 %systemd_postun nvmf-autoconnect.service
 %systemd_postun nvmf-connect@.service
@@ -119,12 +122,20 @@ fi
 %license LICENSE
 %doc %{_pkgdocdir}
 %{_sbindir}/nvme
+%{_libdir}/libnvme3.so.*
+%{_libdir}/pkgconfig/libnvme3.pc
+%{_includedir}/libnvme3
 %{_mandir}/man1/nvme*.gz
+# Kestrel: 3.1 ships libnvme3 API (man2) and config (man5) pages from
+# -Ddocs=all; the pre-3.1 spec did not list them.
+%{_mandir}/man2/nvme*-libnvme3.2.gz
+%{_mandir}/man5/nvme*.5.gz
 %{_datadir}/bash-completion/completions/nvme
 %{_datadir}/zsh/site-functions/_nvme
 %dir %{_sysconfdir}/nvme
 # Kestrel: upstream 3.1 dropped the shipped discovery.conf; nvme reads it
 # from /etc/nvme but meson only installs nvme-fabrics.conf.sample.
+%{_sysconfdir}/nvme/nvme-fabrics.conf.sample
 %{_unitdir}/nvmefc-boot-connections.service
 %{_unitdir}/nvmf-autoconnect.service
 %{_unitdir}/nvmf-connect.target
@@ -133,6 +144,7 @@ fi
 %{_udevrulesdir}/65-persistent-net-nbft.rules
 %{_udevrulesdir}/70-nvmf-autoconnect.rules
 %{_udevrulesdir}/70-nvmf-keys.rules
+%{_udevrulesdir}/70-nvmf-registry.rules
 %{_udevrulesdir}/71-nvmf-netapp.rules
 %{_udevrulesdir}/71-nvmf-vastdata.rules
 %{_udevrulesdir}/71-nvmf-hpe.rules
