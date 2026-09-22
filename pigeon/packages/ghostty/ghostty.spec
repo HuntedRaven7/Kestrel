@@ -26,6 +26,11 @@ BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  blueprint-compiler
 
+# libghostty-vt.so* is built by Zig without a GNU build-id note; find-debuginfo
+# --strict-build-id would abort the build on it. Undefine only this one check so
+# the lib is packaged (find-debuginfo still skips it); all other checks stay.
+%undefine _missing_build_ids_terminate_build
+
 %description
 Ghostty terminal emulator — default terminal of the Warbler desktop.
 
@@ -53,9 +58,12 @@ zig build -Doptimize=ReleaseFast -p %{buildroot}%{_prefix}
 %files
 %license LICENSE
 %{_bindir}/ghostty
+%{_prefix}/lib/libghostty-vt.so*
+%{_includedir}/ghostty
 %{_datadir}/applications/com.mitchellh.ghostty.desktop
 %{_datadir}/ghostty/
 %{_datadir}/icons/hicolor/*/apps/com.mitchellh.ghostty*.png
+%{_datadir}/pkgconfig/libghostty-vt.pc
 %{_datadir}/terminfo/
 %{_mandir}/man1/ghostty.1*
 %{_mandir}/man5/ghostty.5*
