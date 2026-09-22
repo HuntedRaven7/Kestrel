@@ -66,7 +66,11 @@ tar -xzf %{SOURCE2} -C subprojects/libnkutils --strip-components=1
 %files
 %license COPYING
 %{_bindir}/rofi*
+%{_includedir}/rofi/
+%{_libdir}/pkgconfig/rofi.pc
 %{_datadir}/rofi/
+%{_datadir}/applications/rofi*.desktop
+%{_datadir}/icons/hicolor/scalable/apps/rofi.svg
 %{_mandir}/man1/rofi*
 %{_mandir}/man5/rofi*
 
