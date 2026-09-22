@@ -1677,7 +1677,7 @@
       "version": "3.1",
       "url_template": "https://github.com/linux-nvme/nvme-cli/archive/refs/tags/v{version}.tar.gz",
       "sha512": "980a806125c75313aefe6f24aef13b850d69893407fc5ccf549b74829b1622efdb8f28f794dff6f7b258bb2a8dcd16c7fcf457a427a04eaa558ff38c954ed2e5",
-      "stage": 3,
+      "stage": 2,
       "note": "Fedora dist-git import. NVMe CLI tools.",
       "renovate": {
         "datasource": "github-tags",
