@@ -407,7 +407,7 @@
       "version": "1.3.1",
       "url_template": "https://github.com/ghostty-org/ghostty/archive/refs/tags/v{version}.tar.gz",
       "sha512": "b9d2a35ba71111cab27a67279279a22bdb9ab6b371374cb6da5c0f543610a848f37d6114fb8f0555afd8817203df16a203257df8fa5bfe43482c2f2a115f2662",
-      "stage": 2,
+      "stage": 1,
       "renovate": {
         "datasource": "github-tags",
         "depName": "ghostty-org/ghostty"
