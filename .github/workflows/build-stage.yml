@@ -86,13 +86,18 @@ jobs:
           if ! command -v gh >/dev/null 2>&1; then
             echo "::error title=gh CLI missing::gh run download needs the GitHub CLI on the runner; install it in this workflow before downloading priors"
           fi
-          tmpdir=$(mktemp -d)
+          # Stage on the runner workspace, not /tmp: hosted /tmp is a small
+          # tmpfs, and unzipping a multi-GB merged-stage blob there dies with
+          # EDQUOT ("disk quota exceeded") on every job. mktemp under work/
+          # lands on the same big disk work/prior already lives on.
+          mkdir -p work
+          tmpdir=$(mktemp -d "work/priors-tmp.XXXXXX")
           delay=15
           for attempt in 1 2 3 4 5; do
             rm -rf "$tmpdir"
             mkdir -p "$tmpdir"
             if err=$(gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" --pattern 'merged-stage-*' --dir "$tmpdir" 2>&1); then
-              find "$tmpdir" -name '*.rpm' -exec cp -t work/prior/ {} +
+              find "$tmpdir" -name '*.rpm' -exec mv -t work/prior/ {} +
               break
             elif echo "$err" | grep -qi "no artifact matches"; then
               break
