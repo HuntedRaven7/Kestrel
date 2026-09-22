@@ -82,6 +82,10 @@ jobs:
           # sibling jobs keep spending it, so fail fast and let the build
           # either pass on Fedora fallbacks or fail loudly at rpmbuild.
           mkdir -p work/prior
+          reason=""
+          if ! command -v gh >/dev/null 2>&1; then
+            echo "::error title=gh CLI missing::gh run download needs the GitHub CLI on the runner; install it in this workflow before downloading priors"
+          fi
           tmpdir=$(mktemp -d)
           delay=15
           for attempt in 1 2 3 4 5; do
@@ -93,14 +97,27 @@ jobs:
             elif echo "$err" | grep -qi "no artifact matches"; then
               break
             elif echo "$err" | grep -qi "rate limit"; then
+              reason="gh run download was rate-limited"
               echo "::warning title=artifact download rate limited::priors unavailable, continuing without them"
               break
+            elif echo "$err" | grep -qi "command not found\|not authenticated\|no such host\|refused to connect"; then
+              reason="permanent gh failure, retries will not help"
+              echo "::error title=artifact download permanent failure::$(echo "$err" | tr '\n' ' ' | head -c 500)"
+              break
             fi
-            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry"
+            reason="gh run download failed after $attempt attempt(s)"
+            echo "::warning title=artifact download retry::attempt $attempt failed, waiting ${delay}s before retry: $(echo "$err" | tr '\n' ' ' | head -c 500)"
             sleep $delay
             delay=$((delay * 2 + RANDOM % 10))
           done
           rm -rf "$tmpdir"
+          # Fail loudly instead of silently: an empty prior dir means every
+          # versioned BuildRequires can only resolve Fedora/hummingbird
+          # fallbacks (F44 pango is 1.57.1, gtk4 needs >= 1.58), and the
+          # package then dies at rpmbuild -br looking like a spec bug.
+          if [ "${{ inputs.stage }}" != "0" ] && [ -z "$(find work/prior -name '*.rpm' -print -quit)" ]; then
+            echo "::error title=prior stage RPMs missing::stage ${{ inputs.stage }} found no merged-stage-* priors (${reason:-no artifact matches}); exact/versioned BuildRequires can only resolve Fedora/hummingbird fallbacks, so rpmbuild -br will fail. Re-run the wave once the GH API rate limit clears."
+          fi
         continue-on-error: true
 
       - name: Resolve build root for cache key
