@@ -106,8 +106,8 @@ gh workflow run import-package.yml -f package=pkgname
 - [docs/SKILL.md](docs/SKILL.md) — Skill router
 
 > Inspiration
-- [Utah](https://github.com/projectbluefin/utah)
-- [Utah-Packages](https://github.com/projectbluefin/utah-packages)
+- [Utah](https://github.com/projectbluefin/utah) Project Bluefins Fedora Hummingbird image!
+- [Utah-Packages](https://github.com/projectbluefin/utah-packages) The package factory for Utah!
 
 ## License
 
