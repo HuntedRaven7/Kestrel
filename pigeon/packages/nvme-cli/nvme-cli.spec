@@ -123,7 +123,8 @@ fi
 %{_datadir}/bash-completion/completions/nvme
 %{_datadir}/zsh/site-functions/_nvme
 %dir %{_sysconfdir}/nvme
-%config(noreplace) %{_sysconfdir}/nvme/discovery.conf
+# Kestrel: upstream 3.1 dropped the shipped discovery.conf; nvme reads it
+# from /etc/nvme but meson only installs nvme-fabrics.conf.sample.
 %{_unitdir}/nvmefc-boot-connections.service
 %{_unitdir}/nvmf-autoconnect.service
 %{_unitdir}/nvmf-connect.target
