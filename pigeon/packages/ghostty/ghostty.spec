@@ -21,6 +21,7 @@ Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{vers
 
 BuildRequires:  gcc
 BuildRequires:  pkgconfig(gtk4)
+BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  blueprint-compiler
