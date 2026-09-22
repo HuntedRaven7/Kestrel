@@ -41,6 +41,10 @@ BuildRequires:  pkgconfig(libkmod)
 BuildRequires:  keyutils-libs-devel
 
 BuildRequires:  asciidoc
+# Kestrel: upstream 3.1 builds the libnvme docs with Sphinx when
+# -Ddocs-build=true (libnvme/doc/meson.build requires sphinx-build);
+# the Fedora rawhide spec carries this BR but the import dropped it.
+BuildRequires:  python3-sphinx
 BuildRequires:  xmlto
 
 Requires:       util-linux
