@@ -83,6 +83,12 @@ mkdir -p $RPM_BUILD_ROOT%{nmlibdir}/conf.d
 rm -f %{buildroot}%{_sysconfdir}/nvme/hostid
 rm -f %{buildroot}%{_sysconfdir}/nvme/hostnqn
 
+# Kestrel: upstream 3.1 added its own 80-nvmf-connect-nbft.sh NetworkManager
+# dispatcher hook (2.x never installed one). We ship the renamed
+# 99-nvme-nbft-connect.sh hook instead; an extra upstream copy would fire the
+# same nvmf-connect-nbft.service twice per interface event.
+rm -f %{buildroot}%{nmlibdir}/dispatcher.d/80-nvmf-connect-nbft.sh
+
 # Do not install the dracut rule yet.  See rhbz 1742764
 rm -f %{buildroot}/usr/lib/dracut/dracut.conf.d/70-nvmf-autoconnect.conf
 
@@ -122,13 +128,13 @@ fi
 %license LICENSE
 %doc %{_pkgdocdir}
 %{_sbindir}/nvme
-%{_libdir}/libnvme3.so.*
+%{_libdir}/libnvme3.so*
 %{_libdir}/pkgconfig/libnvme3.pc
 %{_includedir}/libnvme3
 %{_mandir}/man1/nvme*.gz
 # Kestrel: 3.1 ships libnvme3 API (man2) and config (man5) pages from
 # -Ddocs=all; the pre-3.1 spec did not list them.
-%{_mandir}/man2/nvme*-libnvme3.2.gz
+%{_mandir}/man2/*-libnvme3.2.gz
 %{_mandir}/man5/nvme*.5.gz
 %{_datadir}/bash-completion/completions/nvme
 %{_datadir}/zsh/site-functions/_nvme
