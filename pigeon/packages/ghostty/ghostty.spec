@@ -33,6 +33,10 @@ Ghostty terminal emulator — default terminal of the Warbler desktop.
 %autosetup -n ghostty-%{version} -p1
 
 %build
+# Compile and stage happens in %install: rpmbuild re-creates %{buildroot}
+# between %build and %install, so zig installs done here would be wiped.
+
+%install
 # Install Zig 0.15.2 (newer Fedora 44 ships 0.16.0 which has breaking changes;
 # older versions can't build ghostty v1.3.1 which requires 0.15.2).
 # See: https://ziglang.org/download/0.15.2/
@@ -45,9 +49,6 @@ tar -xf /tmp/zig.tar.xz -C /tmp
 export PATH="/tmp/zig-x86_64-linux-${ZIG_VER}:$PATH"
 
 zig build -Doptimize=ReleaseFast -p %{buildroot}%{_prefix}
-
-%install
-# zig build -p installs above; nothing more to stage.
 
 %files
 %license LICENSE
