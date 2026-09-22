@@ -98,16 +98,16 @@ gh workflow run import-package.yml -f package=pkgname
 
 ## References
 
-> Docs
+**Docs**
 - [AGENTS.md](AGENTS.md) — Agent instructions + skill router
 - [docs/architecture.md](docs/architecture.md) — Architecture details
 - [docs/building.md](docs/building.md) — Build instructions
 - [docs/targeting-hummingbird.md](docs/targeting-hummingbird.md) — Hummingbird targeting
 - [docs/SKILL.md](docs/SKILL.md) — Skill router
 
-> Inspiration
-- [Utah](https://github.com/projectbluefin/utah) Project Bluefins Fedora Hummingbird image!
-- [Utah-Packages](https://github.com/projectbluefin/utah-packages) The package factory for Utah!
+**Inspiration**
+- [Utah](https://github.com/projectbluefin/utah) — Project Bluefins Fedora Hummingbird image!
+- [Utah-Packages](https://github.com/projectbluefin/utah-packages) — The package factory for Utah!
 
 ## License
 
