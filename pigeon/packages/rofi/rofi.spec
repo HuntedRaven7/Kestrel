@@ -18,6 +18,7 @@ Source2:        libnkutils-master.tar.gz
 BuildRequires:  gcc
 BuildRequires:  meson
 BuildRequires:  ninja-build
+BuildRequires:  pandoc
 BuildRequires:  flex
 BuildRequires:  bison
 BuildRequires:  pkgconfig(cairo)
