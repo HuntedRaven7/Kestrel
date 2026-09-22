@@ -1,6 +1,10 @@
 # Project Kestrel
 
-> One source of reason for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
+> [!WARNING]
+> THIS IS ONLY FOR ROBIN THE MAKER OF THIS REPO, YOU WILL NOT GET ANY SUPPORT WHEN USING THESE IMAGES INSTEAD USE THIS AS A BASE FOR YOUR OWN.
+
+
+One source of reason for Fedora Hummingbird images: **Pigeon** (package factory) → **Warbler** (desktop) + **Woodpecker** (server).
 
 ## Architecture
 
@@ -13,34 +17,6 @@ Swan/
 ├── docs/                # Architecture, building, targeting-hummingbird
 ├── .github/workflows/   # CI/CD (build, test, sign, scan, promote)
 └── .agents/skills/      # Agent skills for specialized tasks
-```
-
-## Quick Start
-
-```bash
-# Validate configuration
-just check
-
-# Run tests
-just test
-
-# Build Pigeon package factory (local)
-just build-pigeon
-
-# Build Warbler desktop (flavor: main, nvidia, gaming, nvidia-gaming)
-just build-warbler flavor=main
-
-# Build Woodpecker server
-just build-woodpecker
-
-# Build ISO (requires bootc-image-builder)
-just iso image=warbler flavor=main
-
-# Import package from Fedora dist-git rawhide
-just import pkg=wlroots
-
-# Sync Bluefin base.toml for drift detection
-just sync-bluefin-toml
 ```
 
 ## Images
@@ -68,15 +44,7 @@ just sync-bluefin-toml
 
 ## Packages (Pigeon)
 
-56 packages in `pigeon/config/upstream-sources.json`, managed by Packit + Renovate.
-
-**Priority packages (built in stages):**
-
-| Stage | Packages |
-|-------|----------|
-| 0 | `wlroots 0.20.2`, `scenefx 0.5` |
-| 1 | `mango 0.17.2`, `quickshell 0.3.1` |
-| 2 | `awww 0.12.1`, `rofi 1.7.9.1`, `ghostty 1.3.1`, `sddm 0.21.0` + portal stack |
+145 packages in `pigeon/config/upstream-sources.json`, managed by Packit + Renovate.
 
 All packages:
 - Verified via `source_pipeline.py` (SHA-512 + optional signature verification)
@@ -93,22 +61,6 @@ Today the images still consume some base packages directly; each one is tracked 
 - `upstream-sources.json` is the allow-list: a package with no entry cannot build or publish.
 - `recalculate-gaps.yml` (every 6h) diffs the Hummingbird base + repo against the image contracts and reports what Pigeon still needs to absorb.
 - Rule of thumb: leaf apps and the desktop stack first, toolchain and base libraries last — never rebuild what Hummingbird's hardened pipeline already owns unless the desktop needs a newer or different build.
-
-## CI/CD
-
-Workflows in `.github/workflows/`:
-
-| Workflow | Purpose |
-|----------|---------|
-| `validate.yml` | Factory contract, package config, unit tests |
-| `rebuild-pigeon.yml` | Full Pigeon rebuild pipeline (stages 0-2 → precedence → publish) |
-| `build-stage.yml` | Reusable RPM build stage (rpmbuild in fedora:44) |
-| `build-warbler.yml` | Warbler image + ISO (per flavor, with kernel cache) |
-| `build-woodpecker.yml` | Woodpecker server image |
-| `build-iso.yml` | Standalone ISO build via bootc-image-builder |
-| `import-package.yml` | Seed import from Fedora dist-git rawhide |
-| `packit-srpm-pilot.yml` | SRPM generation verification |
-| `recalculate-gaps.yml` | Scheduled (6h): diff installed vs contract |
 
 ## Security
 
@@ -146,11 +98,16 @@ gh workflow run import-package.yml -f package=pkgname
 
 ## References
 
+> Docs
 - [AGENTS.md](AGENTS.md) — Agent instructions + skill router
 - [docs/architecture.md](docs/architecture.md) — Architecture details
 - [docs/building.md](docs/building.md) — Build instructions
 - [docs/targeting-hummingbird.md](docs/targeting-hummingbird.md) — Hummingbird targeting
 - [docs/SKILL.md](docs/SKILL.md) — Skill router
+
+> Inspiration
+- [Utah](https://github.com/projectbluefin/utah)
+- [Utah-Packages](https://github.com/projectbluefin/utah-packages)
 
 ## License
 
