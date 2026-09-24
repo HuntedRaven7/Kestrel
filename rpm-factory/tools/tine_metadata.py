@@ -60,6 +60,55 @@ def _rpmspec(spec: Path, arguments: list[str], *, parsed: bool = False) -> str:
     return _run(command)
 
 
+def _history_timestamp(path: str) -> int | None:
+    """Return the last content-changing commit timestamp for a path.
+
+    A directory rename is a history event, not a new source release.  Ignore
+    rename/copy records so moving a recipe does not reset SOURCE_DATE_EPOCH.
+    The staged-rename fallback in ``_source_date_epoch`` keeps this usable
+    before a rename has been committed.
+    """
+    output = _run(
+        [
+            "git",
+            "log",
+            "--follow",
+            "--format=%H%x09%ct",
+            "--name-status",
+            "--",
+            path,
+        ]
+    )
+    lines = output.splitlines()
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        index += 1
+        if not line:
+            continue
+        header = line.split("\t", 1)
+        if (
+            len(header) != 2
+            or re.fullmatch(r"[0-9a-f]{40}", header[0]) is None
+            or not header[1].isdigit()
+        ):
+            continue
+        timestamp = int(header[1])
+        while index < len(lines) and not lines[index]:
+            index += 1
+        if index >= len(lines):
+            break
+        status_line = lines[index]
+        index += 1
+        if re.fullmatch(r"[0-9a-f]{40}\t\d+", status_line):
+            continue
+        status = status_line.split("\t", 1)[0]
+        if status.startswith(("R", "C")):
+            continue
+        return max(1, timestamp)
+    return None
+
+
 @lru_cache(maxsize=1)
 def _staged_renames() -> dict[str, str]:
     """Map staged destination paths to their pre-rename history paths."""
@@ -89,11 +138,9 @@ def _source_date_epoch(spec: Path) -> int:
     for candidate in candidates:
         if not candidate:
             continue
-        committed = _run(
-            ["git", "log", "--follow", "-1", "--format=%ct", "--", candidate]
-        ).strip()
-        if committed:
-            return max(1, int(committed))
+        committed = _history_timestamp(candidate)
+        if committed is not None:
+            return committed
     return 1
 
 
