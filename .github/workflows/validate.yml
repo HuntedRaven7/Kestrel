@@ -3,27 +3,61 @@ on:
   pull_request: {}
   push:
     branches: [main]
+
+permissions:
+  contents: read
+
 jobs:
   contract:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: python3 pigeon/tools/factory_contract.py
+        with:
+          persist-credentials: false
+      - run: python3 rpm-factory/tools/factory_contract.py
+
   packages:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - run: python3 pigeon/tools/validate.py
-      - run: python3 pigeon/tools/sync_versions.py --check
+        with:
+          persist-credentials: false
+      - run: python3 rpm-factory/tools/validate.py
+      - run: python3 rpm-factory/tools/sync_versions.py --check
       # Static pre-rpmbuild gate: every SourceN/PatchN must be satisfiable,
       # otherwise rpmbuild -bs dies with "Bad file: ...: No such file".
-      - run: python3 pigeon/tools/audit_sources.py --spec-sources
+      - run: python3 rpm-factory/tools/audit_sources.py --spec-sources
+
+  tine-metadata:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: false
+      - name: Install Tine prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq zstd
+      - name: Enable Tine user namespaces
+        run: |
+          setting=/proc/sys/kernel/apparmor_restrict_unprivileged_userns
+          if [[ -r "$setting" && "$(cat "$setting")" != 0 ]]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+      - name: Check generated Tine metadata in the pinned Fedora 46 box
+        run: |
+          tine/bin/tine buck run tine//tools:dev.box -- python3 rpm-factory/tools/tine_metadata.py --check
+
   unit:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Install pytest
         run: pip install pytest -q
       - name: Install PyYAML
         run: pip install pyyaml -q
-      - run: python3 -m pytest pigeon/tests -q
+      - run: python3 -m pytest rpm-factory/tests -q

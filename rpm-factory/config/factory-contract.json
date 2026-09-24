@@ -1,0 +1,9 @@
+{
+  "contract": "kestrel-rpm-factory",
+  "registry": "ghcr.io/huntedraven7/rpm-factory",
+  "rpm_suffix": ".hum1.rpmfactory",
+  "allow_list": "rpm-factory/config/upstream-sources.json",
+  "build_system": "tine",
+  "tine_commit": "4c80c7bd771233002b36ec80568d3a252a468aa2",
+  "fedora_baseline": "46-rawhide"
+}

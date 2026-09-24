@@ -1,5 +1,5 @@
 .packit_cache/
-work/
+work/*
 *.rpm
 *.rpm
 *.srpm
@@ -8,11 +8,18 @@ work/
 __pycache__/
 utah-packages/
 .pytest_cache/
-pigeon/reports/
-pigeon/packages/*/*.tar.*
+rpm-factory/reports/
+rpm-factory/packages/*/*.tar.*
 # Committed deliberately: small release signatures verified by %gpgverify.
 # Specs reference these by exact basename and hermetic builds must not
 # fetch them over the network. (Large binaries instead travel as
 # hash-verified extra_sources, staged at build time by source_pipeline.py
-# fetch — including grub2's lookaside archives via audit --fix.)
-!pigeon/packages/*/*.sig
+# fetch — including declared lookaside archives.)
+!rpm-factory/packages/*/*.sig
+!rpm-factory/.tine-sources/
+!rpm-factory/.tine-sources/**
+
+# Tine/Buck runtime state; only the pinned checkout and committed config stay tracked.
+/.buck/
+/.buckconfig.local
+/tine.local.toml

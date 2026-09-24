@@ -1,7 +1,7 @@
 # Woodpecker package contract
 # Server image: no GUI, no desktop stack.
-# Packages from Pigeon repo + Fedora/Hummingbird base.
-# Fedora repos NEVER enabled at runtime — only Pigeon + base image content.
+# Packages from RPM factory repo + Fedora/Hummingbird base.
+# Fedora repos NEVER enabled at runtime — only RPM factory + base image content.
 
 [woodpecker]
 # Container / orchestration

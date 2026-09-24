@@ -1,14 +1,14 @@
 # Warbler — Hummingbird-based Mango desktop
 # Layer discipline: few COPYs, fold small RUNs, declare VERSION/flavor ARGs late.
-# Consumes Pigeon RPM repo by digest (Renovate-owned).
+# Consumes RPM factory RPM repo by digest (Renovate-owned).
 # For nvidia/gaming flavors, uses kernel cache image (prebuilt OGC kernel + NVIDIA modules).
 
 ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:9d69f6f33f5af87c76b0d7f49387bc4b969271a8eb788970396d6eab2b5af8a2
 ARG BASE_IMAGE_SHA=sha256:5c05afed5a70b3438e5584cfe6342328e8d1a221cb6efa50913c12aa0c037393
 ARG KERNEL_CACHE_IMAGE=ghcr.io/huntedraven7/warbler-kernel-cache@sha256:TODO_KERNEL_CACHE_SHA
 ARG KERNEL_CACHE_SHA=sha256:TODO_KERNEL_CACHE_SHA
-ARG PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon
-ARG PIGEON_IMAGE_SHA=sha256:TODO_PIGEON_IMAGE_SHA
+ARG RPM_FACTORY_IMAGE=ghcr.io/huntedraven7/rpm-factory
+ARG RPM_FACTORY_IMAGE_SHA=sha256:TODO_RPM_FACTORY_IMAGE_SHA
 
 # Flavor determines base image: main uses pristine base; nvidia/gaming use kernel cache
 ARG IMAGE_FLAVOR=main
@@ -21,8 +21,8 @@ RUN if [ "${IMAGE_FLAVOR}" = "main" ]; then \
 # Use the selected base image
 FROM ${BASE_IMAGE} AS base
 
-# Install Pigeon repo + base packages needed for bootstrap
-COPY --from=${PIGEON_IMAGE}@${PIGEON_IMAGE_SHA} /repository /etc/pigeon
+# Install RPM factory repo + base packages needed for bootstrap
+COPY --from=${RPM_FACTORY_IMAGE}@${RPM_FACTORY_IMAGE_SHA} /repository /etc/rpm-factory
 RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
     dnf -y install \
         createrepo_c \
@@ -36,11 +36,11 @@ COPY packages/ /etc/warbler/packages/
 COPY contracts/ /etc/warbler/contracts/
 COPY scripts/ /usr/libexec/warbler/
 
-# Install packages from Pigeon repo + base (warbler.toml contract)
+# Install packages from RPM factory repo + base (warbler.toml contract)
 RUN --mount=type=cache,id=dnf-cache,target=/var/cache/dnf \
     /usr/libexec/warbler/install-packages.py \
         --contract /etc/warbler/packages/warbler.toml \
-        --repo /etc/pigeon \
+        --repo /etc/rpm-factory \
         --base-image ${BASE_IMAGE} \
     && dnf clean all
 

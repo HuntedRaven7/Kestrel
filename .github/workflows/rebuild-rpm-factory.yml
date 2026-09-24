@@ -1,0 +1,378 @@
+name: rebuild-rpm-factory
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_rebuild:
+        type: boolean
+        description: "Ignore cached RPM output for every chunk"
+        required: false
+        default: false
+      packages:
+        type: string
+        description: "Optional comma- or space-separated package names"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rpm-factory-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  prepare:
+    name: Prepare Tine chunks
+    runs-on: ubuntu-26.04
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      package-count: ${{ steps.plan.outputs.package-count }}
+      complete: ${{ steps.plan.outputs.complete }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build package matrix
+        id: plan
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          metadata = json.loads(Path("rpm-factory/config/tine-packages.json").read_text())
+          all_names = sorted(metadata["packages"])
+          chunk_size = int(metadata["chunk_size"])
+          requested = os.environ.get("PACKAGES", "")
+          if requested.strip():
+              selected = {p for p in re.split(r"[\s,]+", requested.strip()) if p}
+              unknown = sorted(selected - set(all_names))
+              if unknown:
+                  raise SystemExit("unknown package(s): " + ", ".join(unknown))
+              names = [name for name in all_names if name in selected]
+              chunks = [names[i : i + chunk_size] for i in range(0, len(names), chunk_size)]
+              complete = set(names) == set(all_names)
+          else:
+              names = all_names
+              chunks = metadata["chunks"]
+              complete = True
+          flattened = [package for chunk in chunks for package in chunk]
+          if len(flattened) != len(set(flattened)) or set(flattened) != set(names):
+              raise SystemExit("generated chunks do not exactly cover the selected package set")
+          matrix = [
+              {"index": index, "packages": " ".join(chunk)}
+              for index, chunk in enumerate(chunks)
+          ]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
+              output.write(f"package-count={len(names)}\n")
+              output.write(f"complete={str(complete).lower()}\n")
+          print(f"prepared {len(names)} package(s) in {len(matrix)} chunk(s); complete={complete}")
+          PY
+        env:
+          PACKAGES: ${{ inputs.packages }}
+
+  build:
+    name: Build Tine chunk ${{ matrix.index }}
+    needs: prepare
+    if: ${{ needs.prepare.outputs.matrix != '[]' }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Build rpm-factory with Tine
+        uses: ./.github/actions/tine-build
+        with:
+          packages: ${{ matrix.packages }}
+          expected-tine-sha: 4c80c7bd771233002b36ec80568d3a252a468aa2
+          output-dir: work/tine-artifacts/${{ matrix.index }}
+          force-rebuild: ${{ inputs.full_rebuild == true }}
+
+      - name: Upload Tine chunk
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rpm-factory-chunk-${{ matrix.index }}
+          path: work/tine-artifacts/${{ matrix.index }}/
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish rpm-factory repository
+    needs: [prepare, build]
+    if: ${{ github.ref == 'refs/heads/main' && needs.prepare.outputs.complete == 'true' && needs.prepare.outputs.matrix != '[]' }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    outputs:
+      image-digest: ${{ steps.push.outputs.digest }}
+      candidate-tag: ${{ steps.push.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Podman
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Download Tine chunks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p work/chunks
+          delay=15
+          for attempt in 1 2 3 4 5; do
+            rm -rf work/chunks/*
+            if gh run download "${{ github.run_id }}" --repo "${{ github.repository }}" \
+              --pattern 'rpm-factory-chunk-*' --dir work/chunks; then
+              break
+            fi
+            if [[ "$attempt" == 5 ]]; then
+              echo "could not download Tine chunk artifacts" >&2
+              exit 1
+            fi
+            echo "artifact download retry $attempt" >&2
+            sleep "$delay"
+            delay=$((delay * 2))
+          done
+          mkdir -p work/rpms
+          while IFS= read -r -d '' rpm; do
+            name=$(basename "$rpm")
+            if [[ -e "work/rpms/$name" ]]; then
+              echo "duplicate RPM filename across chunks: $name" >&2
+              exit 1
+            fi
+            cp "$rpm" "work/rpms/$name"
+          done < <(find work/chunks -type f -name '*.rpm' -print0)
+          test -n "$(find work/rpms -type f -name '*.rpm' -print -quit)"
+
+      - name: Create repository metadata
+        run: |
+          set -euo pipefail
+          mkdir -p work/repository
+          cp work/rpms/*.rpm work/repository/
+          podman run --rm \
+            -v "$PWD/work/repository:/repository:Z" \
+            quay.io/fedora/fedora:46@sha256:f05e932036d561392458386e7d6f379eaf26dee8b5636ce4154143d7c937cc9a \
+            bash -exc 'dnf install -y createrepo_c >/dev/null; createrepo_c /repository'
+
+      - name: Run publish gate
+        run: |
+          set -euo pipefail
+          podman run --rm \
+            -v "$PWD:/repo:Z" \
+            -w /repo \
+            quay.io/fedora/fedora:46@sha256:f05e932036d561392458386e7d6f379eaf26dee8b5636ce4154143d7c937cc9a \
+            bash -exc 'dnf install -y python3 >/dev/null; python3 rpm-factory/tools/publish_gate.py --repo-root work/rpms --metadata rpm-factory/config/tine-packages.json --rpm-factory-suffix .hum1.rpmfactory'
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.1.3
+
+      - name: Sign repomd.xml
+        run: |
+          set -euo pipefail
+          cosign sign-blob --yes \
+            --output-signature work/repository/repodata/repomd.xml.sig \
+            work/repository/repodata/repomd.xml
+
+      - name: Push rpm-factory candidate image
+        id: push
+        env:
+          IMAGE: ghcr.io/huntedraven7/rpm-factory
+          CANDIDATE_TAG: candidate-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          rm -rf work/chunks work/rpms
+          mkdir -p work/publish-context
+          mv work/repository work/publish-context/repository
+          cat > "$RUNNER_TEMP/Dockerfile.publish" <<'EOF'
+          FROM scratch
+          COPY repository /repository
+          LABEL org.opencontainers.image.title="Kestrel RPM Factory"
+          LABEL org.opencontainers.image.description="Kestrel Tine-built RPM repository"
+          LABEL org.opencontainers.image.source="https://github.com/HuntedRaven7/Kestrel"
+          EOF
+          mkdir -p "$HOME/.docker"
+          printf '%s' "${{ github.token }}" | podman login ghcr.io \
+            --authfile "$HOME/.docker/config.json" \
+            -u "${{ github.actor }}" --password-stdin
+          podman build -f "$RUNNER_TEMP/Dockerfile.publish" -t "$IMAGE:$CANDIDATE_TAG" "$PWD/work/publish-context"
+          podman push "$IMAGE:$CANDIDATE_TAG"
+          digest=$(podman inspect --format '{{.Digest}}' "$IMAGE:$CANDIDATE_TAG")
+          [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+            echo "invalid candidate image digest: $digest" >&2
+            exit 1
+          }
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "tag=$IMAGE:$CANDIDATE_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Generate candidate SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          image: ${{ steps.push.outputs.tag }}
+          format: spdx-json
+          output-file: rpm-factory-sbom.spdx.json
+
+      - name: Upload candidate SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: rpm-factory-sbom
+          path: rpm-factory-sbom.spdx.json
+          retention-days: 30
+
+  trivy-scan:
+    name: Trivy RPM vulnerability scan
+    needs: publish
+    if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.image-digest != '' }}
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - name: Download candidate SBOM
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: rpm-factory-sbom
+          path: rpm-factory-sbom
+
+      - name: Require RPM package inventory in SBOM
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          document = json.loads(Path("rpm-factory-sbom/rpm-factory-sbom.spdx.json").read_text())
+          rpm_packages = [
+              package for package in document.get("packages", [])
+              if str(package.get("purl", "")).startswith("pkg:rpm/")
+          ]
+          if len(rpm_packages) < 145:
+              raise SystemExit(
+                  f"SBOM contains only {len(rpm_packages)} RPM packages; expected at least 145"
+              )
+          print(f"SBOM contains {len(rpm_packages)} RPM package records")
+          PY
+
+      - name: Scan RPM SBOM
+        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # master 2026-09-19
+        with:
+          scan-type: sbom
+          input: rpm-factory-sbom/rpm-factory-sbom.spdx.json
+          scanners: vuln
+          vuln-type: os
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          limit-severities-for-sarif: true
+          exit-code: '1'
+          ignore-unfixed: true
+
+      - name: Upload Trivy results
+        if: ${{ always() && hashFiles('trivy-results.sarif') != '' }}
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4
+        with:
+          sarif_file: trivy-results.sarif
+
+  promote:
+    name: Sign, attest, and promote rpm-factory
+    needs: [publish, trivy-scan]
+    if: ${{ github.ref == 'refs/heads/main' && needs.publish.outputs.image-digest != '' }}
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    outputs:
+      image-digest: ${{ needs.publish.outputs.image-digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Podman
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq podman
+
+      - name: Download candidate SBOM
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: rpm-factory-sbom
+          path: rpm-factory-sbom
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.1.3
+
+      - name: Sign candidate image digest
+        env:
+          IMAGE: ghcr.io/huntedraven7/rpm-factory
+          DIGEST: ${{ needs.publish.outputs.image-digest }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.docker"
+          printf '%s' "${{ github.token }}" | podman login ghcr.io \
+            --authfile "$HOME/.docker/config.json" \
+            -u "${{ github.actor }}" --password-stdin
+          cosign sign --yes "$IMAGE@$DIGEST"
+
+      - name: Attest SLSA provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/huntedraven7/rpm-factory
+          subject-digest: ${{ needs.publish.outputs.image-digest }}
+          push-to-registry: true
+
+      - name: Attest RPM SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/huntedraven7/rpm-factory
+          subject-digest: ${{ needs.publish.outputs.image-digest }}
+          sbom-path: rpm-factory-sbom/rpm-factory-sbom.spdx.json
+          push-to-registry: true
+
+      - name: Promote verified digest to latest
+        env:
+          IMAGE: ghcr.io/huntedraven7/rpm-factory
+          DIGEST: ${{ needs.publish.outputs.image-digest }}
+        run: |
+          set -euo pipefail
+          podman pull "$IMAGE@$DIGEST"
+          podman tag "$IMAGE@$DIGEST" "$IMAGE:latest"
+          podman push "$IMAGE:latest"
+          test "$(podman inspect --format '{{.Digest}}' "$IMAGE:latest")" = "$DIGEST"

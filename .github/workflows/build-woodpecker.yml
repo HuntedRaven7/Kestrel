@@ -8,6 +8,10 @@ on:
         required: false
         type: boolean
         default: false
+      rpm_factory_image_sha:
+        description: "Pinned rpm-factory OCI digest"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -42,11 +46,34 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq podman
 
-      - name: Build Woodpecker image
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.1.3
+
+      - name: Verify rpm-factory image signature
+        env:
+          RPM_FACTORY_IMAGE_SHA: ${{ inputs.rpm_factory_image_sha }}
         run: |
+          set -euo pipefail
+          [[ "$RPM_FACTORY_IMAGE_SHA" =~ ^sha256:[0-9a-f]{64}$ ]]
+          cosign verify \
+            "ghcr.io/huntedraven7/rpm-factory@$RPM_FACTORY_IMAGE_SHA" \
+            --certificate-identity "https://github.com/HuntedRaven7/Kestrel/.github/workflows/rebuild-rpm-factory.yml@refs/heads/main" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+
+      - name: Build Woodpecker image
+        env:
+          RPM_FACTORY_IMAGE_SHA: ${{ inputs.rpm_factory_image_sha }}
+        run: |
+          if [[ ! "$RPM_FACTORY_IMAGE_SHA" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+            echo "rpm_factory_image_sha must be a full lowercase SHA-256 digest" >&2
+            exit 1
+          fi
           podman build -f woodpecker/Containerfile \
             --build-arg BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:TODO_BASE_IMAGE_SHA \
-            --build-arg PIGEON_IMAGE=ghcr.io/huntedraven7/pigeon@sha256:TODO_PIGEON_IMAGE_SHA \
+            --build-arg RPM_FACTORY_IMAGE=ghcr.io/huntedraven7/rpm-factory \
+            --build-arg "RPM_FACTORY_IMAGE_SHA=$RPM_FACTORY_IMAGE_SHA" \
             --build-arg VERSION=testing \
             -t ghcr.io/huntedraven7/woodpecker:testing \
             woodpecker/.

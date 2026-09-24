@@ -1,0 +1,3 @@
+[submodule "tine"]
+	path = tine
+	url = https://github.com/amutable-systems/tine

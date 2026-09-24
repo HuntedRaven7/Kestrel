@@ -1,6 +1,6 @@
 # Warbler package contract
-# Packages sourced from Pigeon repo (ghcr.io/huntedraven7/pigeon) + Fedora/Hummingbird base.
-# Fedora repos are NEVER enabled at runtime — only Pigeon + base image content.
+# Packages sourced from RPM factory repo (ghcr.io/huntedraven7/rpm-factory) + Fedora/Hummingbird base.
+# Fedora repos are NEVER enabled at runtime — only RPM factory + base image content.
 # verify-rpm-contract.py asserts this exact set is installed.
 # [unavailable] entries carry tracking issues; missing packages fail the build otherwise.
 
