@@ -20,6 +20,7 @@ BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  blueprint-compiler
+BuildRequires:  xz
 
 # libghostty-vt.so* is built by Zig without a GNU build-id note; find-debuginfo
 # --strict-build-id would abort the build on it. Undefine only this one check so
