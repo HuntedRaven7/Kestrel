@@ -40,10 +40,23 @@ Ghostty terminal emulator — default terminal of the Warbler desktop.
 %install
 # Install the locked Zig 0.15.2 archive supplied by source_pipeline.py.
 ZIG_VER=0.15.2
-ZIG_ARCHIVE="%{SOURCES}/zig-x86_64-linux-${ZIG_VER}.tar.xz"
+ZIG_ARCHIVE="%{_sourcedir}/zig-x86_64-linux-${ZIG_VER}.tar.xz"
 test -f "${ZIG_ARCHIVE}"
 tar -xf "${ZIG_ARCHIVE}" -C /tmp
 export PATH="/tmp/zig-x86_64-linux-${ZIG_VER}:$PATH"
+
+# Seed Zig's package cache from the digest-locked dependency archives. The
+# Tine sandbox intentionally has no network access during rpmbuild.
+ZIG_CACHE=/tmp/ghostty-zig-cache
+mkdir -p "${ZIG_CACHE}"
+for archive in "%{_sourcedir}"/*.tar.gz "%{_sourcedir}"/*.tar.zst "%{_sourcedir}"/*.tgz; do
+  [ -f "${archive}" ] || continue
+  case "$(basename "${archive}")" in
+    v%{version}.tar.gz) continue ;;
+  esac
+  zig fetch --global-cache-dir "${ZIG_CACHE}" "${archive}" >/dev/null
+done
+export ZIG_GLOBAL_CACHE_DIR="${ZIG_CACHE}"
 
 zig build -Doptimize=ReleaseFast -p %{buildroot}%{_prefix}
 

@@ -427,6 +427,81 @@
           "filename": "zig-x86_64-linux-0.15.2.tar.xz",
           "url_template": "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz",
           "sha512": "bd2c53cd7ad1ce9e3cfc020072db42b5dd260028c156bb03dee1bc50c3485c2f50f9f4abb9c22c60faff6b5ddda83e0a5385300590d126121b3d8b989533d199"
+        },
+        {
+          "filename": "JetBrainsMono-2.304.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/JetBrainsMono-2.304.tar.gz",
+          "sha512": "546c4306a3523a676f7c335387b680ae57fb869aa18c52a0034bef7969e75810f43112e8be0e1a6e9738770fe5ba908bd2b6105f0362619bf1f5e30ea09786bc"
+        },
+        {
+          "filename": "NerdFontsSymbolsOnly-3.4.0.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/NerdFontsSymbolsOnly-3.4.0.tar.gz",
+          "sha512": "60ace3377f04c2c53fa067dde1a082fc3109b534a87ddf9c0a73fa65a82a3e15793351a39434ad4e0fe452cf60f019de27989ac90b74420bb92954efeb4962bc"
+        },
+        {
+          "filename": "ghostty-themes-release-20260216-151611-fc73ce3.tgz",
+          "url_template": "https://deps.files.ghostty.org/ghostty-themes-release-20260216-151611-fc73ce3.tgz",
+          "sha512": "298449d680019dbc10961006bf92514949a5c6b9483127002d35cd263b2b74fcb946dd6bf638c94173fc3c144a7fc0b15642673f10351c37537af7f2a46c4fef"
+        },
+        {
+          "filename": "gobject-2025-11-08-23-1.tar.zst",
+          "url_template": "https://deps.files.ghostty.org/gobject-2025-11-08-23-1.tar.zst",
+          "sha512": "bc615af43b167fa598284ea32420583ce830b8890485b9bafca592c0e484692daf01410ca1ae89733075d0520b86459f61cb78437baec6a012237f3e688d2219"
+        },
+        {
+          "filename": "libxev-34fa50878aec6e5fa8f532867001ab3c36fae23e.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/libxev-34fa50878aec6e5fa8f532867001ab3c36fae23e.tar.gz",
+          "sha512": "9607a0e60b5c9032cbd6f2d56072101b5484ab682429b035bc1b86c3ff3aeb0600ed65b6ba82581ad00b916f25aece5b656c3e50622987bc2f1b6b08ab99a136"
+        },
+        {
+          "filename": "plasma_wayland_protocols-12207e0851c12acdeee0991e893e0132fc87bb763969a585dc16ecca33e88334c566.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/plasma_wayland_protocols-12207e0851c12acdeee0991e893e0132fc87bb763969a585dc16ecca33e88334c566.tar.gz",
+          "sha512": "909432de8881e063bfddd41d83758effc3dee43818d04126ccf6bd06a0ba1d4afd9ecdb49c86c584cad01607f625367b642e5d529d149c3e1732b2136a6b3bb3"
+        },
+        {
+          "filename": "uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/uucode-0.2.0-ZZjBPqZVVABQepOqZHR7vV_NcaN-wats0IB6o-Exj6m9.tar.gz",
+          "sha512": "2f796dd5869728d912c3cd3e0ba7528806b1366bd6bf7949d93309507825ae690edc5573827ef0fc83b076f1330a4c97dd29e91e4e9ac431ab3a8c5164d6c8d1"
+        },
+        {
+          "filename": "vaxis-7dbb9fd3122e4ffad262dd7c151d80d863b68558.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/vaxis-7dbb9fd3122e4ffad262dd7c151d80d863b68558.tar.gz",
+          "sha512": "439bc1938edc6499780d93997477cfd572a2301d0bb70d0a25fdedeb0c65f8bd772a916bfd6e64981fa0019852b27e0570a2d970e0998d8d951eb14472b034f5"
+        },
+        {
+          "filename": "wayland-9cb3d7aa9dc995ffafdbdef7ab86a949d0fb0e7d.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/wayland-9cb3d7aa9dc995ffafdbdef7ab86a949d0fb0e7d.tar.gz",
+          "sha512": "1a90c26e08280567c1ba2b023f04e14bbf0722eb8606d331cd60c420eca4ab6bb2cddc8cbfcf0c0bf00b00488a77e84eb4e95255f72a6600ade8a841e4d29671"
+        },
+        {
+          "filename": "wayland-protocols-258d8f88f2c8c25a830c6316f87d23ce1a0f12d9.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/wayland-protocols-258d8f88f2c8c25a830c6316f87d23ce1a0f12d9.tar.gz",
+          "sha512": "ed642352a88eb9b42ba36c5847dd2023c7b5cdf638e57a2212dba64239017cae597de33e7a4f3530fcc0aac4633a8bd0178138b7e72cb1d42414b87c23b831c4"
+        },
+        {
+          "filename": "z2d-0.10.0-j5P_Hu-6FgBsZNgwphIqh17jDnj8_yPtD8yzjO6PpHRQ.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/z2d-0.10.0-j5P_Hu-6FgBsZNgwphIqh17jDnj8_yPtD8yzjO6PpHRQ.tar.gz",
+          "sha512": "36a55a9d043d82b62d36a5be905696f1970ad0a7371f05fa068675f5237f19b823a394b7af785197d6fee97061534884a34434998aa51c8fd9dfbeb8d149c95a"
+        },
+        {
+          "filename": "zf-3c52637b7e937c5ae61fd679717da3e276765b23.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/zf-3c52637b7e937c5ae61fd679717da3e276765b23.tar.gz",
+          "sha512": "b033363cd102b417f092d6b51eb1ffca50aa35ab2ef95bacf6242b0fc43c05f99651058021c8de2f64c46e1ee428f057f61db86c43c5874a0fd0b819135f2210"
+        },
+        {
+          "filename": "zig_js-04db83c617da1956ac5adc1cb9ba1e434c1cb6fd.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/zig_js-04db83c617da1956ac5adc1cb9ba1e434c1cb6fd.tar.gz",
+          "sha512": "07c11c60a1e347c23340cb688d4d8cdc2625c50b8053d87282c57707d9ebcca4cd09f7fceb9895998a20cd6ca527287913f25e866781506c3745bdece57e392d"
+        },
+        {
+          "filename": "zig_objc-f356ed02833f0f1b8e84d50bed9e807bf7cdc0ae.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/zig_objc-f356ed02833f0f1b8e84d50bed9e807bf7cdc0ae.tar.gz",
+          "sha512": "cbaae87a4fd55f1d8277b7b0e4b70c0bf116f5d49758dfb4b21ca1b29116ffcb9955ea7773f04f0ef57ff05c48bddd8e8d355cc836309b7209e8129f76ccc11b"
+        },
+        {
+          "filename": "zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz",
+          "url_template": "https://deps.files.ghostty.org/zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz",
+          "sha512": "b987fc6dcdcccbb1f3b4ead7d15688bc72925b40a84f093e9bf51bbfd8af1c775698eabe19c9e7fb7d871ea3627ed56e0a2e4a62331653402da5541676d4afd9"
         }
       ]
     },
