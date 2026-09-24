@@ -1,0 +1,75 @@
+{
+  "containerd": [
+    "askalono-cli"
+  ],
+  "python-pydantic": [
+    "python3-devel",
+    "python3dist(hatch-fancy-pypi-readme) >= 22.5",
+    "python3dist(hatchling)",
+    "python3dist(pip) >= 19",
+    "python3dist(annotated-types) >= 0.6",
+    "python3dist(email-validator) >= 2",
+    "python3dist(pydantic-core) = 2.46.5",
+    "python3dist(typing-extensions) >= 4.14.1",
+    "python3dist(typing-inspection) >= 0.4.2"
+  ],
+  "python-pydantic-core": [
+    "(crate(ahash/default) >= 0.8.12 with crate(ahash/default) < 0.9.0~)",
+    "(crate(base64/default) >= 0.22.1 with crate(base64/default) < 0.23.0~)",
+    "(crate(enum_dispatch/default) >= 0.3.13 with crate(enum_dispatch/default) < 0.4.0~)",
+    "(crate(hashbrown) >= 0.16.0 with crate(hashbrown) < 0.17.0~)",
+    "(crate(hashbrown/inline-more) >= 0.16.0 with crate(hashbrown/inline-more) < 0.17.0~)",
+    "(crate(hex/default) >= 0.4.3 with crate(hex/default) < 0.5.0~)",
+    "(crate(idna/default) >= 1.1.0 with crate(idna/default) < 2.0.0~)",
+    "(crate(jiter/default) >= 0.14.0 with crate(jiter/default) < 0.18.0~)",
+    "(crate(jiter/python) >= 0.14.0 with crate(jiter/python) < 0.18.0~)",
+    "(crate(lru/default) >= 0.16.3 with crate(lru/default) < 0.17.0~)",
+    "(crate(num-bigint/default) >= 0.4.6 with crate(num-bigint/default) < 0.5.0~)",
+    "(crate(num-traits/default) >= 0.2.19 with crate(num-traits/default) < 0.3.0~)",
+    "(crate(percent-encoding/default) >= 2.3.2 with crate(percent-encoding/default) < 3.0.0~)",
+    "(crate(pyo3-build-config/default) >= 0.29.0 with crate(pyo3-build-config/default) < 0.30.0~)",
+    "(crate(pyo3/default) >= 0.29.0 with crate(pyo3/default) < 0.30.0~)",
+    "(crate(pyo3/num-bigint) >= 0.29.0 with crate(pyo3/num-bigint) < 0.30.0~)",
+    "(crate(pyo3/py-clone) >= 0.29.0 with crate(pyo3/py-clone) < 0.30.0~)",
+    "(crate(pyo3/smallvec) >= 0.29.0 with crate(pyo3/smallvec) < 0.30.0~)",
+    "(crate(regex/default) >= 1.12.3 with crate(regex/default) < 2.0.0~)",
+    "(crate(serde/default) >= 1.0.219 with crate(serde/default) < 2.0.0~)",
+    "(crate(serde/derive) >= 1.0.219 with crate(serde/derive) < 2.0.0~)",
+    "(crate(serde_json/arbitrary_precision) >= 1.0.149 with crate(serde_json/arbitrary_precision) < 2.0.0~)",
+    "(crate(serde_json/default) >= 1.0.149 with crate(serde_json/default) < 2.0.0~)",
+    "(crate(smallvec/default) >= 1.15.1 with crate(smallvec/default) < 2.0.0~)",
+    "(crate(speedate/default) >= 0.17.0 with crate(speedate/default) < 0.18.0~)",
+    "(crate(strum/default) >= 0.27.0 with crate(strum/default) < 0.28.0~)",
+    "(crate(strum/derive) >= 0.27.0 with crate(strum/derive) < 0.28.0~)",
+    "(crate(strum_macros/default) >= 0.27.0 with crate(strum_macros/default) < 0.28.0~)",
+    "(crate(url/default) >= 2.5.8 with crate(url/default) < 3.0.0~)",
+    "(crate(uuid/default) >= 1.23.0 with crate(uuid/default) < 2.0.0~)",
+    "(crate(version_check/default) >= 0.9.5 with crate(version_check/default) < 0.10.0~)",
+    "python3dist(dirty-equals)",
+    "python3dist(hypothesis)",
+    "python3dist(inline-snapshot)",
+    "python3dist(maturin)",
+    "python3dist(numpy)",
+    "python3dist(pandas)",
+    "python3dist(pip) >= 19",
+    "python3dist(pytest)",
+    "python3dist(pytest-mock)",
+    "python3dist(python-dateutil)",
+    "python3dist(typing-extensions) >= 4.14.1",
+    "python3dist(typing-inspection) >= 0.4.1",
+    "pyproject-rpm-macros"
+  ],
+  "protobuf3": [
+    "python3dist(pip) >= 19"
+  ],
+  "re2": [
+    "cmake",
+    "python3-devel",
+    "python3dist(packaging)",
+    "python3dist(pip) >= 19",
+    "python3dist(setuptools) >= 40.8"
+  ],
+  "runc": [
+    "askalono-cli"
+  ]
+}

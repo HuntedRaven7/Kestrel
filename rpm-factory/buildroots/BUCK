@@ -1,0 +1,6 @@
+# Fedora 46 buildroot supplied by the pinned Tine catalog.
+alias(
+    name = "f46",
+    actual = "tine//catalog:fedora.rawhide.buildroot",
+    visibility = ["PUBLIC"],
+)

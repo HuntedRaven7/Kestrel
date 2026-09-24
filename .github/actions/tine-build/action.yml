@@ -1,0 +1,276 @@
+# SPDX-License-Identifier: Apache-2.0
+name: tine-build
+description: Build and collect one rpm-factory Tine chunk with pinned Tine and actions/cache.
+
+inputs:
+  packages:
+    description: Space-separated rpm-factory package directory names
+    required: true
+  expected-tine-sha:
+    description: Reviewed Tine submodule commit
+    required: true
+  output-dir:
+    description: Workspace directory receiving the collected RPM tree
+    required: false
+    default: work/tine-artifacts
+  force-rebuild:
+    description: Ignore a cached RPM output tree
+    required: false
+    default: "false"
+  setup-user-namespaces:
+    description: Enable unprivileged user namespaces on Ubuntu when needed
+    required: false
+    default: "true"
+
+outputs:
+  cache-hit:
+    description: Whether the exact RPM output cache was restored
+    value: ${{ steps.cache_validate.outputs.cache-hit || 'false' }}
+  output-path:
+    description: Directory containing the collected RPMs
+    value: ${{ steps.preflight.outputs.output-dir }}
+
+runs:
+  using: composite
+  steps:
+    - name: Verify Tine pin and compute cache keys
+      id: preflight
+      shell: bash
+      run: |
+        set -euo pipefail
+        TINE_PATH="tine"
+        EXPECTED_TINE_SHA="${{ inputs.expected-tine-sha }}"
+        [[ "$EXPECTED_TINE_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+          echo "expected-tine-sha must be a full 40-character commit" >&2
+          exit 1
+        }
+        test -f tine.toml
+        test -f .buckconfig
+        test ! -e .buckconfig.local
+        test ! -e tine.local.toml
+        test ! -e .buck/tine-mounts.toml
+        test -f "$TINE_PATH/tools/tools.json"
+        test "$(git ls-tree HEAD -- "$TINE_PATH" | awk '{print $3}')" = "$EXPECTED_TINE_SHA"
+        test "$(git -C "$TINE_PATH" rev-parse HEAD)" = "$EXPECTED_TINE_SHA"
+        test "$(git rev-parse --is-shallow-repository)" = false
+        test -z "$(git -C "$TINE_PATH" status --porcelain)"
+
+        read -r -a PACKAGE_LIST <<< "${{ inputs.packages }}"
+        ((${#PACKAGE_LIST[@]} > 0)) || {
+          echo "packages must not be empty" >&2
+          exit 1
+        }
+        for package in "${PACKAGE_LIST[@]}"; do
+          [[ "$package" =~ ^[A-Za-z0-9_.+-]+$ ]] || {
+            echo "invalid package name: $package" >&2
+            exit 1
+          }
+          test -d "rpm-factory/packages/$package"
+        done
+
+        command -v python3 >/dev/null
+        command -v git >/dev/null
+        command -v zstd >/dev/null || [[ "$(python3 -c 'import sys; print(sys.version_info >= (3, 14))')" == True ]] || {
+          echo "Tine needs zstd unless the host Python is 3.14+" >&2
+          exit 1
+        }
+
+        PLATFORM="Linux-$(uname -m)"
+        EXPECTED_BUCK2_SHA=$(python3 - "$TINE_PATH/tools/tools.json" "$PLATFORM" <<'PY'
+        import json
+        import sys
+        data = json.load(open(sys.argv[1]))
+        print(data["buck2"]["platforms"][sys.argv[2]]["sha256"])
+        PY
+        )
+        CONFIG_HASH=$(sha256sum tine/tools/tools.json tine.toml .buckconfig | sha256sum | cut -d' ' -f1)
+        RECIPE_FILES=$(git ls-files -- \
+          '.github/actions/tine-build/action.yml' \
+          'rpm-factory/BUCK' \
+          'rpm-factory/buildroots/BUCK' \
+          'rpm-factory/config/tine-packages.json' \
+          'rpm-factory/config/tine-dynamic-buildrequires.json' \
+          'rpm-factory/config/upstream-sources.json' \
+          'rpm-factory/packages/**' \
+          'rpm-factory/tools/*.py')
+        RECIPE_HASH=$(printf '%s\n' "$RECIPE_FILES" | while IFS= read -r file; do sha256sum "$file"; done | sha256sum | cut -d' ' -f1)
+        PACKAGE_HASH=$(printf '%s\n' "${PACKAGE_LIST[@]}" | sha256sum | cut -d' ' -f1)
+        BUCK2_KEY="kestrel-tine-buck2-${PLATFORM}-${EXPECTED_TINE_SHA}-${CONFIG_HASH}"
+        OUTPUT_KEY="kestrel-rpm-factory-tine-v2-${PLATFORM}-${EXPECTED_TINE_SHA}-${RECIPE_HASH}-${PACKAGE_HASH}"
+        if [[ "${{ inputs.force-rebuild }}" == true ]]; then
+          OUTPUT_KEY="${OUTPUT_KEY}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+        fi
+        OUTPUT_DIR="${{ inputs.output-dir }}"
+        [[ "$OUTPUT_DIR" = /* ]] || OUTPUT_DIR="$GITHUB_WORKSPACE/$OUTPUT_DIR"
+        mkdir -p "$OUTPUT_DIR"
+
+        {
+          echo "TINE_PATH=$TINE_PATH"
+          echo "TINE_LOG_DIR=$RUNNER_TEMP/kestrel-tine-logs"
+          echo "XDG_CACHE_HOME=$RUNNER_TEMP/kestrel-tine-xdg"
+          echo "OUTPUT_DIR=$OUTPUT_DIR"
+          echo "CACHE_MANIFEST=ARTIFACT-MANIFEST.sha256"
+          echo "BUCK2_BINARY="
+          echo "BUCK2_ARG0="
+          echo "TINE_MOUNTS="
+        } >> "$GITHUB_ENV"
+        mkdir -p "$RUNNER_TEMP/kestrel-tine-logs" "$RUNNER_TEMP/kestrel-tine-xdg"
+        {
+          echo "output-dir=$OUTPUT_DIR"
+          echo "buck2-key=$BUCK2_KEY"
+          echo "output-key=$OUTPUT_KEY"
+          echo "expected-buck2-sha=$EXPECTED_BUCK2_SHA"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Enable Tine user namespaces
+      if: ${{ inputs.setup-user-namespaces == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        setting=/proc/sys/kernel/apparmor_restrict_unprivileged_userns
+        if [[ -r "$setting" && "$(cat "$setting")" != 0 ]]; then
+          if ! command -v sudo >/dev/null 2>&1; then
+            echo "unprivileged user namespaces are restricted and sudo is unavailable" >&2
+            exit 1
+          fi
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+        fi
+
+    - name: Restore pinned Buck2
+      id: buck2_restore
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ runner.temp }}/kestrel-tine-xdg/tine/buck2
+        key: ${{ steps.preflight.outputs.buck2-key }}
+
+    - name: Verify restored Buck2
+      shell: bash
+      run: |
+        set -euo pipefail
+        binary_root="$XDG_CACHE_HOME/tine/buck2"
+        expected="${{ steps.preflight.outputs.expected-buck2-sha }}"
+        if [[ -d "$binary_root" ]]; then
+          mapfile -t binaries < <(find "$binary_root" -type f -name buck2 -print)
+          if ((${#binaries[@]} != 1)); then
+            echo "discarding incomplete cached Buck2 directory" >&2
+            rm -rf "$binary_root"
+          else
+            actual=$(sha256sum "${binaries[0]}" | cut -d' ' -f1)
+            if [[ "$actual" != "$expected" ]]; then
+              echo "discarding unverifiable cached Buck2: ${binaries[0]}" >&2
+              rm -rf "$binary_root"
+            fi
+          fi
+        fi
+
+    - name: Restore RPM output cache
+      id: output_restore
+      if: ${{ inputs.force-rebuild != 'true' }}
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ steps.preflight.outputs.output-dir }}
+        key: ${{ steps.preflight.outputs.output-key }}
+
+    - name: Validate restored RPM output
+      id: cache_validate
+      if: ${{ steps.output_restore.outputs.cache-hit == 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        read -r -a packages <<< "${{ inputs.packages }}"
+        manifest="$OUTPUT_DIR/$CACHE_MANIFEST"
+        valid=false
+        if [[ -f "$manifest" ]] && (cd "$OUTPUT_DIR" && sha256sum --check --strict "$CACHE_MANIFEST"); then
+          valid=true
+          for package in "${packages[@]}"; do
+            if ! find "$OUTPUT_DIR/$package" -type f -name '*.rpm' -print -quit 2>/dev/null | grep -q .; then
+              echo "cached RPM output is missing package directory: $package" >&2
+              valid=false
+              break
+            fi
+          done
+        fi
+        if [[ "$valid" == true ]]; then
+          echo "cache-hit=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "cache-hit=false" >> "$GITHUB_OUTPUT"
+          rm -rf "$OUTPUT_DIR"
+          mkdir -p "$OUTPUT_DIR"
+        fi
+
+    - name: Stage verified sources
+      if: ${{ steps.cache_validate.outputs.cache-hit != 'true' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        read -r -a packages <<< "${{ inputs.packages }}"
+        python3 rpm-factory/tools/stage_sources.py "${packages[@]}"
+
+    - name: Build Tine package targets
+      id: tine_build
+      if: ${{ steps.cache_validate.outputs.cache-hit != 'true' }}
+      continue-on-error: true
+      shell: bash
+      run: |
+        set -u
+        read -r -a packages <<< "${{ inputs.packages }}"
+        targets=()
+        for package in "${packages[@]}"; do
+          targets+=("//rpm-factory:$package")
+        done
+        "$TINE_PATH/bin/tine" buck build "${targets[@]}" > "$TINE_LOG_DIR/build.log" 2>&1
+        status=$?
+        cat "$TINE_LOG_DIR/build.log"
+        echo "Tine build exited with status $status; full log: $TINE_LOG_DIR/build.log" >&2
+        exit "$status"
+
+    - name: Materialize Tine outputs
+      id: materialize
+      if: ${{ steps.cache_validate.outputs.cache-hit != 'true' && steps.tine_build.outcome == 'success' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        read -r -a packages <<< "${{ inputs.packages }}"
+        rm -rf "$OUTPUT_DIR"
+        mkdir -p "$OUTPUT_DIR"
+        for package in "${packages[@]}"; do
+          destination="$OUTPUT_DIR/$package"
+          "$TINE_PATH/bin/tine" buck build "//rpm-factory:$package" --out "$destination" \
+            > "$TINE_LOG_DIR/materialize-$package.log" 2>&1
+          cat "$TINE_LOG_DIR/materialize-$package.log"
+          find "$destination" -type f -name '*.rpm' -print -quit | grep -q . || {
+            echo "Tine produced no RPMs for $package" >&2
+            exit 1
+          }
+        done
+        count=$(find "$OUTPUT_DIR" -type f -name '*.rpm' | wc -l)
+        (
+          cd "$OUTPUT_DIR"
+          find . -type f -name '*.rpm' -print0 \
+            | sort -z \
+            | xargs -0 sha256sum > "$CACHE_MANIFEST"
+        )
+        echo "Collected $count RPM artifacts in $OUTPUT_DIR"
+
+    - name: Save RPM output cache
+      if: ${{ always() && steps.cache_validate.outputs.cache-hit != 'true' && steps.tine_build.outcome == 'success' && steps.materialize.outcome == 'success' }}
+      continue-on-error: true
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ steps.preflight.outputs.output-dir }}
+        key: ${{ steps.preflight.outputs.output-key }}
+
+    - name: Save pinned Buck2 cache
+      if: ${{ always() && steps.tine_build.outcome == 'success' && steps.buck2_restore.outputs.cache-hit != 'true' }}
+      continue-on-error: true
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        path: ${{ runner.temp }}/kestrel-tine-xdg/tine/buck2
+        key: ${{ steps.preflight.outputs.buck2-key }}
+
+    - name: Fail a failed Tine build
+      if: ${{ always() && steps.tine_build.outcome == 'failure' }}
+      shell: bash
+      run: |
+        echo "Tine build failed; see $TINE_LOG_DIR/build.log" >&2
+        exit 1

@@ -38,7 +38,7 @@ jobs:
           set -o pipefail
           ARGS=""
           if [ -n "$PACKAGE" ]; then ARGS="--package $PACKAGE"; fi
-          python3 pigeon/tools/drift_check.py $ARGS --report drift-out | tee drift.log
+          python3 rpm-factory/tools/drift_check.py $ARGS --report drift-out | tee drift.log
           echo "exit=$?" >> "$GITHUB_OUTPUT"
 
       - name: Publish report summary

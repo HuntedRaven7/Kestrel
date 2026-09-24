@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install packages from Pigeon repo + base image per woodpecker.toml contract.
+"""Install packages from RPM factory repo + base image per woodpecker.toml contract.
 
 Usage:
   install-packages.py --contract PATH --repo PATH --base-image IMAGE
@@ -35,10 +35,10 @@ def main() -> int:
         print("ERROR: No packages in contract", file=sys.stderr)
         return 1
 
-    # Build repo config for Pigeon repo
-    repo_file = Path("/etc/yum.repos.d/pigeon.repo")
-    repo_file.write_text(f"""[pigeon]
-name=Kestrel Pigeon Repository
+    # Build repo config for RPM factory repo
+    repo_file = Path("/etc/yum.repos.d/rpm-factory.repo")
+    repo_file.write_text(f"""[rpm-factory]
+name=Kestrel RPM Factory
 baseurl=file://{args.repo}
 enabled=1
 gpgcheck=0
@@ -46,14 +46,14 @@ priority=5
 """)
 
     # Filter out wildcard versions (from base) - they'll be installed from base repos
-    pigeon_pkgs = [f"{name}-{ver}" if ver != "*" else name for name, ver in pkgs.items() if ver != "*"]
+    factory_pkgs = [f"{name}-{ver}" if ver != "*" else name for name, ver in pkgs.items() if ver != "*"]
     base_pkgs = [name for name, ver in pkgs.items() if ver == "*"]
 
-    # Install from Pigeon repo
-    if pigeon_pkgs:
-        print(f"Installing from Pigeon repo: {pigeon_pkgs}")
+    # Install from RPM factory repo
+    if factory_pkgs:
+        print(f"Installing from RPM factory repo: {factory_pkgs}")
         subprocess.run(
-            ["dnf", "install", "-y", "--repo=pigeon", *pigeon_pkgs],
+            ["dnf", "install", "-y", "--repo=rpm-factory", *factory_pkgs],
             check=True,
         )
 
