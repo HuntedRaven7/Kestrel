@@ -421,7 +421,14 @@
         "datasource": "github-tags",
         "depName": "ghostty-org/ghostty"
       },
-      "filename": "v1.3.1.tar.gz"
+      "filename": "v1.3.1.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "zig-x86_64-linux-0.15.2.tar.xz",
+          "url_template": "https://ziglang.org/download/0.15.2/zig-x86_64-linux-0.15.2.tar.xz",
+          "sha512": "bd2c53cd7ad1ce9e3cfc020072db42b5dd260028c156bb03dee1bc50c3485c2f50f9f4abb9c22c60faff6b5ddda83e0a5385300590d126121b3d8b989533d199"
+        }
+      ]
     },
     "git": {
       "version": "2.55.0",
