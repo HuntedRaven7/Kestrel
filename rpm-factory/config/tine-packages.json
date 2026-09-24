@@ -506,7 +506,7 @@
       "source_date_epoch": 1789835952,
       "source_lock_sha512": "50b8f4c88c15fdaf053efccae578cecf261851df8c5b0731d87bd424a413f8b0fb7a7fad145b7757b459e1709377e32b430d1f5d3889f9641b04bfcc41a6b478",
       "spec": "packages/awww/awww.spec",
-      "spec_sha256": "ae6fd412cf3bb1dcd1d91147e88bcdbf69d0c340ba795fa52cd1c0702b15b972",
+      "spec_sha256": "4a5bad0bf1d86f472b7cbf5267e4c436eb3d3c82364a0998f2bd6ea7d298c0bc",
       "subpackages": [
         "awww"
       ],

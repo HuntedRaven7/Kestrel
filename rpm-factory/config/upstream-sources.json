@@ -92,7 +92,14 @@
       "license": "GPL-3.0",
       "stage": 4,
       "note": "Direct archive download works (Codeberg blocks repo-page scraping only). Digest recorded 2026-09-17; re-verify on bump. No Renovate datasource covers Codeberg; bumps are manual.",
-      "filename": "v0.12.1.tar.gz"
+      "filename": "v0.12.1.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "awww-0.12.1-vendor.tar.gz",
+          "vendored": true,
+          "sha512": "1aba1163d32f60c9773f16487cf1fa0345d6fe1e70e80df19a92c62b298445fa461848f05fefcad22282905c1e7618a2348ac6ac758dec3d06ed9a4bae7bcca8"
+        }
+      ]
     },
     "bluez": {
       "version": "5.87",
