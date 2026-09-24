@@ -36,8 +36,8 @@ rm -rf /tmp/* /var/tmp/*
 # Remove build scripts (they're baked in the image)
 rm -rf /usr/libexec/warbler/*.py /usr/libexec/warbler/*.sh 2>/dev/null || true
 
-# Remove repo configs (Pigeon repo not needed at runtime)
-rm -f /etc/yum.repos.d/pigeon.repo
+# Remove repo configs (RPM factory repo not needed at runtime)
+rm -f /etc/yum.repos.d/rpm-factory.repo
 rm -f /etc/yum.repos.d/ogc-kernel.repo
 
 # Remove documentation

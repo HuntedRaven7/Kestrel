@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           
           pkg="$PACKAGE"
-          dest="pigeon/packages/$pkg"
+          dest="rpm-factory/packages/$pkg"
           
           if [ -d "$dest" ]; then
             echo "Package $pkg already exists at $dest"
@@ -100,9 +100,9 @@ jobs:
           body: |
             This PR imports `$pkg` from Fedora dist-git rawhide branch.
             
-            - Spec file: `pigeon/packages/$pkg/$pkg.spec`
-            - Upstream provenance: `pigeon/packages/$pkg/.hummingbird-upstream.json`
+            - Spec file: `rpm-factory/packages/$pkg/$pkg.spec`
+            - Upstream provenance: `rpm-factory/packages/$pkg/.hummingbird-upstream.json`
             
-            After review, this will be built in Pigeon and published to `ghcr.io/huntedraven7/pigeon`.
+            After review, this will be built in RPM factory and published to `ghcr.io/huntedraven7/rpm-factory`.
           branch: import/${{ github.event.inputs.package }}
           labels: import

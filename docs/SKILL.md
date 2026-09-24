@@ -2,8 +2,8 @@
 
 | Skill | When |
 |---|---|
-| `pigeon-packaging` | RPM recipes, specs, Mock/rpmbuild |
-| `pigeon-source-verify` | upstream-sources, verification, Renovate |
+| `rpm-factory-packaging` | RPM recipes, specs, Tine/Buck builds |
+| `rpm-factory-source-verify` | upstream-sources, verification, Renovate |
 | `warbler-image` | Warbler Containerfile, contracts, ISO |
 | `woodpecker-server` | server image, services, uupd |
 | `mango-quickshell` | Mango, Quickshell, rofi, ghostty, awww |

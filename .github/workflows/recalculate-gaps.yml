@@ -46,24 +46,24 @@ jobs:
           rpm --dbpath /tmp/base-rpm-db -qa --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' | sort > /tmp/base-rpms.txt
           echo "base_rpms_count=$(wc -l < /tmp/base-rpms.txt)" >> $GITHUB_OUTPUT
 
-      - name: Pull Pigeon repo image
+      - name: Pull RPM factory repo image
         run: |
-          podman pull ghcr.io/huntedraven7/pigeon:latest || echo "Pigeon image not yet published, skipping"
+          podman pull ghcr.io/huntedraven7/rpm-factory:latest || echo "RPM factory image not yet published, skipping"
 
-      - name: Extract Pigeon repo packages
-        id: pigeon-rpms
+      - name: Extract RPM factory repo packages
+        id: rpm-factory-rpms
         run: |
-          if podman image exists ghcr.io/huntedraven7/pigeon:latest; then
-            cid=$(podman create ghcr.io/huntedraven7/pigeon:latest)
-            podman cp $cid:/repository /tmp/pigeon-repo
+          if podman image exists ghcr.io/huntedraven7/rpm-factory:latest; then
+            cid=$(podman create ghcr.io/huntedraven7/rpm-factory:latest)
+            podman cp $cid:/repository /tmp/factory-repo
             podman rm $cid
 
-            # List all RPMs in the Pigeon repo
-            find /tmp/pigeon-repo -name "*.rpm" -exec rpm -qp --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' {} \; | sort -u > /tmp/pigeon-rpms.txt
-            echo "pigeon_rpms_count=$(wc -l < /tmp/pigeon-rpms.txt)" >> $GITHUB_OUTPUT
+            # List all RPMs in the RPM factory repo
+            find /tmp/factory-repo -name "*.rpm" -exec rpm -qp --queryformat '%{NAME} %{VERSION}-%{RELEASE}\n' {} \; | sort -u > /tmp/factory-rpms.txt
+            echo "factory_rpms_count=$(wc -l < /tmp/factory-rpms.txt)" >> $GITHUB_OUTPUT
           else
-            echo "pigeon_rpms_count=0" >> $GITHUB_OUTPUT
-            touch /tmp/pigeon-rpms.txt
+            echo "factory_rpms_count=0" >> $GITHUB_OUTPUT
+            touch /tmp/factory-rpms.txt
           fi
 
       - name: Pull Warbler images
@@ -129,8 +129,8 @@ jobs:
       - name: Compute gaps
         id: gaps
         run: |
-          # Combine base + pigeon = available packages
-          cat /tmp/base-rpms.txt /tmp/pigeon-rpms.txt 2>/dev/null | awk '{print $1}' | sort -u > /tmp/available.txt
+          # Combine base + rpm-factory = available packages
+          cat /tmp/base-rpms.txt /tmp/factory-rpms.txt 2>/dev/null | awk '{print $1}' | sort -u > /tmp/available.txt
 
           # Warbler gaps
           if [ -f /tmp/image-rpms/warbler-main-rpms.txt ]; then
@@ -138,7 +138,7 @@ jobs:
             comm -23 /tmp/warbler-contract.txt /tmp/image-rpms/warbler-main-rpms.txt > /tmp/warbler-missing.txt || true
             # Extra in image (installed but not in contract)
             comm -13 /tmp/warbler-contract.txt /tmp/image-rpms/warbler-main-rpms.txt > /tmp/warbler-extra.txt || true
-            # Available but not in contract (should be in base/pigeon)
+            # Available but not in contract (should be in base/rpm-factory)
             comm -23 /tmp/available.txt /tmp/warbler-contract.txt > /tmp/warbler-available-not-contracted.txt || true
           fi
 

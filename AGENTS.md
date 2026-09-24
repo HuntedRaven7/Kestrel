@@ -1,7 +1,7 @@
 # Kestrel agent guide
 
-Kestrel is a monorepo for Fedora Hummingbird bootc images. `pigeon/`
-builds RPMs and publishes `ghcr.io/huntedraven7/pigeon` (OCI repo image).
+Kestrel is a monorepo for Fedora Hummingbird bootc images. `rpm-factory/`
+builds RPMs and publishes `ghcr.io/huntedraven7/rpm-factory` (OCI repo image).
 `warbler/` (desktop: Mango + Quickshell + SDDM autologin) and `woodpecker/`
 (server) consume it via `COPY --from=` pinned by digest.
 
@@ -12,8 +12,8 @@ Load only the skill matching the task; do not read every skill.
 
 | Task / Domain | Skill to load |
 |---|---|
-| RPM recipes, specs, Mock/rpmbuild, SRPM builds | `pigeon-packaging` |
-| `upstream-sources.json`, source verification, Renovate bumps | `pigeon-source-verify` |
+| RPM recipes, specs, Tine/Buck builds, source staging | `rpm-factory-packaging` |
+| `upstream-sources.json`, source verification, Renovate bumps | `rpm-factory-source-verify` |
 | Warbler Containerfile, contracts, system_files, ISO | `warbler-image` |
 | Woodpecker server image, services, uupd | `woodpecker-server` |
 | Mango compositor, Quickshell, rofi, ghostty, awww integration | `mango-quickshell` |
@@ -32,7 +32,7 @@ Load only the skill matching the task; do not read every skill.
 ## Sources of truth
 
 1. Read the file being changed and its callers before editing.
-2. (GHCR owner, `.hum1.pigeon` suffix, Renovate-owned lock versions).
+2. (GHCR owner, `.hum1.rpmfactory` suffix, Renovate-owned lock versions).
 3. Workflows, `Justfile`, and `tools/` output are current truth; prose that disagrees is stale.
 4. Verify external syntax against current official docs before changing Containerfile, Renovate, cosign, or bootc usage.
 

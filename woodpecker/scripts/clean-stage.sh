@@ -36,8 +36,8 @@ rm -rf /tmp/* /var/tmp/*
 # Remove build scripts (they're baked in the image)
 rm -rf /usr/libexec/woodpecker/*.py /usr/libexec/woodpecker/*.sh 2>/dev/null || true
 
-# Remove repo configs (Pigeon repo not needed at runtime)
-rm -f /etc/yum.repos.d/pigeon.repo
+# Remove repo configs (RPM factory repo not needed at runtime)
+rm -f /etc/yum.repos.d/rpm-factory.repo
 
 # Remove documentation
 rm -rf /usr/share/doc/* /usr/share/man/* /usr/share/info/*
