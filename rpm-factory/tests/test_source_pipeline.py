@@ -9,6 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "rpm-factory" / "to
 
 import source_pipeline as sp
 import stage_sources as ss
+import tine_metadata
 
 
 def test_fetch_refuses_unknown_package(capsys):
@@ -47,6 +48,18 @@ def test_generated_local_source_must_match_lock(tmp_path):
         ss._verify_locked_source("generated", source, "")
     with pytest.raises(SystemExit, match="generated source SHA-512 mismatch"):
         ss._verify_locked_source("generated", source, "0" * 128)
+
+
+def test_tine_metadata_ignores_rename_commit_for_source_epoch(monkeypatch):
+    history = (
+        f"{'a' * 40}\t200\n\n"
+        "R087\told/spec\tnew/spec\n"
+        f"{'b' * 40}\t100\n\n"
+        "M\told/spec\n"
+    )
+    monkeypatch.setattr(tine_metadata, "_run", lambda *args, **kwargs: history)
+
+    assert tine_metadata._history_timestamp("new/spec") == 100
 
 
 def test_stage_refreshes_existing_recipe_sidecars(tmp_path, monkeypatch):
