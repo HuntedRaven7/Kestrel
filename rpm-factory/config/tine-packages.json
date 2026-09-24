@@ -1571,6 +1571,7 @@
         "libadwaita-devel",
         "libpng-devel",
         "oniguruma-devel",
+        "pandoc-cli",
         "pixman-devel",
         "pkgconfig",
         "wayland-protocols-devel",
@@ -1582,10 +1583,10 @@
       "recipe_dir": "packages/ghostty",
       "release": "1",
       "rpmbuild_options": [],
-      "source_date_epoch": 1790289260,
+      "source_date_epoch": 1790290025,
       "source_lock_sha512": "b9d2a35ba71111cab27a67279279a22bdb9ab6b371374cb6da5c0f543610a848f37d6114fb8f0555afd8817203df16a203257df8fa5bfe43482c2f2a115f2662",
       "spec": "packages/ghostty/ghostty.spec",
-      "spec_sha256": "b240ffb67df18ee5a918b313810d899276e17a65b440c946253c89ac4c0eaa78",
+      "spec_sha256": "99e9b5a301daba5e55800a6595ae94f420ed0ea2632d60251c4d7119e17dc93e",
       "subpackages": [
         "ghostty"
       ],

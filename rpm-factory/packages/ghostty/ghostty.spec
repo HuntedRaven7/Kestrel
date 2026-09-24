@@ -25,6 +25,7 @@ BuildRequires:  harfbuzz-devel
 BuildRequires:  libadwaita-devel
 BuildRequires:  libpng-devel
 BuildRequires:  oniguruma-devel
+BuildRequires:  pandoc-cli
 BuildRequires:  pixman-devel
 BuildRequires:  pkgconfig
 BuildRequires:  wayland-protocols-devel
@@ -79,6 +80,7 @@ DESTDIR=%{buildroot} zig build \
   -Dcpu=baseline \
   -Dpie=true \
   -Dstrip=false \
+  -Demit-docs \
   -Demit-themes=true
 
 %files
@@ -87,10 +89,28 @@ DESTDIR=%{buildroot} zig build \
 %{_prefix}/lib/libghostty-vt.so*
 %{_includedir}/ghostty
 %{_datadir}/applications/com.mitchellh.ghostty.desktop
+%{_datadir}/bash-completion/completions/ghostty.bash
+%{_datadir}/bat/syntaxes/ghostty.sublime-syntax
+%{_datadir}/dbus-1/services/com.mitchellh.ghostty.service
+%{_datadir}/fish/vendor_completions.d/ghostty.fish
 %{_datadir}/ghostty/
 %{_datadir}/icons/hicolor/*/apps/com.mitchellh.ghostty*.png
+%{_datadir}/kio/servicemenus/com.mitchellh.ghostty.desktop
+%{_datadir}/locale/*/LC_MESSAGES/com.mitchellh.ghostty.mo
+%{_datadir}/metainfo/com.mitchellh.ghostty.metainfo.xml
+%{_datadir}/nautilus-python/extensions/ghostty.py
+%{_datadir}/nvim/site/compiler/ghostty.vim
+%{_datadir}/nvim/site/ftdetect/ghostty.vim
+%{_datadir}/nvim/site/ftplugin/ghostty.vim
+%{_datadir}/nvim/site/syntax/ghostty.vim
 %{_datadir}/pkgconfig/libghostty-vt.pc
+%{_datadir}/systemd/user/app-com.mitchellh.ghostty.service
 %{_datadir}/terminfo/
+%{_datadir}/vim/vimfiles/compiler/ghostty.vim
+%{_datadir}/vim/vimfiles/ftdetect/ghostty.vim
+%{_datadir}/vim/vimfiles/ftplugin/ghostty.vim
+%{_datadir}/vim/vimfiles/syntax/ghostty.vim
+%{_datadir}/zsh/site-functions/_ghostty
 %{_mandir}/man1/ghostty.1*
 %{_mandir}/man5/ghostty.5*
 
