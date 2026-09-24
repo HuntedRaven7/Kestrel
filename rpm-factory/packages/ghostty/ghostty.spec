@@ -3,13 +3,8 @@
 # Source0 MUST match rpm-factory/config/upstream-sources.json (verified by
 # source_pipeline.py before any build).
 #
-# Zig notes (read before touching this recipe):
-# - build.zig.zon pins minimum_zig_version = 0.15.2. If the Fedora 44
-#   buildroot ships older zig, RPM factory must package zig first (CI will tell).
-# - Library deps (libxev, vaxis, …) come from deps.files.ghostty.org and are
-#   content-hash-pinned in build.zig.zon, which zig verifies. This recipe is
-#   therefore the ONE package allowed network at build time; the hashes make
-#   it fail-closed rather than floating. Revisit if the lane goes hermetic.
+# Zig 0.15.2 is supplied as a digest-locked extra source. The archive is
+# unpacked in %install, so rpmbuild never needs network access.
 
 Name:           ghostty
 Version:        1.3.1
