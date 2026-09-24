@@ -502,6 +502,16 @@
           "filename": "zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz",
           "url_template": "https://deps.files.ghostty.org/zig_wayland-1b5c038ec10da20ed3a15b0b2a6db1c21383e8ea.tar.gz",
           "sha512": "b987fc6dcdcccbb1f3b4ead7d15688bc72925b40a84f093e9bf51bbfd8af1c775698eabe19c9e7fb7d871ea3627ed56e0a2e4a62331653402da5541676d4afd9"
+        },
+        {
+          "filename": "zigimg-d7b7ab0ba0899643831ef042bd73289510b39906.tar.gz",
+          "url_template": "https://github.com/ivanstepanovftw/zigimg/archive/d7b7ab0ba0899643831ef042bd73289510b39906.tar.gz",
+          "sha512": "a68f5545b4182ba423da7980472b2632c452787608859a65e6328739d15d00f6cbade0806ab89d39a724b6bdf594c59571155bcfcfd29952ed7c3861872b9d3e"
+        },
+        {
+          "filename": "uucode-5f05f8f83a75caea201f12cc8ea32a2d82ea9732.tar.gz",
+          "url_template": "https://github.com/jacobsandlund/uucode/archive/5f05f8f83a75caea201f12cc8ea32a2d82ea9732.tar.gz",
+          "sha512": "9359b17d1f25c7934e6687d63d1283e4d6ab5a879d323dc7052289fd5946e590a4b436b7a1df3e56f14cd2e51946ebf086fb79b7ecaa6666a8eb38609903903d"
         }
       ]
     },

@@ -15,10 +15,20 @@ URL:            https://github.com/ghostty-org/ghostty
 Source0:        https://github.com/ghostty-org/ghostty/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  pkgconfig(gtk4)
-BuildRequires:  pkgconfig(gtk4-layer-shell-0)
-BuildRequires:  pkgconfig(libadwaita-1)
-BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  bzip2-devel
+BuildRequires:  fontconfig-devel
+BuildRequires:  freetype-devel
+BuildRequires:  glib2-devel
+BuildRequires:  gtk4-devel
+BuildRequires:  gtk4-layer-shell-devel
+BuildRequires:  harfbuzz-devel
+BuildRequires:  libadwaita-devel
+BuildRequires:  libpng-devel
+BuildRequires:  oniguruma-devel
+BuildRequires:  pixman-devel
+BuildRequires:  pkgconfig
+BuildRequires:  wayland-protocols-devel
+BuildRequires:  zlib-ng-devel
 BuildRequires:  blueprint-compiler
 BuildRequires:  xz
 
@@ -58,7 +68,18 @@ for archive in "%{_sourcedir}"/*.tar.gz "%{_sourcedir}"/*.tar.zst "%{_sourcedir}
 done
 export ZIG_GLOBAL_CACHE_DIR="${ZIG_CACHE}"
 
-zig build -Doptimize=ReleaseFast -p %{buildroot}%{_prefix}
+DESTDIR=%{buildroot} zig build \
+  --summary all \
+  --prefix "%{_prefix}" \
+  -fsys=fontconfig \
+  -fsys=freetype \
+  -fsys=harfbuzz \
+  -Dversion-string=%{version}-%{release} \
+  -Doptimize=ReleaseFast \
+  -Dcpu=baseline \
+  -Dpie=true \
+  -Dstrip=false \
+  -Demit-themes=true
 
 %files
 %license LICENSE
