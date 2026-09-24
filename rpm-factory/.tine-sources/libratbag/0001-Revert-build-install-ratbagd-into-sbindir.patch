@@ -1,0 +1,112 @@
+From 7e5c1631c6d8c8f381e39d4a40deded46da3d908 Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Fri, 3 Jan 2025 09:12:35 +1000
+Subject: [PATCH libratbag] Revert "build: install ratbagd into sbindir"
+
+/sbin in Fedora is about to go dodo
+https://fedoraproject.org/wiki/Changes/Unify_bin_and_sbin
+and modern programs shouldn't go there anyway. 
+There's an upstream issue filed now to revert this change
+https://github.com/libratbag/libratbag/issues/1672
+
+
+This reverts commit 6a07d0ec9c16e9fadb73f003667f4d3d5695bedd.
+---
+ dbus/org.freedesktop.ratbag1.service.in |  2 +-
+ meson.build                             | 39 ++++++++++---------------
+ ratbagd/ratbagd.service.in              |  2 +-
+ 3 files changed, 17 insertions(+), 26 deletions(-)
+
+diff --git a/dbus/org.freedesktop.ratbag1.service.in b/dbus/org.freedesktop.ratbag1.service.in
+index 6569ead01391..aaa3b56a00c4 100644
+--- a/dbus/org.freedesktop.ratbag1.service.in
++++ b/dbus/org.freedesktop.ratbag1.service.in
+@@ -1,5 +1,5 @@
+ [D-BUS Service]
+ Name=org.freedesktop.ratbag1
+-Exec=@sbindir@/ratbagd
++Exec=@bindir@/ratbagd
+ User=root
+ SystemdService=ratbagd.service
+diff --git a/meson.build b/meson.build
+index 73771e5d96f4..69b908d56649 100644
+--- a/meson.build
++++ b/meson.build
+@@ -388,13 +388,11 @@ deps_ratbagd = [
+ 	dep_unistring,
+ ]
+ 
+-executable(
+-  'ratbagd',
+-  src_ratbagd,
+-  dependencies : deps_ratbagd,
+-  include_directories : include_directories('src'),
+-  install : true,
+-  install_dir : get_option('sbindir'),
++executable('ratbagd',
++	   src_ratbagd,
++	   dependencies : deps_ratbagd,
++	   include_directories : include_directories('src'),
++	   install : true,
+ )
+ 
+ install_man('ratbagd/ratbagd.8')
+@@ -453,19 +451,14 @@ if enable_systemd
+ 	endif
+ endif
+ 
+-config_sbindir = configuration_data()
+-config_sbindir.set(
+-  'sbindir',
+-  join_paths(get_option('prefix'), get_option('sbindir')),
+-)
++config_bindir = configuration_data()
++config_bindir.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
+ 
+ if enable_systemd
+-  configure_file(
+-    input : 'ratbagd/ratbagd.service.in',
+-    output : 'ratbagd.service',
+-    configuration : config_sbindir,
+-    install_dir : unitdir,
+-  )
++	configure_file(input : 'ratbagd/ratbagd.service.in',
++			output : 'ratbagd.service',
++			configuration : config_bindir,
++			install_dir : unitdir)
+ endif
+ 
+ dbusdir = get_option('dbus-root-dir')
+@@ -473,12 +466,10 @@ if dbusdir == ''
+ 	dbusdir = join_paths(get_option('prefix'), get_option('datadir'), 'dbus-1')
+ endif
+ 
+-configure_file(
+-  input : 'dbus/org.freedesktop.ratbag1.service.in',
+-  output : 'org.freedesktop.ratbag1.service',
+-  configuration : config_sbindir,
+-  install_dir : join_paths(dbusdir, 'system-services')
+-)
++configure_file(input : 'dbus/org.freedesktop.ratbag1.service.in',
++	       output : 'org.freedesktop.ratbag1.service',
++	       configuration : config_bindir,
++	       install_dir : join_paths(dbusdir, 'system-services'))
+ 
+ dbusgroup = get_option('dbus-group')
+ if dbusgroup == ''
+diff --git a/ratbagd/ratbagd.service.in b/ratbagd/ratbagd.service.in
+index 4ce2e00bf50d..e6f6eb9f6ed0 100644
+--- a/ratbagd/ratbagd.service.in
++++ b/ratbagd/ratbagd.service.in
+@@ -4,7 +4,7 @@ Description=Daemon to introspect and modify configurable mice
+ [Service]
+ Type=dbus
+ BusName=org.freedesktop.ratbag1
+-ExecStart=@sbindir@/ratbagd
++ExecStart=@bindir@/ratbagd
+ Restart=on-abort
+ 
+ [Install]
+-- 
+2.47.1
+

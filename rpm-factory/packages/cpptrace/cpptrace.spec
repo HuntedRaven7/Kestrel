@@ -12,10 +12,12 @@ URL:            https://github.com/jeremy-rifkin/cpptrace
 Source0:        https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  gcc-c++
+BuildRequires:  git-core
 BuildRequires:  cmake
 BuildRequires:  ninja-build
 BuildRequires:  pkgconfig
 BuildRequires:  elfutils-libelf-devel
+BuildRequires:  libdwarf-devel
 BuildRequires:  libunwind-devel
 BuildRequires:  libzstd-devel
 
@@ -31,6 +33,8 @@ symbol names and inline assembly.
 %cmake -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCPPTRACE_BUILD_SHARED=ON \
+  -DCPPTRACE_USE_EXTERNAL_LIBDWARF=ON \
+  -DCPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG=ON \
   -DCPPTRACE_USE_EXTERNAL_ZSTD=ON \
   -DCPPTRACE_UNWIND_WITH_LIBUNWIND=ON
 # NOTE: autoconfig would pick libgcc _Unwind on Linux, but quickshell's

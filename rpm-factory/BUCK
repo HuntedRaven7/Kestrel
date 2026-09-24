@@ -351,7 +351,7 @@ rpm.package(
     release = "1",
     dist = ".hum1.rpmfactory",
     source_date_epoch = 1789800623,
-    build_requires = ["cmake", "elfutils-libelf-devel", "gcc-c++", "libunwind-devel", "libzstd-devel", "ninja-build", "pkgconfig"],
+    build_requires = ["cmake", "elfutils-libelf-devel", "gcc-c++", "git-core", "libdwarf-devel", "libunwind-devel", "libzstd-devel", "ninja-build", "pkgconfig"],
     rpmbuild_options = [],
     subpackages = ["cpptrace", "cpptrace-devel"],
 )

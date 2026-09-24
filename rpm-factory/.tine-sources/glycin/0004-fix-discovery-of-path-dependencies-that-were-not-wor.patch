@@ -1,0 +1,26 @@
+From e99c3fd971c15586e7427e32884902deb7ae0dc3 Mon Sep 17 00:00:00 2001
+From: Fabio Valentini <decathorpe@gmail.com>
+Date: Sat, 8 Aug 2026 00:19:03 +0200
+Subject: [PATCH 4/5] fix discovery of path dependencies that were not
+ workspace members
+
+---
+ Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index ff1f7d6..0111d1a 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -18,7 +18,7 @@ zvariant.opt-level = "z"
+ 
+ [workspace]
+ resolver = "3"
+-members = ["glycin-dev-tools", "glycin-loaders/*", "glycin-thumbnailer", "libglycin", "libglycin/libglycin-gtk4", "tests", "benches"]
++members = ["glycin-dev-tools", "glycin-loaders/*", "glycin-thumbnailer", "libglycin", "libglycin/libglycin-gtk4", "libglycin-rebind/libglycin-rebind", "libglycin-rebind/libglycin-rebind/sys", "libglycin-rebind/libglycin-rebind-gtk4", "libglycin-rebind/libglycin-rebind-gtk4/sys", "tests", "benches"]
+ exclude = ["libglycin-rebind/gir"]
+ default-members = ["glycin-dev-tools", "glycin-thumbnailer", "glycin-loaders/*"]
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,8 @@
+{
+  "package": "git",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/git.git",
+  "commit": "a40d40b977bd5d619ff8f99c78674383cf09a5d6",
+  "tree": "899435b37a11011bc20a7fb49431fb0ed74ed606",
+  "imported_at": "2026-08-29T06:02:32.856521+00:00"
+}

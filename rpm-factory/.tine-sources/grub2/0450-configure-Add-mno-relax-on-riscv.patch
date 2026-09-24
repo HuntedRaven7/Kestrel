@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Vladimir Serbinenko <phcoder@gmail.com>
+Date: Thu, 27 Mar 2025 19:32:23 +0300
+Subject: [PATCH] configure: Add -mno-relax on riscv*
+
+Without this option compiler sometimes emits R_RISCV_ALIGN relocs.
+Unlike other relocs this one requires the linker to do NOP deletions
+and we can't ignore them. Just instruct compiler not to emit them.
+
+Signed-off-by: Vladimir Serbinenko <phcoder@gmail.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+---
+ configure.ac | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 8e7945da595..bca4dc5beaa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -939,6 +939,31 @@ else
+   with_utils=target
+ fi
+ 
++if test "x$target_cpu" = xriscv64 || test "x$target_cpu" = xriscv32; then
++  AC_CACHE_CHECK([for no-relax options], grub_cv_target_cc_mno_relax, [
++    grub_cv_target_cc_mno_relax=no
++    for cand in "-mno-relax" "-Wa,-mno-relax"; do
++      if test x"$grub_cv_target_cc_mno_relax" != xno ; then
++        break
++      fi
++      CFLAGS="$TARGET_CFLAGS $cand -Werror"
++      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
++	    asm (".globl start; start:");
++	    void __main (void);
++	    void __main (void) {}
++	    int main (void);
++	    ]], [[]])], [grub_cv_target_cc_mno_relax="$cand"], [])
++    done
++  ])
++
++  CFLAGS="$TARGET_CFLAGS"
++
++  if test x"$grub_cv_target_cc_mno_relax" != xno ; then
++    TARGET_CFLAGS="$TARGET_CFLAGS $grub_cv_target_cc_mno_relax"
++    TARGET_CCASFLAGS="$TARGET_CCASFLAGS $grub_cv_target_cc_mno_relax"
++  fi
++fi
++
+ # GRUB doesn't use float or doubles at all. Yet some toolchains may decide
+ # that floats are a good fit to run instead of what's written in the code.
+ # Given that floating point unit is disabled (if present to begin with)

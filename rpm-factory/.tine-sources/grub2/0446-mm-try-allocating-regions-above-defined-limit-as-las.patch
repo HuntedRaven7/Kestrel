@@ -1,0 +1,146 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Leo Sandoval <lsandova@redhat.com>
+Date: Fri, 26 Jun 2026 15:14:37 -0600
+Subject: [PATCH] mm: try allocating regions above defined limit as last
+ resource
+
+This is yet another approach to overcome out-of-memory issues on those
+systems with constrained and fragmented EFI memories, where large files,
+e.g. initrd, which may cause out-of-memory errors stopping the boot process.
+
+This time, the approach is not to hardcode the
+maximum (GRUB_EFI_MAX_ALLOCATION_ADDRESS=2^64-1) but instead increase
+the filtering range to include EFI's conventional memory above
+GRUB_EFI_MAX_ALLOCATION_ADDRESS (2GB).
+
+Conceptually this is the same as increasing
+GRUB_EFI_MAX_ALLOCATION_ADDRESS to 2^64-1 but this time the memory
+allocator  algorithm is a bit smarter: it first tries current
+allocation methods below GRUB_EFI_MAX_ALLOCATION_ADDRESS, not
+impacting current boots and if fails, it tries above this value.
+
+This is not a silver-buller for all firmware types: there may be some
+machines with constrained and fragmented memories besides with firmware
+drivers which cannot properly DMA above
+GRUB_EFI_MAX_ALLOCATION_ADDRESS, where although no OOM issues are
+seeing, boot can fail in other areas. On these particular systems,
+there is not much GRUB can do.
+
+Signed-off-by: Leo Sandoval <lsandova@redhat.com>
+---
+ grub-core/kern/efi/mm.c | 22 +++++++++++++---------
+ grub-core/kern/mm.c     | 25 +++++++++++++++++++++++--
+ include/grub/mm.h       |  1 +
+ 3 files changed, 37 insertions(+), 11 deletions(-)
+
+diff --git a/grub-core/kern/efi/mm.c b/grub-core/kern/efi/mm.c
+index 464fe1c3c..22a936a6e 100644
+--- a/grub-core/kern/efi/mm.c
++++ b/grub-core/kern/efi/mm.c
+@@ -470,10 +470,12 @@ static grub_efi_memory_descriptor_t *
+ filter_memory_map (grub_efi_memory_descriptor_t *memory_map,
+ 		   grub_efi_memory_descriptor_t *filtered_memory_map,
+ 		   grub_efi_uintn_t desc_size,
+-		   grub_efi_memory_descriptor_t *memory_map_end)
++		   grub_efi_memory_descriptor_t *memory_map_end,
++		   unsigned int flags)
+ {
+   grub_efi_memory_descriptor_t *desc;
+   grub_efi_memory_descriptor_t *filtered_desc;
++  unsigned int no_limit = flags & GRUB_MM_ADD_REGION_NO_LIMIT;
+ 
+   for (desc = memory_map, filtered_desc = filtered_memory_map;
+        desc < memory_map_end;
+@@ -481,7 +483,7 @@ filter_memory_map (grub_efi_memory_descriptor_t *memory_map,
+     {
+       if (desc->type == GRUB_EFI_CONVENTIONAL_MEMORY
+ #if 1
+-	  && desc->physical_start <= GRUB_EFI_MAX_ALLOCATION_ADDRESS
++	  && (no_limit || desc->physical_start <= GRUB_EFI_MAX_ALLOCATION_ADDRESS)
+ #endif
+ 	  && desc->physical_start + PAGES_TO_BYTES (desc->num_pages) > 0x100000
+ 	  && desc->num_pages != 0)
+@@ -497,12 +499,13 @@ filter_memory_map (grub_efi_memory_descriptor_t *memory_map,
+ 	    }
+ 
+ #if 1
+-	  if (BYTES_TO_PAGES (filtered_desc->physical_start)
+-	      + filtered_desc->num_pages
+-	      > BYTES_TO_PAGES_DOWN (GRUB_EFI_MAX_ALLOCATION_ADDRESS))
+-	    filtered_desc->num_pages
+-	      = (BYTES_TO_PAGES_DOWN (GRUB_EFI_MAX_ALLOCATION_ADDRESS)
+-		 - BYTES_TO_PAGES (filtered_desc->physical_start));
++	  if (!no_limit)
++	    if (BYTES_TO_PAGES (filtered_desc->physical_start)
++		+ filtered_desc->num_pages
++		> BYTES_TO_PAGES_DOWN (GRUB_EFI_MAX_ALLOCATION_ADDRESS))
++	      filtered_desc->num_pages
++		= (BYTES_TO_PAGES_DOWN (GRUB_EFI_MAX_ALLOCATION_ADDRESS)
++		   - BYTES_TO_PAGES (filtered_desc->physical_start));
+ #endif
+ 
+ 	  if (filtered_desc->num_pages == 0)
+@@ -729,7 +732,8 @@ grub_efi_mm_add_regions (grub_size_t required_bytes, unsigned int flags)
+   filtered_memory_map = memory_map_end;
+ 
+   filtered_memory_map_end = filter_memory_map (memory_map, filtered_memory_map,
+-					       desc_size, memory_map_end);
++					       desc_size, memory_map_end,
++					       flags);
+ 
+   /* Sort the filtered descriptors, so that GRUB can allocate pages
+      from smaller regions.  */
+diff --git a/grub-core/kern/mm.c b/grub-core/kern/mm.c
+index 819bc5126..49d4b5284 100644
+--- a/grub-core/kern/mm.c
++++ b/grub-core/kern/mm.c
+@@ -536,14 +536,35 @@ grub_memalign (grub_size_t align, grub_size_t size)
+           goto again;
+         }
+ 
+-      /* fallthrough */
+-
+     case 2:
+       /* Invalidate disk caches.  */
+       grub_disk_cache_invalidate_all ();
+       count++;
+       goto again;
+ 
++
++#if defined (GRUB_MACHINE_EFI) && defined (__x86_64__)
++    case 3:
++      /* Request additional pages, anything at all, but this time
++         without the GRUB_EFI_MAX_ALLOCATION_ADDRESS limit.
++         This is a risky approach because some cannot DMA above 2GB,
++         but give it try and hope for the best.
++      */
++      count++;
++
++      if (grub_mm_add_region_fn != NULL)
++        {
++          /*
++           * Try again even if this fails, in case it was able to partially
++           * satisfy the request
++           */
++          grub_mm_add_region_fn (grow, GRUB_MM_ADD_REGION_NO_LIMIT);
++          goto again;
++        }
++#endif
++
++      /* fallthrough */
++
+     default:
+       break;
+     }
+diff --git a/include/grub/mm.h b/include/grub/mm.h
+index 8ee1fc717..d3bd3c057 100644
+--- a/include/grub/mm.h
++++ b/include/grub/mm.h
+@@ -32,6 +32,7 @@
+ 
+ #define GRUB_MM_ADD_REGION_NONE        0
+ #define GRUB_MM_ADD_REGION_CONSECUTIVE (1 << 0)
++#define GRUB_MM_ADD_REGION_NO_LIMIT (1 << 1)
+ 
+ /*
+  * Function used to request memory regions of `grub_size_t` bytes. The second

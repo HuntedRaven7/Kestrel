@@ -12,6 +12,7 @@ Source0:        https://github.com/libratbag/%{name}/archive/v%{version}/%{name}
 # for now until sure that's a permanent change
 # https://github.com/libratbag/libratbag/issues/1672
 Patch0001:      0001-Revert-build-install-ratbagd-into-sbindir.patch
+Patch0002:      0002-python3-swig.patch
 
 BuildRequires:  git gcc gcc-c++
 BuildRequires:  meson pkgconfig

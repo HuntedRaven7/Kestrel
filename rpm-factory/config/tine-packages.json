@@ -808,6 +808,8 @@
         "cmake",
         "elfutils-libelf-devel",
         "gcc-c++",
+        "git-core",
+        "libdwarf-devel",
         "libunwind-devel",
         "libzstd-devel",
         "ninja-build",
@@ -821,7 +823,7 @@
       "source_date_epoch": 1789800623,
       "source_lock_sha512": "e88edddbcdd423d49ed3adb02cf70580ee3a56065db4d81ca69d3f9f6d9b64ac27734842ca3b6d8ff45a548c25900a88f979e39d777af422a153e586d26ac5b5",
       "spec": "packages/cpptrace/cpptrace.spec",
-      "spec_sha256": "88be92b8857d1035847d4da1d6d6f55b4ba4b4cd0268689e0bd28aeef373d728",
+      "spec_sha256": "df79e2e2feb83d893dd16e2573fd35aeda05e60c015727c9875db0cae01098cc",
       "subpackages": [
         "cpptrace",
         "cpptrace-devel"
@@ -2900,7 +2902,7 @@
       "source_date_epoch": 1789829108,
       "source_lock_sha512": "ae1796d738f7e448c6022c56cb876af5fb43e29b89fef31bbf42b9c838a07fd1d6cf94815dfde87dcd94a72bae159ca14624826b75cf83c988ba4c20340031cb",
       "spec": "packages/libratbag/libratbag.spec",
-      "spec_sha256": "a2bee233fb3619cfa5ef51976a5c883a55650ec8b64cf614d1ceafbe6dfc7f01",
+      "spec_sha256": "02b9ce4b8060bebc6b09583646cdc15ef5bd6834a13beaef16e1540a884ab81d",
       "subpackages": [
         "liblur",
         "liblur-devel",

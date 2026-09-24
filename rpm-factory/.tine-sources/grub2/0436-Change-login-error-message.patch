@@ -1,0 +1,128 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Josue Hernandez <josherna@redhat.com>
+Date: Mon, 25 May 2026 17:19:47 -0600
+Subject: [PATCH] Change login error message
+
+Login error message shows the line of code where it was called
+which is not user friendly, This proposal adds better and more
+human log messages when authentication fails
+
+Signed-off-by: Josue Hernandez <josherna@redhat.com>
+---
+ grub-core/commands/password.c        |  2 +-
+ grub-core/commands/password_pbkdf2.c |  2 +-
+ grub-core/kern/err.c                 | 14 ++++++++++++++
+ grub-core/normal/auth.c              | 17 +++++++++++++----
+ include/grub/err.h                   |  2 ++
+ 5 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/grub-core/commands/password.c b/grub-core/commands/password.c
+index 6d42c9b02..607ee6435 100644
+--- a/grub-core/commands/password.c
++++ b/grub-core/commands/password.c
+@@ -35,7 +35,7 @@ check_password (const char *user, const char *entered,
+ 		void *password)
+ {
+   if (grub_crypto_memcmp (entered, password, GRUB_AUTH_MAX_PASSLEN) != 0)
+-    return GRUB_ACCESS_DENIED;
++    grub_user_error(GRUB_ERR_ACCESS_DENIED, N_("Authentication error"));
+ 
+   grub_auth_authenticate (user);
+ 
+diff --git a/grub-core/commands/password_pbkdf2.c b/grub-core/commands/password_pbkdf2.c
+index bcb902f97..915fcdc47 100644
+--- a/grub-core/commands/password_pbkdf2.c
++++ b/grub-core/commands/password_pbkdf2.c
+@@ -58,7 +58,7 @@ check_password (const char *user, const char *entered, void *pin)
+   if (err)
+       ret = grub_crypto_gcry_error (err);
+   else if (grub_crypto_memcmp (buf, pass->expected, pass->buflen) != 0)
+-      ret = GRUB_ACCESS_DENIED;
++      ret = grub_user_error(GRUB_ERR_ACCESS_DENIED, N_("Authentication error"));
+   else
+     {
+       grub_auth_authenticate (user);
+diff --git a/grub-core/kern/err.c b/grub-core/kern/err.c
+index ba04b57fb..f4c1b42c5 100644
+--- a/grub-core/kern/err.c
++++ b/grub-core/kern/err.c
+@@ -37,6 +37,20 @@ static int grub_error_stack_assert;
+ #undef grub_error
+ #endif
+ 
++grub_err_t
++grub_user_error (grub_err_t n, const char *fmt, ...)
++{
++  va_list ap;
++
++  grub_errno = n;
++
++  va_start (ap, fmt);
++  grub_vsnprintf (grub_errmsg, sizeof (grub_errmsg), _(fmt), ap);
++  va_end (ap);
++
++  return n;
++}
++
+ grub_err_t
+ grub_error (grub_err_t n, const char *file, const char *function, const int line, const char *fmt, ...)
+ {
+diff --git a/grub-core/normal/auth.c b/grub-core/normal/auth.c
+index 71b361bc0..005de2fd9 100644
+--- a/grub-core/normal/auth.c
++++ b/grub-core/normal/auth.c
+@@ -253,12 +253,18 @@ grub_auth_check_authentication (const char *userlist)
+   grub_puts_ (N_("Enter username: "));
+ 
+   if (!grub_username_get (login, sizeof (login) - 1))
+-    goto access_denied;
++    {
++      grub_user_error(GRUB_ERR_ACCESS_DENIED, N_("Error getting user"));
++      goto access_denied;
++    }
+ 
+   grub_puts_ (N_("Enter password: "));
+ 
+   if (!grub_password_get (entered, GRUB_AUTH_MAX_PASSLEN))
+-    goto access_denied;
++    {
++      grub_user_error(GRUB_ERR_ACCESS_DENIED, N_("Error getting password"));
++      goto access_denied;
++    }
+ 
+   FOR_LIST_ELEMENTS (user, users)
+     {
+@@ -267,7 +273,10 @@ grub_auth_check_authentication (const char *userlist)
+     }
+ 
+   if (!cur || ! cur->callback)
+-    goto access_denied;
++    {
++      grub_user_error(GRUB_ERR_ACCESS_DENIED, N_("Authentication error"));
++      goto access_denied;
++    }
+ 
+   cur->callback (login, entered, cur->arg);
+   if (is_authenticated (userlist))
+@@ -282,7 +291,7 @@ grub_auth_check_authentication (const char *userlist)
+   if (punishment_delay < GRUB_ULONG_MAX / 2)
+     punishment_delay *= 2;
+ 
+-  return GRUB_ACCESS_DENIED;
++  return GRUB_ERR_ACCESS_DENIED;
+ }
+ 
+ static grub_err_t
+diff --git a/include/grub/err.h b/include/grub/err.h
+index 6379a6baf..dbd82b2ae 100644
+--- a/include/grub/err.h
++++ b/include/grub/err.h
+@@ -90,6 +90,8 @@ extern char EXPORT_VAR(grub_errmsg)[GRUB_MAX_ERRMSG];
+ 
+ grub_err_t EXPORT_FUNC(grub_error) (grub_err_t n, const char *file, const char *function, const int line, const char *fmt, ...)
+ 	__attribute__ ((format (GNU_PRINTF, 5, 6)));
++grub_err_t EXPORT_FUNC(grub_user_error) (grub_err_t n, const char *fmt, ...)
++	__attribute__ ((format (GNU_PRINTF, 2, 3)));
+ 
+ #define grub_error(n, fmt, ...) grub_error (n, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__)
+ 
