@@ -19,6 +19,8 @@ rpm-factory/packages/*/*.tar.*
 !rpm-factory/.tine-sources/
 !rpm-factory/.tine-sources/**
 
+*.tar*
+
 # Tine/Buck runtime state; only the pinned checkout and committed config stay tracked.
 /.buck/
 /.buckconfig.local
