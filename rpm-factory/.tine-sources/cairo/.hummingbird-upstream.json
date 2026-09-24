@@ -1,0 +1,8 @@
+{
+  "package": "cairo",
+  "branch": "rawhide",
+  "remote": "https://src.fedoraproject.org/rpms/cairo.git",
+  "commit": "0a975b109f0b0115eac1388ddc486982e0520f24",
+  "tree": "17de618641789cd13071a5aa4cb5cf2b31e39cb9",
+  "imported_at": "2026-08-30T15:46:53.404038+00:00"
+}

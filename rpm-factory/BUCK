@@ -654,7 +654,7 @@ rpm.package(
     buildroot = _BUILDROOT,
     release = "1",
     dist = ".hum1.rpmfactory",
-    source_date_epoch = 1790290025,
+    source_date_epoch = 1790291024,
     build_requires = ["blueprint-compiler", "bzip2-devel", "fontconfig-devel", "freetype-devel", "gcc", "glib2-devel", "gtk4-devel", "gtk4-layer-shell-devel", "harfbuzz-devel", "libadwaita-devel", "libpng-devel", "oniguruma-devel", "pandoc-cli", "pixman-devel", "pkgconfig", "wayland-protocols-devel", "xz", "zlib-ng-devel"],
     rpmbuild_options = [],
     subpackages = ["ghostty"],
