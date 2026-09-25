@@ -188,7 +188,7 @@
       "filename": "v1.0.4.tar.gz"
     },
     "crun": {
-      "version": "1.29.1",
+      "version": "1.30.1",
       "url_template": "https://github.com/containers/crun/releases/download/{version}/crun-{version}.tar.zst",
       "sha512": "d12ff1252b20fe8ac1015c7581fde3eabbefca396b8cd9c7fac94eb12606e7ace0c8f561651fa9983a7ae98ba1489c72da6d6aa563061faf1b274d5075ac22bd",
       "stage": 3,
@@ -1570,7 +1570,7 @@
       "filename": "malcontent-0.14.0.tar.xz"
     },
     "mango": {
-      "version": "0.17.2",
+      "version": "0.17.3",
       "url_template": "https://github.com/mangowm/mango/archive/refs/tags/{version}.tar.gz",
       "sha512": "bbfc9a6444ba2f282ddb1ab924d19a0a78c120b5d2649cd59bebc4ba97e507ac18fb3fdd7f3dad419e434bef4a7b1f8e90ebf0daa3a6a4cb6a4404622711c4a5",
       "stage": 1,
@@ -2254,7 +2254,7 @@
       "filename": "volume_key-0.3.12.tar.xz"
     },
     "voxtype": {
-      "version": "1.0.1",
+      "version": "1.1.0",
       "url_template": "https://github.com/peteonrails/voxtype/archive/refs/tags/v{version}.tar.gz",
       "sha512": "80b2cd51a65b14bed796d3788210a5144e6bba460336b22c181a6b0a0a7a713ac95f62077b3664c75fc811706e87f4b0edcf7bfa12b94173caf51abc13ccae73",
       "stage": 4,
