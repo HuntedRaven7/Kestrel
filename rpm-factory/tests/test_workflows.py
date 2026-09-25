@@ -45,6 +45,14 @@ def test_embedded_bash_parses() -> None:
                 assert result.returncode == 0, result.stderr
 
 
+def test_matrix_planning_is_shared_between_local_and_ci() -> None:
+    workflow_text = (WORKFLOWS / "rebuild-rpm-factory.yml").read_text()
+    justfile = (ROOT / "Justfile").read_text()
+    assert "rpm-factory/tools/matrix.py --output" in workflow_text
+    assert "rpm-factory/tools/matrix.py --requested" in justfile
+    assert "verify: check test tine-check" in justfile
+
+
 def test_rebuild_uses_tine_chunks_and_promotes_only_complete_verified_builds() -> None:
     data = _workflow("rebuild-rpm-factory.yml")
     jobs = data["jobs"]

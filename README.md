@@ -93,6 +93,11 @@ just tine-check
 just tine-build dconf
 ```
 
+Use `just verify` as the complete local pre-commit gate (config checks, unit tests, and
+Tine metadata). Use `just matrix` to inspect the exact chunk plan that CI will build, and
+`just tine-build-chunk "pkg-one pkg-two"` to stage sources and build a group of packages the
+same way the workflow does.
+
 ### Adding a Package
 
 1. Add an entry to `rpm-factory/config/upstream-sources.json` with version and URL template.
@@ -100,7 +105,7 @@ just tine-build dconf
 3. Add the spec and sidecars under `rpm-factory/packages/<pkg>/`.
 4. Regenerate the Tine projection with `just tine-generate`.
 5. Update the `.packit.yaml` entry and the Warbler/Woodpecker contracts if needed.
-6. Run `just check && just test && just tine-check`.
+6. Run `just verify` and build the affected package with `just tine-build <pkg>`.
 
 ### Importing from Fedora
 

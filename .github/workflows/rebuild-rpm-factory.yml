@@ -40,41 +40,7 @@ jobs:
         id: plan
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import json
-          import os
-          import re
-          from pathlib import Path
-
-          metadata = json.loads(Path("rpm-factory/config/tine-packages.json").read_text())
-          all_names = sorted(metadata["packages"])
-          chunk_size = int(metadata["chunk_size"])
-          requested = os.environ.get("PACKAGES", "")
-          if requested.strip():
-              selected = {p for p in re.split(r"[\s,]+", requested.strip()) if p}
-              unknown = sorted(selected - set(all_names))
-              if unknown:
-                  raise SystemExit("unknown package(s): " + ", ".join(unknown))
-              names = [name for name in all_names if name in selected]
-              chunks = [names[i : i + chunk_size] for i in range(0, len(names), chunk_size)]
-              complete = set(names) == set(all_names)
-          else:
-              names = all_names
-              chunks = metadata["chunks"]
-              complete = True
-          flattened = [package for chunk in chunks for package in chunk]
-          if len(flattened) != len(set(flattened)) or set(flattened) != set(names):
-              raise SystemExit("generated chunks do not exactly cover the selected package set")
-          matrix = [
-              {"index": index, "packages": " ".join(chunk)}
-              for index, chunk in enumerate(chunks)
-          ]
-          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
-              output.write(f"matrix={json.dumps(matrix, separators=(',', ':'))}\n")
-              output.write(f"package-count={len(names)}\n")
-              output.write(f"complete={str(complete).lower()}\n")
-          print(f"prepared {len(names)} package(s) in {len(matrix)} chunk(s); complete={complete}")
-          PY
+          python3 rpm-factory/tools/matrix.py --output "$GITHUB_OUTPUT"
         env:
           PACKAGES: ${{ inputs.packages }}
 

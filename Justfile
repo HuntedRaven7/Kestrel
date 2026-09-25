@@ -6,6 +6,9 @@ check:
     python3 rpm-factory/tools/sync_versions.py --check
     python3 rpm-factory/tools/audit_sources.py --spec-sources
 
+# One command for the complete local pre-commit gate.
+verify: check test tine-check
+
 sync-versions:
     python3 rpm-factory/tools/sync_versions.py
 
@@ -17,6 +20,27 @@ tine-generate:
 
 tine-check:
     tine/bin/tine buck run tine//tools:dev.box -- python3 rpm-factory/tools/tine_metadata.py --check
+
+matrix packages="":
+    python3 rpm-factory/tools/matrix.py --requested "{{ packages }}"
+
+# Stage sources and build several packages with the same invocation used by CI.
+tine-build-chunk packages:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    read -r -a package_list <<< "{{ packages }}"
+    ((${#package_list[@]} > 0)) || {
+      echo "tine-build-chunk requires at least one package" >&2
+      exit 1
+    }
+    python3 rpm-factory/tools/stage_sources.py "${package_list[@]}"
+    rm -rf work/tine-local/chunk
+    targets=()
+    for package in "${package_list[@]}"; do
+      targets+=("//rpm-factory:$package")
+    done
+    tine/bin/tine buck build "${targets[@]}" --out work/tine-local/chunk
+    find work/tine-local/chunk -type f -name '*.rpm' -print
 
 tine-build pkg:
     #!/usr/bin/env bash
