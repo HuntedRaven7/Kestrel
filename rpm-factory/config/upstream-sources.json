@@ -2452,12 +2452,24 @@
       "url_template": "https://github.com/peteonrails/voxtype/archive/refs/tags/v{version}.tar.gz",
       "sha512": "80b2cd51a65b14bed796d3788210a5144e6bba460336b22c181a6b0a0a7a713ac95f62077b3664c75fc811706e87f4b0edcf7bfa12b94173caf51abc13ccae73",
       "stage": 4,
-      "note": "Push-to-talk voice-to-text daemon. Offline transcription via whisper.cpp. Tiered CPU binaries (AVX2 baseline, AVX-512 optimized) with Vulkan GPU variant. Requires Rust/cargo build; vendor tree pending.",
+      "note": "Push-to-talk voice-to-text daemon. Offline transcription via whisper.cpp. Tiered CPU binaries (AVX2 baseline, AVX-512 optimized) with Vulkan GPU variant. Cargo dependencies are shipped as a digest-locked vendor archive.",
       "renovate": {
         "datasource": "github-tags",
         "depName": "peteonrails/voxtype"
       },
-      "filename": "v1.0.1.tar.gz"
+      "filename": "v1.0.1.tar.gz",
+      "extra_sources": [
+        {
+          "filename": "voxtype-1.0.1-vendor-a.tar.gz",
+          "vendored": true,
+          "sha512": "827a323b62310443f12fa745eb8e04c83fee09f27f5b43a54b17e32d394f0b489ffbfbf1bb9ffbd3dab39e8b980559c12e6d05ec0a12d49dda50deb15ceea891"
+        },
+        {
+          "filename": "voxtype-1.0.1-vendor-b.tar.gz",
+          "vendored": true,
+          "sha512": "7cb748532d613723e3ece64445aabdc9df508b74314253069d8b623eb9839629b88149586e0744b0ca9e4998160b32be63b516c4bcc67d8f64714cb90c2fb2f7"
+        }
+      ]
     },
     "vulkan-headers": {
       "version": "1.4.357.0",

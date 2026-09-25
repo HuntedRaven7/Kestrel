@@ -175,9 +175,21 @@ def _subpackages(spec: Path) -> list[str]:
         match = re.match(r"^%package(?:\s+-n)?\s+([^\s]+)", line)
         if match:
             parsed.add(match.group(1).strip("'").strip('"'))
-    # Macro-generated packages (not textually declared in the spec) need the
-    # parsed form; ordinary conditional declarations are left to --builtrpms.
-    result = built | (parsed - declared)
+    # --builtrpms evaluates the same macro/condition set as rpmbuild and is
+    # authoritative for ordinary packages.  A few Fedora macros create real
+    # packages that rpmspec cannot list (notably font and Python-extra macros),
+    # so retain those parsed names.  Drop internal spellings when the prefixed
+    # RPM exists; grub2 also declares pc-tools without a files section, so it
+    # is the one known empty macro package to omit.
+    package = _rpmspec(spec, ["--queryformat", "%{NAME}\n"]).splitlines()[0].strip()
+    empty_macro_subpackages = {("grub2", "pc-tools")}
+    additional = {
+        name
+        for name in parsed - declared
+        if (package, name) not in empty_macro_subpackages
+        and f"{package}-{name}" not in built
+    }
+    result = built | additional
     return sorted(name for name in result if not name.endswith(("-debuginfo", "-debugsource")))
 
 

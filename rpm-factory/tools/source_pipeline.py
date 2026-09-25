@@ -524,6 +524,10 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
 
     if extra.get("vendored"):
         staged = ROOT / "rpm-factory" / "packages" / pkg / filename
+        if not staged.is_file() and output:
+            committed = Path(output) / filename
+            if committed.is_file():
+                staged = committed
         if not staged.is_file():
             return {"ok": False, "filename": filename,
                     "reason": f"vendored file not staged: {filename}"}
@@ -533,8 +537,10 @@ def fetch_extra(pkg: str, extra: dict, version: str, workdir: Path,
         ok = digest == recorded
         if ok:
             if output:
-                Path(output).mkdir(parents=True, exist_ok=True)
-                shutil.copy(staged, Path(output) / filename)
+                destination = Path(output) / filename
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                if staged.resolve() != destination.resolve():
+                    shutil.copy(staged, destination)
             if stage_into:
                 pkg_dir = ROOT / stage_into / pkg
                 if pkg_dir.exists() and pkg_dir.resolve() != staged.parent.resolve():

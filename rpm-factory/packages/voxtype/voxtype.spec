@@ -4,14 +4,16 @@
 # source_pipeline.py before any build).
 #
 # Offline-vendor mechanism: the build is hermetic, so crates.io deps travel
-# as Source1. Regenerate on every version bump (maintainer, with network):
+# as two digest-locked Source archives. Regenerate on every version bump
+# (maintainer, with network):
 #   source_pipeline.py fetch voxtype --output /tmp/voxtype-src
 #   tar -xzf /tmp/voxtype-src/v1.0.1.tar.gz && cd voxtype-1.0.1
 #   cargo vendor --versioned-dirs vendor
-#   tar -czf voxtype-1.0.1-vendor.tar.gz vendor/
-# then record the vendor tarball digest alongside Source0.
+#   split vendor/ into two archives below the source hosting size limit
+# then record each archive digest alongside Source0.
 
 %bcond_without check
+%global __brp_mangle_shebangs %{nil}
 
 Name:           voxtype
 Version:        1.0.1
@@ -20,14 +22,17 @@ Summary:        Push-to-talk voice-to-text for Linux
 License:        MIT
 URL:            https://github.com/peteonrails/voxtype
 Source0:        https://github.com/peteonrails/voxtype/archive/refs/tags/v%{version}.tar.gz
-# TODO(phase-2): generate + record vendor tarball, then uncomment:
-# Source1:        voxtype-%{version}-vendor.tar.gz
+Source1:        voxtype-%{version}-vendor-a.tar.gz
+Source2:        voxtype-%{version}-vendor-b.tar.gz
 
 BuildRequires:  cargo
 BuildRequires:  rustc
 BuildRequires:  gcc-c++
 BuildRequires:  clang-devel
 BuildRequires:  cmake
+BuildRequires:  glslc
+BuildRequires:  vulkan-headers
+BuildRequires:  vulkan-loader-devel
 BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  systemd-rpm-macros
@@ -58,15 +63,17 @@ GPU acceleration can be enabled with: voxtype setup gpu --enable
 
 %prep
 %autosetup -n voxtype-%{version} -p1
-# TODO(phase-2): unpack vendor tree and point cargo at it:
-# tar -xzf %{SOURCE1}
-# mkdir -p .cargo
-# cat > .cargo/config.toml <<'EOF'
-# [source.crates-io]
-# replace-with = "vendored-sources"
-# [source.vendored-sources]
-# directory = "vendor"
-# EOF
+# The crate graph is a build input; never let Cargo contact the network.
+tar -xzf %{SOURCE1}
+tar -xzf %{SOURCE2}
+mkdir -p .cargo
+cat > .cargo/config.toml <<'EOF'
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+EOF
 
 %build
 export CARGO_HOME=%{_builddir}/cargo
@@ -79,30 +86,31 @@ export LDFLAGS="%{build_ldflags} -pie"
 # Build AVX2 baseline binary (compatible with most CPUs from 2013+)
 # Disable AVX-512 and GFNI in both Rust code and whisper.cpp to prevent
 # SIGILL on older CPUs.
+mkdir -p .kestrel-bin
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
 CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
-cargo build --release --locked
-cp target/release/voxtype target/release/voxtype-avx2
+cargo build --release --locked --offline
+cp target/release/voxtype .kestrel-bin/voxtype-avx2
 
 # Build AVX-512 optimized binary (for Zen 4+, some Intel)
 cargo clean
-cargo build --release --locked
-cp target/release/voxtype target/release/voxtype-avx512
+cargo build --release --locked --offline
+cp target/release/voxtype .kestrel-bin/voxtype-avx512
 
 # Build Vulkan GPU binary (for GPU acceleration)
 cargo clean
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
 CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
-cargo build --release --locked --features gpu-vulkan
-cp target/release/voxtype target/release/voxtype-vulkan
+cargo build --release --locked --offline --features gpu-vulkan
+cp target/release/voxtype .kestrel-bin/voxtype-vulkan
 
 %install
-# Install tiered binaries to /usr/lib/voxtype/
-install -D -m 755 target/release/voxtype-avx2 %{buildroot}%{_libdir}/voxtype/voxtype-avx2
-install -D -m 755 target/release/voxtype-avx512 %{buildroot}%{_libdir}/voxtype/voxtype-avx512
-install -D -m 755 target/release/voxtype-vulkan %{buildroot}%{_libdir}/voxtype/voxtype-vulkan
+# cargo clean removes earlier target trees, so install the saved variants.
+install -D -m 755 .kestrel-bin/voxtype-avx2 %{buildroot}%{_libdir}/voxtype/voxtype-avx2
+install -D -m 755 .kestrel-bin/voxtype-avx512 %{buildroot}%{_libdir}/voxtype/voxtype-avx512
+install -D -m 755 .kestrel-bin/voxtype-vulkan %{buildroot}%{_libdir}/voxtype/voxtype-vulkan
 
 # Install default configuration
 install -D -m 644 config/default.toml %{buildroot}%{_sysconfdir}/voxtype/config.toml
@@ -142,7 +150,7 @@ export LDFLAGS="%{build_ldflags} -pie"
 RUSTFLAGS="-C target-cpu=haswell -C target-feature=-avx512f,-avx512bw,-avx512cd,-avx512dq,-avx512vl,-gfni" \
 GGML_NATIVE=OFF GGML_AVX512=OFF \
 CMAKE_C_FLAGS="-mno-avx512f -mno-gfni -fPIE" CMAKE_CXX_FLAGS="-mno-avx512f -mno-gfni -fPIE" \
-cargo test --release --locked
+cargo test --release --locked --offline
 %endif
 
 %post

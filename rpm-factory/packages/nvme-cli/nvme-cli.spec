@@ -41,6 +41,8 @@ BuildRequires:  pkgconfig(libkmod)
 BuildRequires:  keyutils-libs-devel
 
 BuildRequires:  asciidoc
+# Kestrel: libnvme's kernel-doc helper is a Perl script.
+BuildRequires:  perl
 # Kestrel: upstream 3.1 builds the libnvme docs with Sphinx when
 # -Ddocs-build=true (libnvme/doc/meson.build requires sphinx-build);
 # the Fedora rawhide spec carries this BR but the import dropped it.

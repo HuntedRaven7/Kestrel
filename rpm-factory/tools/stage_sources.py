@@ -50,9 +50,22 @@ def _stage_one(package: str, output_root: Path) -> None:
         raise SystemExit(f"{package}: expected exactly one spec")
     spec = specs[0]
     output = output_root / package
+    # Some repositories commit a verified vendored extra in the Tine source
+    # tree. Preserve those bytes before refreshing the directory; the source
+    # pipeline can then verify and reuse them without a second host archive.
+    preserved_vendored: dict[str, bytes] = {}
+    if output.is_dir():
+        for extra in entry.get("extra_sources", []) or []:
+            if not extra.get("vendored") or not extra.get("filename"):
+                continue
+            candidate = output / extra["filename"]
+            if candidate.is_file():
+                preserved_vendored[extra["filename"]] = candidate.read_bytes()
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
+    for filename, content in preserved_vendored.items():
+        (output / filename).write_bytes(content)
 
     if entry.get("vendored"):
         _run(sys.executable, str(TOOLS / "fetch_vendored.py"), "--package", package)

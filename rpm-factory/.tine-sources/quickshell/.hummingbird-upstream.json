@@ -1,0 +1,6 @@
+{
+  "status": "independent",
+  "reason": "Kestrel-original recipe: Quickshell is not in Fedora dist-git.",
+  "upstream": "https://github.com/quickshell-mirror/quickshell",
+  "upstream_tag": "v0.3.1"
+}

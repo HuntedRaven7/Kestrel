@@ -174,7 +174,7 @@ rpm.package(
     buildroot = _BUILDROOT,
     release = "1",
     dist = ".hum1.rpmfactory",
-    source_date_epoch = 1789835952,
+    source_date_epoch = 1790293291,
     build_requires = ["cargo", "gcc", "libdav1d-devel", "pkgconfig(liblz4)", "pkgconfig(wayland-client)", "pkgconfig(wayland-protocols)", "pkgconfig(wayland-scanner)", "rustc"],
     rpmbuild_options = [],
     subpackages = ["awww"],
@@ -721,7 +721,7 @@ rpm.package(
     source_date_epoch = 1789693506,
     build_requires = ["autoconf", "automake", "binutils", "bison", "bzip2-devel", "dejavu-sans-fonts", "device-mapper-devel", "efi-srpm-macros", "flex", "freetype-devel", "fuse3-devel", "gcc", "gettext-devel", "git", "help2man", "ncurses-devel", "pesign >= 0.99-8", "python3", "rpm-devel", "rpm-libs", "squashfs-tools", "systemd-rpm-macros", "texinfo", "xz-devel"],
     rpmbuild_options = [],
-    subpackages = ["efi-ia32", "efi-ia32-cdboot", "efi-ia32-modules", "efi-x64", "efi-x64-cc", "efi-x64-cdboot", "efi-x64-modules", "grub2-common", "grub2-efi-ia32", "grub2-efi-ia32-cdboot", "grub2-efi-ia32-modules", "grub2-efi-x64", "grub2-efi-x64-cc", "grub2-efi-x64-cdboot", "grub2-efi-x64-modules", "grub2-emu", "grub2-emu-modules", "grub2-pc", "grub2-pc-modules", "grub2-tools", "grub2-tools-efi", "grub2-tools-extra", "grub2-tools-minimal", "grub2-xen-x64-modules", "grub2-xen_pvh-i386-modules", "pc", "pc-modules", "pc-tools", "xen-x64-modules", "xen_pvh-i386-modules"],
+    subpackages = ["grub2-common", "grub2-efi-ia32", "grub2-efi-ia32-cdboot", "grub2-efi-ia32-modules", "grub2-efi-x64", "grub2-efi-x64-cc", "grub2-efi-x64-cdboot", "grub2-efi-x64-modules", "grub2-emu", "grub2-emu-modules", "grub2-pc", "grub2-pc-modules", "grub2-tools", "grub2-tools-efi", "grub2-tools-extra", "grub2-tools-minimal", "grub2-xen-x64-modules", "grub2-xen_pvh-i386-modules"],
 )
 
 rpm.package(
@@ -1343,7 +1343,7 @@ rpm.package(
     release = "5",
     dist = ".hum1.rpmfactory",
     source_date_epoch = 1790105543,
-    build_requires = ["asciidoc", "gcc", "gcc-c++", "json-c-devel >= 0.14", "kernel-headers", "keyutils-libs-devel", "libnvme-devel >= 1.16.1", "meson >= 0.53", "openssl-devel", "pkgconfig(libkmod)", "python3-sphinx", "systemd-devel", "systemd-rpm-macros", "xmlto", "zlib-devel"],
+    build_requires = ["asciidoc", "gcc", "gcc-c++", "json-c-devel >= 0.14", "kernel-headers", "keyutils-libs-devel", "libnvme-devel >= 1.16.1", "meson >= 0.53", "openssl-devel", "perl", "pkgconfig(libkmod)", "python3-sphinx", "systemd-devel", "systemd-rpm-macros", "xmlto", "zlib-devel"],
     rpmbuild_options = [],
     subpackages = ["nvme-cli"],
 )
@@ -1935,7 +1935,7 @@ rpm.package(
     release = "1",
     dist = ".hum1.rpmfactory",
     source_date_epoch = 1789875267,
-    build_requires = ["cargo", "clang-devel", "cmake", "gcc-c++", "pkgconfig", "pkgconfig(alsa)", "rustc", "systemd-rpm-macros"],
+    build_requires = ["cargo", "clang-devel", "cmake", "gcc-c++", "glslc", "pkgconfig", "pkgconfig(alsa)", "rustc", "systemd-rpm-macros", "vulkan-headers", "vulkan-loader-devel"],
     rpmbuild_options = [],
     subpackages = ["voxtype"],
 )

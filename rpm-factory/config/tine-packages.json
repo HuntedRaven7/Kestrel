@@ -503,7 +503,7 @@
       "recipe_dir": "packages/awww",
       "release": "1",
       "rpmbuild_options": [],
-      "source_date_epoch": 1789835952,
+      "source_date_epoch": 1790293291,
       "source_lock_sha512": "50b8f4c88c15fdaf053efccae578cecf261851df8c5b0731d87bd424a413f8b0fb7a7fad145b7757b459e1709377e32b430d1f5d3889f9641b04bfcc41a6b478",
       "spec": "packages/awww/awww.spec",
       "spec_sha256": "4a5bad0bf1d86f472b7cbf5267e4c436eb3d3c82364a0998f2bd6ea7d298c0bc",
@@ -1758,13 +1758,6 @@
       "spec": "packages/grub2/grub2.spec",
       "spec_sha256": "06613fb979181293f827c59ce2ad483e6cf76b9ab2b5f1a4d59a3838a79ed833",
       "subpackages": [
-        "efi-ia32",
-        "efi-ia32-cdboot",
-        "efi-ia32-modules",
-        "efi-x64",
-        "efi-x64-cc",
-        "efi-x64-cdboot",
-        "efi-x64-modules",
         "grub2-common",
         "grub2-efi-ia32",
         "grub2-efi-ia32-cdboot",
@@ -1782,12 +1775,7 @@
         "grub2-tools-extra",
         "grub2-tools-minimal",
         "grub2-xen-x64-modules",
-        "grub2-xen_pvh-i386-modules",
-        "pc",
-        "pc-modules",
-        "pc-tools",
-        "xen-x64-modules",
-        "xen_pvh-i386-modules"
+        "grub2-xen_pvh-i386-modules"
       ],
       "target": "grub2"
     },
@@ -3174,6 +3162,7 @@
         "libnvme-devel >= 1.16.1",
         "meson >= 0.53",
         "openssl-devel",
+        "perl",
         "pkgconfig(libkmod)",
         "python3-sphinx",
         "systemd-devel",
@@ -3189,7 +3178,7 @@
       "source_date_epoch": 1790105543,
       "source_lock_sha512": "980a806125c75313aefe6f24aef13b850d69893407fc5ccf549b74829b1622efdb8f28f794dff6f7b258bb2a8dcd16c7fcf457a427a04eaa558ff38c954ed2e5",
       "spec": "packages/nvme-cli/nvme-cli.spec",
-      "spec_sha256": "fad8779292e0c60e845325232d81404abd4c839a3908f0ddfe2cae4967892af7",
+      "spec_sha256": "ff3dc999870fa44e6b1674e19ec4bf724b251d8e86920558b2a42f31a9f3b0c5",
       "subpackages": [
         "nvme-cli"
       ],
@@ -3864,7 +3853,7 @@
       "source_date_epoch": 1789805978,
       "source_lock_sha512": "7da5b37a20369e52f14cba2cf03b948522c8d79598f4a54e456034f2d0f868cf525539f15d86ebacde547e862eac8d029a597d5e360cd443ed2404dbd4781ad9",
       "spec": "packages/quickshell/quickshell.spec",
-      "spec_sha256": "19a2f510a98cf0d0c4749dc0673017595db74795e077855befe8f6642ecc6836",
+      "spec_sha256": "13dfdf9e37f626771ac5c74eef2f004e840d4d4702f1faa8a201a11423b7f3f1",
       "subpackages": [
         "quickshell"
       ],
@@ -4480,10 +4469,13 @@
         "clang-devel",
         "cmake",
         "gcc-c++",
+        "glslc",
         "pkgconfig",
         "pkgconfig(alsa)",
         "rustc",
-        "systemd-rpm-macros"
+        "systemd-rpm-macros",
+        "vulkan-headers",
+        "vulkan-loader-devel"
       ],
       "dist": ".hum1.rpmfactory",
       "package": "voxtype",
@@ -4493,7 +4485,7 @@
       "source_date_epoch": 1789875267,
       "source_lock_sha512": "80b2cd51a65b14bed796d3788210a5144e6bba460336b22c181a6b0a0a7a713ac95f62077b3664c75fc811706e87f4b0edcf7bfa12b94173caf51abc13ccae73",
       "spec": "packages/voxtype/voxtype.spec",
-      "spec_sha256": "021de61bd466947afeefc3048b17b87caea4c0b5b9089da2c114b41889805220",
+      "spec_sha256": "f2adaaba476731ee36edc37e471e03fa38623d90f2cd6ef89f0827941970a8d1",
       "subpackages": [
         "voxtype"
       ],

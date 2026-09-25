@@ -1,0 +1,12 @@
+diff -pruN mozc-2.28.4950.102.orig/unix/emacs/mozc.el mozc-2.28.4950.102/unix/emacs/mozc.el
+--- mozc-2.28.4950.102.orig/unix/emacs/mozc.el	2022-12-20 14:42:26.000000000 +0900
++++ mozc-2.28.4950.102/unix/emacs/mozc.el	2023-01-11 15:26:30.380067572 +0900
+@@ -661,7 +661,7 @@ This hack could be moved to mozc-posn-at
+   "Return the width of WINDOW in pixel.
+ WINDOW defaults to the selected window."
+   (let ((rect (window-inside-pixel-edges window)))
+-    (- (third rect) (first rect))))
++    (- (cl-third rect) (cl-first rect))))
+ 
+ (defun mozc-header-line-height ()
+   "Return the height of the header line.

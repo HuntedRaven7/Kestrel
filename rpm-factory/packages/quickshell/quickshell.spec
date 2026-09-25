@@ -51,7 +51,11 @@ shell config is shipped — the user owns ~/.config/quickshell.
 %build
 # INSTALL_QMLDIR: without it upstream skips QML module install entirely
 # (and %files expects them under %%{_libdir}/qt6/qml).
-%cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINSTALL_QMLDIR=%{_libdir}/qt6/qml
+# Fedora's cpptrace-devel is built without the optional libunwind backend;
+# Quickshell's upstream check rejects that configuration.  Keep the build
+# hermetic (the vendor fallback would fetch cpptrace during rpmbuild) and use
+# the system library's supported non-signal-safe unwind path.
+%cmake -GNinja -DCMAKE_BUILD_TYPE=Release -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DDO_NOT_CHECK_CPPTRACE_USABILITY=ON
 %cmake_build
 
 %install

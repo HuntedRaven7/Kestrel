@@ -62,6 +62,23 @@ def test_tine_metadata_ignores_rename_commit_for_source_epoch(monkeypatch):
     assert tine_metadata._history_timestamp("new/spec") == 100
 
 
+def test_tine_metadata_uses_evaluated_subpackages(monkeypatch, tmp_path):
+    spec = tmp_path / "demo.spec"
+    spec.write_text("Name: demo\n%package internal\n")
+
+    def fake_rpmspec(_spec, arguments, **_kwargs):
+        if arguments[:1] == ["--builtrpms"]:
+            return "demo\ngrub2-real\n"
+        if arguments == ["-P"]:
+            return "%package internal\n%package empty\n"
+        if arguments == ["--queryformat", "%{NAME}\n"]:
+            return "demo\n"
+        raise AssertionError(arguments)
+
+    monkeypatch.setattr(tine_metadata, "_rpmspec", fake_rpmspec)
+    assert tine_metadata._subpackages(spec) == ["demo", "empty", "grub2-real"]
+
+
 def test_stage_refreshes_existing_recipe_sidecars(tmp_path, monkeypatch):
     factory = tmp_path / "rpm-factory"
     recipe = factory / "packages" / "demo"
@@ -112,6 +129,37 @@ def test_source_less_local_package_is_staged(tmp_path, monkeypatch):
     ss._stage_one("local-only", output)
 
     assert (output / "local-only").is_dir()
+
+
+def test_stage_preserves_committed_vendored_extra(tmp_path, monkeypatch):
+    factory = tmp_path / "rpm-factory"
+    recipe = factory / "packages" / "demo"
+    recipe.mkdir(parents=True)
+    (recipe / "demo.spec").write_text("Name: demo\n")
+    staged = tmp_path / "staged" / "demo"
+    staged.mkdir(parents=True)
+    vendor = staged / "demo-vendor.tar.gz"
+    vendor.write_bytes(b"locked vendor archive")
+
+    monkeypatch.setattr(ss, "FACTORY", factory)
+    monkeypatch.setattr(ss, "TOOLS", factory / "tools")
+    monkeypatch.setattr(ss, "SOURCES", {
+        "demo": {
+            "version": "1",
+            "filename": "demo-1.tar.gz",
+            "sha512": "0" * 128,
+            "extra_sources": [{
+                "filename": vendor.name,
+                "vendored": True,
+                "sha512": hashlib.sha512(vendor.read_bytes()).hexdigest(),
+            }],
+        }
+    })
+    monkeypatch.setattr(ss, "_run", lambda *args, **kwargs: None)
+
+    ss._stage_one("demo", tmp_path / "staged")
+
+    assert (staged / vendor.name).read_bytes() == b"locked vendor archive"
 
 
 def test_entry_ready_gate():
@@ -506,6 +554,37 @@ def test_fetch_stages_vendored_extra(tmp_path, monkeypatch):
     report = json.loads((tmp_path / "reports" / "multi.json").read_text())
     assert report["extra_sources"][0]["ok"] is True
     assert report["extra_sources"][0].get("vendored") is True
+
+
+def test_fetch_uses_committed_tine_vendored_extra(tmp_path, monkeypatch):
+    import gzip
+    main_arc = tmp_path / "main-2.tar.gz"
+    main_arc.write_bytes(gzip.compress(b"main"))
+    pkg_dir = tmp_path / "rpm-factory" / "packages" / "multi"
+    pkg_dir.mkdir(parents=True)
+    out = tmp_path / "rpm-factory" / ".tine-sources" / "multi"
+    out.mkdir(parents=True)
+    vendor_bytes = gzip.compress(b"vendor-bytes")
+    (out / "vendor.tar.gz").write_bytes(vendor_bytes)
+    pkg = {
+        "version": "2",
+        "url_template": f"file://{tmp_path}/main-{{version}}.tar.gz",
+        "sha512": hashlib.sha512(gzip.compress(b"main")).hexdigest(),
+        "filename": "main-2.tar.gz",
+        "extra_sources": [{
+            "filename": "vendor.tar.gz",
+            "vendored": True,
+            "sha512": hashlib.sha512(vendor_bytes).hexdigest(),
+        }],
+    }
+    srcfile = tmp_path / "upstream-sources.json"
+    srcfile.write_text(json.dumps({"packages": {"multi": pkg}}))
+    monkeypatch.setattr(sp, "SOURCES", srcfile)
+    monkeypatch.setattr(sp, "REPORTS", tmp_path / "reports")
+    monkeypatch.setattr(sp, "ROOT", tmp_path)
+
+    assert sp.cmd_fetch("multi", str(out)) == 0
+    assert (out / "vendor.tar.gz").read_bytes() == vendor_bytes
 
 
 def test_record_locks_extras(tmp_path, monkeypatch):
