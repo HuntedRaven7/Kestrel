@@ -3,7 +3,7 @@
 # Built from warbler/Containerfile.kernel, published as ghcr.io/huntedraven7/warbler-kernel-cache:<key>
 # Key = hash of OGC tag+commit, NVIDIA driver version, base image digest
 
-ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:9d69f6f33f5af87c76b0d7f49387bc4b969271a8eb788970396d6eab2b5af8a2
+ARG BASE_IMAGE=quay.io/hummingbird-community/bootc-os@sha256:a97d682afbba4c978a4f13110fb9a701b81c8821f9f8b114b5e75b12a3a0dbbb
 ARG BASE_IMAGE_SHA=sha256:TODO_BASE_IMAGE_SHA
 ARG RPM_FACTORY_IMAGE=ghcr.io/huntedraven7/rpm-factory
 ARG RPM_FACTORY_IMAGE_SHA=sha256:TODO_RPM_FACTORY_IMAGE_SHA
